@@ -1,12 +1,15 @@
 import Vue from 'vue'
+//import axios from 'axios'
 import App from './App.vue'
 import router from './router'
+//import url from '../server/url'
 // import VueResource from 'vue-resource'
 
 // Vue.use(VueResource)
 
 //obsolete in vue2
 Vue.config.debug = true;
+//Vue.prototype.url = url;
 
 new Vue({
   el: '#app',

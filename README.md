@@ -13,3 +13,6 @@ http://blog.allenm.me/2012/12/whats-sourcemap/
 - [ ] 6.Build a running environment on cloud
 - [ ] 7. How to use sourcemap in config file
 - [ ] 8. How to use ES6 in nodejs server
+- [ ] 9. How to hide the warning log in console
+
+why import in main.js but cannot use it in components

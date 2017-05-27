@@ -1,9 +1,9 @@
-function route(handle, pathname, response) {
-    if (typeof handle[pathname] === 'function') {
-        handle[pathname](response);
-    } else {
-        console.log("No request handler found for " + pathname);
-    }
-}
+let api = require('./api');
+let url = require('./url');
+var express = require('express');
+var router = express.Router();
 
-exports.route = route;
+router.post(url.c2, api.getTestData1);
+router.post(url.c2, api.getTestData2);
+
+module.exports = router;

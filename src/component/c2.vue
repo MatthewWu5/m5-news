@@ -4,6 +4,9 @@
         <router-link :to="{name: 'HomeView'}">Redirect to Component1</router-link>
         <button @click="OnC1DataChangeClick">OnC1DataChangeClick</button>
         <button @click="OnC2DataChangeClick">OnC2DataChangeClick</button>
+        <button @click="OnPostServerDataClick">Get data by post</button>
+        <button @click="OnPostServerDataClick2">Get data2 by post</button>
+        <button @click="OnGetServerDataClick">Get data2 by get</button>
         <div>{{GetData1}}</div>
         <div>{{GetData2}}</div>
         <div>{{GetData3}}</div>
@@ -18,10 +21,42 @@
 import store from '../vuex/store'
 //!!!Do not use mapper, cause you cannot resolve the babel plugin issue, it cost a lot 
 import { mapGetters } from 'vuex'
+import axios from 'axios';
+import url from '../../server/url'
 
 export default {
     name: 'c2',
     methods: {
+        OnPostServerDataClick: () => {
+            axios.post(url.getData1, {pData1: 'test1', pData2: 'test2'})
+            .then(resp => {
+                console.log(resp.data)
+            })
+            .catch(err => {
+                console.log('err');
+                console.log(err);
+            })
+        },
+        OnPostServerDataClick2: () => {
+            axios.post(url.getData2, {pData1: 'test1', pData2: 'test2'})
+            .then(resp => {
+                console.log(resp.data)
+            })
+            .catch(err => {
+                console.log('err');
+                console.log(err);
+            })
+        },
+        OnGetServerDataClick: () => {
+            axios.get(url.getData1)
+            .then(resp => {
+                console.log(resp.data)
+            })
+            .catch(err => {
+                console.log('err');
+                console.log(err);
+            })
+        },
         OnC2DataChangeClick: () => {
             store.commit({
                 type: 'Update',

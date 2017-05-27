@@ -22,6 +22,8 @@ var proxyTable = config.dev.proxyTable
 
 var app = express()
 var compiler = webpack(webpackConfig)
+var router = require('../server/router');
+var bodyParser = require('body-parser');
 
 var devMiddleware = require('webpack-dev-middleware')(compiler, {
   publicPath: webpackConfig.output.publicPath,
@@ -80,6 +82,11 @@ devMiddleware.waitUntilValid(() => {
 })
 
 var server = app.listen(port)
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+//add router
+app.use(router);
 
 module.exports = {
   ready: readyPromise,
