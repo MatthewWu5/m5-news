@@ -16,3 +16,8 @@ http://blog.allenm.me/2012/12/whats-sourcemap/
 - [ ] 9. How to hide the warning log in console
 
 why import in main.js but cannot use it in components
+
+
+# Fetch code in bash step:
+ - git remote add origin https://github.com/MatthewWu5/project-test.git
+ - git pull origin master
