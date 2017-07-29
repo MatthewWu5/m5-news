@@ -40,16 +40,12 @@ export default {
             }
 
             $.ajax({
-                // url: 'https://api.douban.com/v2/movie/in_theaters',
-                url: 'https://www.zhibo8.cc/zuqiu/json/2017-07-20.htm?callback=jCallback&message=Hello',
+                url: 'https://api.douban.com/v2/movie/in_theaters',
+                //wrong way by zhibo8 site
+                // url: 'https://www.zhibo8.cc/zuqiu/json/2017-07-20.htm',
                 dataType: "jsonp",
-                // jsonp: "callback",
-                // jsonpCallback: 'jCallback',
-                processData: false,
-
-                type: 'get',
-
-                data: "{}",
+                jsonp: "callback",
+                jsonpCallback: 'jCallback',
                 success: function (data) {
                     console.log(data)
                     this.jsonpResult = data
