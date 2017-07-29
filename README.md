@@ -17,6 +17,8 @@ http://blog.allenm.me/2012/12/whats-sourcemap/
 
 why import in main.js but cannot use it in components
 
+computed is before mounted 
+
 
 # Fetch code in bash step:
  - git remote add origin https://github.com/MatthewWu5/project-test.git

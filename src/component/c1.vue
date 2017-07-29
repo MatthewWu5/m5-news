@@ -1,13 +1,10 @@
 <template>
     <div>
-    
-        <FootballNews></FootballNews>
-    
         <!--<div v-for="fn in footballNews">
-                    <FootballNews :catagory="fn.catagory" :news="fn.news">    
-                    </FootballNews>
-                </div>-->
-        <router-link :to="{name: 'Component2'}">Component2</router-link>
+                                        <FootballNews :catagory="fn.catagory" :news="fn.news">    
+                                        </FootballNews>
+                                    </div>-->
+        <!--<router-link :to="{name: 'Component2'}">Component2</router-link>-->
     </div>
 </template>
 
@@ -36,21 +33,40 @@ export default {
             //     .catch(function (response) {
             //         console.log(response)
             //     })
+
+            function jCallback(result) {
+                console.log(result)
+                console.log('jCallback')
+            }
+
             $.ajax({
-                url: 'https://api.douban.com/v2/movie/in_theaters',
+                // url: 'https://api.douban.com/v2/movie/in_theaters',
+                url: 'https://www.zhibo8.cc/zuqiu/json/2017-07-20.htm?callback=jCallback&message=Hello',
                 dataType: "jsonp",
-                jsonp: "callback",
+                // jsonp: "callback",
+                // jsonpCallback: 'jCallback',
+                processData: false,
+
+                type: 'get',
+
+                data: "{}",
                 success: function (data) {
                     console.log(data)
                     this.jsonpResult = data
                 },
-                error: function (err) {
+                error: function (err, res) {
+                    console.log(err, res)
                     console.log('err')
-                    console.log(err)
                 }
             })
+
+            // $.getJSON('https://api.douban.com/v2/movie/in_theaters?callback=?', function (res) {
+            //     console.log(res)
+            // })
         }
     },
-
+    created: function () {
+        this.testCrossDomain()
+    }
 }
 </script>

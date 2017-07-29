@@ -4,6 +4,9 @@ import Router from 'vue-router'
 import Base from '../component/base.vue'
 import Component1 from '../component/c1.vue'
 import Component2 from '../component/c2.vue'
+import FootballNews from '../component/footballNews.vue'
+import MessiVideo from '../component/messiVideo.vue'
+import NewsBase from '../component/newsBase.vue'
 
 Vue.use(Router)
 
@@ -11,7 +14,28 @@ export default new Router({
     routes: [
         {
             path: '/',
-            redirect: '/pages/'
+            redirect: '/news/'
+        },
+        {
+            path: '/news',
+            name: 'NewsBase',
+            component: NewsBase,
+            children: [
+                {
+                    path: '',
+                    redirect: '/news/footballNews'
+                },
+                {
+                    path: 'footballNews',
+                    name: 'FootballNews',
+                    component: FootballNews
+                },
+                {
+                    path: 'leoVideo',
+                    name: 'MessiVideo',
+                    component: MessiVideo
+                },
+            ]
         },
         {
             path: '/pages',
@@ -36,7 +60,7 @@ export default new Router({
         },
         {
             path: '*',
-            redirect: '/pages/'
+            redirect: '/news/'
         }
     ]
     // routes: [
