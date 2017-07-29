@@ -26,11 +26,12 @@ computed is before mounted
 
  # The football news revision (Write a football news web app by call zhibo8's web request)
  - Requirements
- 1.Only display what you want to see,
- 2.Sort the news by user comments' count,
- 3.Add comments with different team's fans hahahahahahaha,你们皇马曼联球迷不是吊吗，就是要引战！哈哈哈哈哈
- 4.
+ - 1.Only display what you want to see,
+ - 2.Sort the news by user comments' count,
+ - 3.Add comments with different team's fans hahahahahahaha,你们皇马曼联球迷不是吊吗，就是要引战！哈哈哈哈哈
+ - 4.Use python to find out the history,吹过的牛逼放过的狠话都给我找出来
 
- # So does weibo have some api? if exist, write a web app, you can see what you want, only正能量or负能量, block those fucking, SB star, i do not want to see any star in my weibo, fuck you
+ # So does weibo have some api? 
+ - if exist, write a web app, you can see what you want, only正能量or负能量, block those fucking, SB star, i do not want to see any star in my weibo, fuck you
  - I have found some nodeapi and a vue project about weibo in github, so maybe i can make it.
 
