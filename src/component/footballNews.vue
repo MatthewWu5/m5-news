@@ -4,12 +4,14 @@
       <button @click="OnClick">Barca</button>
       <button @click="OnClick">Mancity</button>
       <button @click="OnClick">All</button>
+      <!--<button @click="OnCheck">console.log(this)</button>-->
       <input type="text" placeholder="Search" v-model="searchKey"></input>
+      <i class="fa fa-times" style="width:10px;height:10px;margin-left:-18px" @click="OnResetSearch"></i>
     </div>
-    <div v-for="item in footballNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-3">
+    <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-3">
       {{item.category}}
       <div v-for="n in item.news" v-bind:key="n">
-        <a :href="n.url" target="_blank">{{n.title}}</a>
+        <a :href="n.url" target="_blank" :class="n.isLeo?'leo-news-color':''">{{n.title}}</a>
         <span>{{n.time}}</span>
       </div>
     </div>
@@ -23,38 +25,59 @@ export default {
   data() {
     return {
       footballNews: [],
-      _fakeData: [{ category: '1', news: [{ url: 'url1', title: 'haha', lable: 'abc' }] }],
       searchKey: '',
+      label: '',
     }
   },
   computed: {
     _filteredNews: function () {
-      console.log(this._fakeData);
-      console.log('_fakeData');
-      let result = [];
-      //TODO: Why always true
-      if (Boolean(this.searchKey != '' && this._fakeData && this._fakeData.length > 0)) {
-        result = this._fakeData.map(function (x) {
+      var key = this.searchKey;
+      var label = this.label;
+      if (key == '') {
+        return this.footballNews.map(function (x) {
           return {
             category: x.category,
-            news: x.news.filter(y => y.title.indexOf(this.searchKey) != -1)
+            news: label == '' ? x.news : x.news.filter(y => y.lable.indexOf(label) != -1)
           }
         })
       } else {
-        result = this._fakeData;
+        return this.footballNews.map(function (x) {
+          return {
+            category: x.category,
+            news: label == '' ? x.news.filter(y => y.title.indexOf(key) != -1)
+              : x.news.filter(y => (y.title.indexOf(key) != -1 && y.lable.indexOf(label) != -1))
+          }
+        })
       }
-
-      console.log(result);
-      // console.log(this.footballNews);
-      return result;
     }
   },
   methods: {
-    OnClick: (e) => {
-
+    OnClick: function (event) {
+      $('button.button-press').removeClass('button-press')
+      var self = this;
+      this.$nextTick(function () {
+        if (event.target.innerText == 'Barca') {
+          self.label = '巴塞罗那';
+        } else if (event.target.innerText == 'Mancity') {
+          self.label = '曼城';
+        } else {
+          self.label = '';
+        }
+      })
+      $(event.target).addClass('button-press');
+    },
+    OnCheck: () => {
+      console.log(this)
+    },
+    OnResetSearch: function () {
+      var self = this;
+      this.$nextTick(function () {
+        self.searchKey = '';
+      })
     }
   },
   created: function () {
+    //https://soccer.hupu.com/home/latest-news?league=%E8%A5%BF%E7%94%B2&page=1
     var ajaxPromise = new Promise(function (resolve, reject) {
       $.ajax({
         url: 'https://m.zhibo8.cc/json/hot/24hours.htm',
@@ -85,6 +108,7 @@ export default {
             url: (isVideo ? 'https://www.zhibo8.cc' : 'https://news.zhibo8.cc') + x.url,
             time: formatTime(x.updatetime),
             lable: x.lable,
+            isLeo: x.title.indexOf('梅西') != -1 || x.title.toLowerCase().indexOf('messi') != -1
           }
         })
       }
@@ -118,8 +142,6 @@ export default {
     var self = this;
     ajaxPromise.then(function (res) {
       self.footballNews = res;
-      console.log(self.footballNews)
-      console.log('get data')
     })
   }
 }
@@ -129,6 +151,17 @@ export default {
 .search-area {
   margin-left: 15px;
   padding-bottom: 5px;
+}
+
+.button-press {
+  background-color: #a8c6e2;
+  cursor: default;
+}
+
+.leo-news-color {
+  color: #f7f71a;
+  font-size: 20px;
+  font-weight: bolder;
 }
 </style>
 

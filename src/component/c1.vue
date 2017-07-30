@@ -1,9 +1,6 @@
 <template>
     <div>
-        <!--<div v-for="fn in footballNews">
-                                        <FootballNews :catagory="fn.catagory" :news="fn.news">    
-                                        </FootballNews>
-                                    </div>-->
+        <div>{{jsonpResult}}</div>
         <!--<router-link :to="{name: 'Component2'}">Component2</router-link>-->
     </div>
 </template>
@@ -40,15 +37,16 @@ export default {
             }
 
             $.ajax({
-                url: 'https://api.douban.com/v2/movie/in_theaters',
+                // url: 'https://api.douban.com/v2/movie/in_theaters',
                 //wrong way by zhibo8 site
                 // url: 'https://www.zhibo8.cc/zuqiu/json/2017-07-20.htm',
+                // url: 'https://news.zhibo8.cc/zuqiu/json/2017-07-20.htm',
                 dataType: "jsonp",
                 jsonp: "callback",
-                jsonpCallback: 'jCallback',
+                // jsonpCallback: 'jCallback',
                 success: function (data) {
-                    console.log(data)
                     this.jsonpResult = data
+                    console.log(data)
                 },
                 error: function (err, res) {
                     console.log(err, res)

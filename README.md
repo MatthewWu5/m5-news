@@ -19,6 +19,14 @@ why import in main.js but cannot use it in components
 
 computed is before mounted 
 
+竟然不支持箭头函数？？？，使用箭头函数将导致this取不到值
+OnResetSearch: function () {
+      var self = this;
+      this.$nextTick(function () {
+        self.searchKey = '';
+      })
+    }
+
 
 # Fetch code in bash step:
  - git remote add origin https://github.com/MatthewWu5/project-test.git

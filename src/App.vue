@@ -46,4 +46,20 @@ export default {
 .my-area>h2 {
   color: red;
 }
+
+.search-area {
+  margin-left: 15px;
+  padding-bottom: 5px;
+}
+
+.button-press {
+  background-color: #a8c6e2;
+  cursor: default;
+}
+
+.leo-news-color {
+  color: #f7f71a;
+  font-size: 20px;
+  font-weight: bolder;
+}
 </style>
