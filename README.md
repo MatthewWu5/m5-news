@@ -26,11 +26,16 @@ OnResetSearch: function () {
         self.searchKey = '';
       })
     }
-
+    
+# How to push code without input user psd:
+ - 在windows中添加一个HOME环境变量，变量名:HOME,变量值：%USERPROFILE%
+ - 进入%HOME%目录(users/yourUser)，新建一个名为"_netrc"的文件，文件中内容格式如下：
+machine github.com
+login MatthewWu5
+password my-password
 
 # Fetch code in bash step:
- - git remote add origin https://github.com/MatthewWu5/project-test.git
- - git pull origin master
+ - git clone https://github.com/MatthewWu5/project-test.git
 
  # The football news revision (Write a football news web app by call zhibo8's web request)
  - Requirements
