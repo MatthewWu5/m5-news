@@ -9,6 +9,8 @@
 <script>
 import $ from 'jquery'
 import FootballNews from './footballNews'
+import axios from 'axios'
+import url from '../../server/url'
 export default {
     name: 'c1',
     components: { FootballNews },
@@ -40,7 +42,7 @@ export default {
                 // url: 'https://api.douban.com/v2/movie/in_theaters',
                 //wrong way by zhibo8 site
                 // url: 'https://www.zhibo8.cc/zuqiu/json/2017-07-20.htm',
-                // url: 'https://news.zhibo8.cc/zuqiu/json/2017-07-20.htm',
+                url: 'https://news.zhibo8.cc/zuqiu/json/2017-07-20.htm',
                 dataType: "jsonp",
                 jsonp: "callback",
                 // jsonpCallback: 'jCallback',
@@ -57,10 +59,22 @@ export default {
             // $.getJSON('https://api.douban.com/v2/movie/in_theaters?callback=?', function (res) {
             //     console.log(res)
             // })
-        }
+        },
+
+        axiosPost: function () {
+            axios.post(url.getNewsData, { type: 'more' })
+                .then(resp => {
+                    console.log(resp.data)
+                })
+                .catch(err => {
+                    console.log('err');
+                    console.log(err);
+                })
+        },
     },
     created: function () {
-        this.testCrossDomain()
+        //this.testCrossDomain()
+        this.axiosPost()
     }
 }
 </script>

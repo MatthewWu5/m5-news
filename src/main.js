@@ -4,7 +4,6 @@ import App from './App.vue'
 import router from './router'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import '../node_modules/font-awesome/css/font-awesome.min.css'
-//import url from '../server/url'
 // import VueResource from 'vue-resource'
 
 // Vue.use(VueResource)
