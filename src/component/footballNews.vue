@@ -12,7 +12,7 @@
       {{item.category}}
       <div v-for="n in item.news" v-bind:key="n">
         <a :href="n.url" target="_blank" :class="n.isLeo?'leo-news-color':''">{{n.title}}</a>
-        <span>{{n.time}}</span>
+        <!--<span>{{n.time}}</span>-->
       </div>
     </div>
   </div>
