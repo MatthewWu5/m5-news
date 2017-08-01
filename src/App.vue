@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="">
-      
+  
       <!--<div v-for="item in v_for_data">{{item.prop1+' '+item.prop2}}</div>-->
       <router-view>
       </router-view>
@@ -23,12 +23,18 @@ export default {
     }
   },
   mounted: function () {
-    this.v_for_data = [{prop1: '1', prop2: '2'}]
+    this.v_for_data = [{ prop1: '1', prop2: '2' }]
   }
 }
 </script>
 
 <style>
+@media (max-width: 992px) {
+  #app {
+    font-size: 30px;
+  }
+}
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

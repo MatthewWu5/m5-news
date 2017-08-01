@@ -8,7 +8,7 @@
       <input type="text" placeholder="Search" v-model="searchKey"></input>
       <i class="fa fa-times" style="width:10px;height:10px;margin-left:-18px" @click="OnResetSearch"></i>
     </div>
-    <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-3">
+    <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-6">
       {{item.category}}
       <div v-for="n in item.news" v-bind:key="n">
         <a :href="n.url" target="_blank" :class="n.isLeo?'leo-news-color':''">{{n.title}}</a>
