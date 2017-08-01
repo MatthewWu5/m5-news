@@ -6,44 +6,42 @@ module.exports = {
         res.send({ code: 200, msg: 'done', data: { hehe: '2', hehe2: req.body.pData2 } });
     },
     getNewsData: function (req, res) {
+        var this_req = req;
         var dataPromise = new Promise(function (resolve, reject) {
             var http = require('http');
-            //if (req.type == 'more') {
-            var options = {
-                host: 'www.zhibo8.cc',
-                port: 80,
-                path: '/zuqiu/json/2017-07-20.htm',
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'text/html'
-                }
-            };
-            var req = http.get(options, function (resp) {
-                //resp.setEncoding('uft8');
-                resp.on('data', function (data, data2, data3) {
-                    console.log(data);
-                    resolve(data);
-                });
-            });
+            if (this_req.body.type == 'more') {
+                var options = {
+                    host: 'news.zhibo8.cc',
+                    // host: 'm.zhibo8.cc',
+                    port: 80,
+                    path: '/zuqiu/json/2017-07-20.htm',// status 301
+                    // path: '/json/hot/24hours.htm', // status 200
+                    method: 'GET',
+                    headers: {
+                        // 'Content-Type': 'text/html'
+                        'Server': 'nginx/1.0.6',
+                        'Content-Type': 'text/html',
+                        'Content-Length': 190576,
+                        'Connection': 'keep-alive',
+                        'Vary': 'Accept-Encoding',
+                        'Accept-Ranges': 'bytes',
+                    }
+                };
+                var req = http.get(options, function (resp) {
+                    var buffers = [];
+                    resp.on('data', function (chunk) {
+                        buffers.push(chunk);
+                        console.log('data: ' + chunk.toString());
+                    });
+                    resp.on('end', function (chunk) {
+                        var wholeData = Buffer.concat(buffers);
+                        var dataStr = wholeData.toString('utf8');
+                        console.log('content: ' + wholeData);
 
-            var options2 = {
-                host: 'api.douban.com',
-                port: 80,
-                path: '/v2/movie/in_theaters',
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8'
-                }
-            };
-            var req2 = http.get(options, function (resp) {
-                //resp.setEncoding('utf8');
-                resp.on('data', function (data) {
-                    console.log(data);
+                        //res.send({ code: 200, msg: 'done', data: wholeData });
+                    });
                 });
-            });
-            //}
+            }
         })
-
-        res.send({ code: 200, msg: 'done', data: '' });
     }
 }
