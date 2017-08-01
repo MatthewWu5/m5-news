@@ -31,7 +31,7 @@ export default {
 <style>
 @media (max-width: 992px) {
   #app {
-    font-size: 30px;
+    font-size: 40px;
   }
 }
 
