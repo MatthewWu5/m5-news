@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div>{{jsonpResult}}</div>
+        <div>{{ajaxResult}}</div>
         <!--<router-link :to="{name: 'Component2'}">Component2</router-link>-->
     </div>
 </template>
@@ -16,7 +16,7 @@ export default {
     components: { FootballNews },
     data() {
         return {
-            jsonpResult: 'loading...',
+            ajaxResult: 'loading...',
             fakeNews: [{ catagory: 'hehe', news: { title: '123', url: '1' } }],
         }
     },
@@ -47,7 +47,7 @@ export default {
                 jsonp: "callback",
                 // jsonpCallback: 'jCallback',
                 success: function (data) {
-                    this.jsonpResult = data
+                    this.ajaxResult = data
                     console.log(data)
                 },
                 error: function (err, res) {
@@ -61,20 +61,28 @@ export default {
             // })
         },
 
-        axiosPost: function () {
-            axios.post(url.getNewsData, { type: 'more' })
-                .then(resp => {
-                    console.log(resp.data)
-                })
-                .catch(err => {
-                    console.log('err');
-                    console.log(err);
-                })
+        axiosRequest: function () {
+            return new Promise((resolve, reject) => {
+                // axios.post(url.getNewsData, { host: 'news.zhibo8.cc', path: '/zuqiu/json/2017-07-20.htm' })
+                axios.post(url.getNewsData, { host: 'www.zhibo8.cc', path: '/zuqiu/json/2017-07-20.htm' })
+                    .then(resp => {
+                        ajaxResult = resp.data;
+                        resolve();
+                    })
+                    .catch(err => {
+                        ajaxResult = 'error';
+                        reject();
+                    })
+            })
         },
     },
     created: function () {
         //this.testCrossDomain()
-        this.axiosPost()
+
+        var self = this;
+        this.axiosRequest().then(function (res) {
+            self.ajaxResult = res;
+        })
     }
 }
 </script>
