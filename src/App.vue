@@ -33,6 +33,12 @@ export default {
   #app {
     font-size: 35px;
   }
+  .leo-news-color {
+    font-size: 40px !important;
+  }
+  .search-area i.removeBtn {
+    margin-left: -45px !important;
+  }
 }
 
 #app {
@@ -56,6 +62,12 @@ export default {
 .search-area {
   margin-left: 15px;
   padding-bottom: 5px;
+}
+
+.search-area i.removeBtn {
+  width: 10px;
+  height: 10px;
+  margin-left: -18px
 }
 
 .button-press {

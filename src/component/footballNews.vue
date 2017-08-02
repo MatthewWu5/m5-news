@@ -1,15 +1,21 @@
 <template>
   <div class="row">
     <div class="search-area">
-      <button @click="OnClick">Barca</button>
-      <button @click="OnClick">Mancity</button>
-      <button @click="OnClick">All</button>
+      <button @click="OnLabelChange">Barca</button>
+      <button @click="OnLabelChange">Mancity</button>
+      <button @click="OnLabelChange">All</button>
       <!--<button @click="OnCheck">console.log(this)</button>-->
       <input type="text" placeholder="Search" v-model="searchKey"></input>
-      <i class="fa fa-times" style="width:10px;height:10px;margin-left:-18px" @click="OnResetSearch"></i>
+      <i class="fa fa-times removeBtn" @click="OnResetSearch"></i>
     </div>
-    <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-6">
-      {{item.category}}
+    <div class="search-area">
+      <span @click="OnCategoryChange">News</span>
+      <span @click="OnCategoryChange">Video</span>
+      <span @click="OnCategoryChange">Official</span>
+      <span @click="OnCategoryChange">Conclusion</span>
+    </div>
+    <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-12">
+      <!--{{item.category}}-->
       <div v-for="n in item.news" v-bind:key="n">
         <a :href="n.url" target="_blank" :class="n.isLeo?'leo-news-color':''">{{n.title}}</a>
         <!--<span>{{n.time}}</span>-->
@@ -20,6 +26,7 @@
 
 <script>
 import $ from 'jquery'
+import const_news from '../const.js'
 export default {
   name: 'footballNews',
   data() {
@@ -27,32 +34,25 @@ export default {
       footballNews: [],
       searchKey: '',
       label: '',
+      category: const_news.Category.News,
     }
   },
   computed: {
     _filteredNews: function () {
       var key = this.searchKey;
       var label = this.label;
-      if (key == '') {
-        return this.footballNews.map(function (x) {
-          return {
-            category: x.category,
-            news: label == '' ? x.news : x.news.filter(y => y.lable.indexOf(label) != -1)
-          }
-        })
-      } else {
-        return this.footballNews.map(function (x) {
-          return {
-            category: x.category,
-            news: label == '' ? x.news.filter(y => y.title.indexOf(key) != -1)
-              : x.news.filter(y => (y.title.indexOf(key) != -1 && y.lable.indexOf(label) != -1))
-          }
-        })
-      }
+      var category = this.category;
+
+      return this.footballNews.filter(f => f.category.indexOf(category) != -1).map(function (x) {
+        return {
+          category: x.category,
+          news: x.news.filter(y => (y.title.indexOf(key) != -1 && y.lable.indexOf(label) != -1))
+        }
+      })
     }
   },
   methods: {
-    OnClick: function (event) {
+    OnLabelChange: function (event) {
       $('button.button-press').removeClass('button-press')
       var self = this;
       this.$nextTick(function () {
@@ -66,8 +66,23 @@ export default {
       })
       $(event.target).addClass('button-press');
     },
-    OnCheck: () => {
-      console.log(this)
+    OnCategoryChange: function () {
+      $('span.button-press').removeClass('button-press')
+      var self = this;
+      this.$nextTick(function () {
+        if (event.target.innerText == 'News') {
+          self.category = const_news.Category.News;
+        } else if (event.target.innerText == 'Video') {
+          self.category = const_news.Category.Video;
+        } else if (event.target.innerText == 'Official') {
+          self.category = const_news.Category.Official;
+        } else if (event.target.innerText == 'Conclusion') {
+          self.category = const_news.Category.Conclusion;
+        } else {
+          self.category = '';
+        }
+      })
+      $(event.target).addClass('button-press');
     },
     OnResetSearch: function () {
       var self = this;
@@ -91,10 +106,10 @@ export default {
           let international_official = internationalData.filter(x => isOfficial(x.title));
           let international_conclusion = internationalData.filter(x => isConclusion(x.title));
 
-          let _international = getFormatNewsData('国际', internationalData)
-          let _official = getFormatNewsData('官方', international_official)
-          let _conclusion = getFormatNewsData('直播吧总结', international_conclusion)
-          let _videoData = getFormatNewsData('视频集锦', videoData, true)
+          let _international = getFormatNewsData(const_news.Category.News, internationalData)
+          let _official = getFormatNewsData(const_news.Category.Official, international_official)
+          let _conclusion = getFormatNewsData(const_news.Category.Conclusion, international_conclusion)
+          let _videoData = getFormatNewsData(const_news.Category.Video, videoData, true)
           resolve([_international, _videoData, _official, _conclusion])
         }
       })
