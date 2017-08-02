@@ -36,7 +36,13 @@ module.exports = {
                 resp.on('end', function (chunk) {
                     var wholeData = Buffer.concat(buffers);
                     var dataStr = wholeData.toString('utf8');
-                    res.send({ code: 200, msg: 'done', data: JSON.parse(wholeData) });
+                    var jsonResult;
+                    try {
+                        jsonResult = JSON.parse(wholeData)
+                    } catch (err) {
+                        console.error(err)
+                    }
+                    res.send({ code: 200, msg: 'done', data: jsonResult });
                 });
             });
             req.end();

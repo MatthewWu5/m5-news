@@ -2,7 +2,8 @@
     <div class="row">
         <!--<div>改用在后台用nodejs发web request试试 傻逼直播吧开发因为跨域server端callback json却返回了字符串导致我不能做梅西单独的视频，傻逼！ 害我在网上查了一晚上，结果不是我的问题！！！</div>-->
     
-        <input type="text" placeholder="10 Days" v-model="intervalDay"></input>
+        <input type="text" v-model="intervalDay" style="width:120px"></input>
+        Days
         <button @click="moreVideoOnClick">More</button>
         <div v-for="n in leoVideo" v-bind:key="n">
             <a :href="n.url" target="_blank">{{n.title}}</a>
@@ -20,49 +21,44 @@ export default {
     data() {
         return {
             leoVideo: [],
-            intervalDay: 10,
-            currentMinDate,
+            intervalDay: 30,
+            currentMinDate: new Date(),
         }
     },
     methods: {
-        //can not set data
+        formatRequestDate: function (minDate, index) {
+            let date = new Date(minDate)
+            date.setDate(date.getDate() - index);
+            let month = date.getMonth() + 1;
+            let day = date.getDate();
+            if (month < 10) month = '0' + month;
+            if (day < 10) day = '0' + day;
+            return date.getFullYear() + '-' + month + '-' + day;
+        },
+
         getMoreVideo: function () {
-            debugger;
             var self = this;
             this.$nextTick(function () {
-                debugger;
-                if (self.currentMinDate == '') {
-                    self.currentMinDate = new Date();
-                }
-                if (self.intervalDay > 30) self.intervalDay = 30;
-
+                if (self.intervalDay > 100) self.intervalDay = 100;
                 var promiseArray = [];
                 for (var i = 0; i < self.intervalDay; i++) {
-                    console.log('in: ')
-                    console.log(formatRequestDate)
-                    console.log(self.moreVideoRequest)
-                    promiseArray.push(self.moreVideoRequest(formatRequestDate(self.currentMinDate, i)));
+                    promiseArray.push(self.moreVideoRequest(self.formatRequestDate(self.currentMinDate, i)));
                 }
-                console.log(promiseArray)
-                console.log('promiseArray')
                 Promise.all(promiseArray).then(function (resps) {
+                    console.log(resps)
                     resps.forEach(x => {
-                        self.leoVideo = self.leoVideo.concat(x)
+                        if (x) {
+                            self.leoVideo = self.leoVideo.concat(x)
+                        }
                     })
                     self.currentMinDate.setDate(self.currentMinDate.getDate() - self.intervalDay);
+                    console.log(self.intervalDay)
+                    console.log(self.currentMinDate)
                 }).catch(err => {
                     console.log('Promise.all error:')
                     console.log(err)
                 })
-
-                let formatRequestDate = function (minDate, index) {
-                    console.log(minDate)
-                    console.log('minDate')
-                    let date = new Date(minDate)
-                    date.setDate(date.getDate() - index);
-                    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-                }
-            });
+            })
         },
 
         moreVideoRequest: function (date) {
@@ -74,8 +70,7 @@ export default {
                         let videoData = respData.data.video_arr.filter(x => x.type == 'zuqiujijin' && x.lable.indexOf('梅西') != -1);
                         let _leoData = getFormatNewsData(videoData)
                         resolve(_leoData)
-                    })
-                    .catch(err => {
+                    }).catch(err => {
                         reject(err);
                     })
 
@@ -94,8 +89,7 @@ export default {
                     return date.getMonth() + 1 + '.' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
                 }
             }).catch(err => {
-                console.log(err);
-                console.log('internal error')
+                console.error(err);
             })
         },
 

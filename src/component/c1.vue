@@ -66,12 +66,10 @@ export default {
                 // axios.post(url.getNewsData, { host: 'news.zhibo8.cc', path: '/zuqiu/json/2017-07-20.htm' })
                 axios.post(url.getNewsData, { host: 'www.zhibo8.cc', path: '/zuqiu/json/2017-07-20.htm' })
                     .then(resp => {
-                        ajaxResult = resp.data;
-                        resolve();
+                        resolve(resp.data);
                     })
                     .catch(err => {
-                        ajaxResult = 'error';
-                        reject();
+                        reject(err);
                     })
             })
         },

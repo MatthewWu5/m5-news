@@ -1,12 +1,13 @@
 <template>
   <div class="row">
     <div class="search-area">
+      <div>
+        <input type="text" placeholder="Search" v-model="searchKey"></input>
+        <i class="fa fa-times removeBtn" @click="OnResetSearch"></i>
+      </div>
       <button @click="OnLabelChange">Barca</button>
       <button @click="OnLabelChange">Mancity</button>
       <button @click="OnLabelChange">All</button>
-      <!--<button @click="OnCheck">console.log(this)</button>-->
-      <input type="text" placeholder="Search" v-model="searchKey"></input>
-      <i class="fa fa-times removeBtn" @click="OnResetSearch"></i>
     </div>
     <div class="search-area">
       <span @click="OnCategoryChange">News</span>
@@ -14,11 +15,13 @@
       <span @click="OnCategoryChange">Official</span>
       <span @click="OnCategoryChange">Conclusion</span>
     </div>
-    <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-12">
-      <!--{{item.category}}-->
-      <div v-for="n in item.news" v-bind:key="n">
-        <a :href="n.url" target="_blank" :class="n.isLeo?'leo-news-color':''">{{n.title}}</a>
-        <!--<span>{{n.time}}</span>-->
+    <div class="fixed-width">
+      <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-12">
+        <!--{{item.category}}-->
+        <div v-for="n in item.news" v-bind:key="n">
+          <a :href="n.url" target="_blank" :class="n.isLeo?'leo-news-color':''">{{n.title}}</a>
+          <span>{{n.time}}</span>
+        </div>
       </div>
     </div>
   </div>
