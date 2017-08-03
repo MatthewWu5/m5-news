@@ -21,7 +21,7 @@ export default {
     data() {
         return {
             leoVideo: [],
-            intervalDay: 30,
+            intervalDay: 10,
             currentMinDate: new Date(),
         }
     },
