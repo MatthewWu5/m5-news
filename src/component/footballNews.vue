@@ -178,7 +178,7 @@ export default {
         news: rawData.map(function (x) {
           return {
             title: x.title,
-            url: (urlType == 'news'? 'https://www.zhibo8.cc' : 'https://news.zhibo8.cc') + x.url,
+            url: (urlType == 'news'? 'https://news.zhibo8.cc' : 'https://www.zhibo8.cc') + x.url,
             time: self.formatTime(x.updatetime),
             lable: x.lable,
             isLeo: x.title.indexOf('梅西') != -1 || x.title.toLowerCase().indexOf('messi') != -1
@@ -231,7 +231,7 @@ export default {
           let _international = self.getFormatNewsData(const_news.Category.News, internationalData)
           let _official = self.getFormatNewsData(const_news.Category.Official, international_official)
           let _conclusion = self.getFormatNewsData(const_news.Category.Conclusion, international_conclusion)
-          let _videoData = self.getFormatNewsData(const_news.Category.Video, videoData, true)
+          let _videoData = self.getFormatNewsData(const_news.Category.Video, videoData, 'video')
           resolve([_international, _videoData, _official, _conclusion])
         }
       })
