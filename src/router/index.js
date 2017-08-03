@@ -5,7 +5,6 @@ import Base from '../component/base.vue'
 import Component1 from '../component/c1.vue'
 import Component2 from '../component/c2.vue'
 import FootballNews from '../component/footballNews.vue'
-import MoreNews from '../component/moreNews.vue'
 import MessiVideo from '../component/messiVideo.vue'
 import NewsBase from '../component/newsBase.vue'
 
@@ -30,11 +29,6 @@ export default new Router({
                     path: 'football',
                     name: 'FootballNews',
                     component: FootballNews
-                },
-                {
-                    path: 'more',
-                    name: 'MoreNews',
-                    component: MoreNews
                 },
                 {
                     path: 'leoVideo',

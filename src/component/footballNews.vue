@@ -1,5 +1,5 @@
 <template>
-  <div class="row">
+  <div class="row" style="margin-left:15px">
     <div class="search-area">
       <div>
         <input type="text" placeholder="Search" v-model="searchKey"></input>
@@ -8,6 +8,11 @@
       <button @click="OnLabelChange">Barca</button>
       <button @click="OnLabelChange">Mancity</button>
       <button @click="OnLabelChange">All</button>
+    </div>
+    <div>
+      <input type="text" v-model="intervalDay" style="width:120px"></input>
+      Days
+      <button @click="moreNewsOnClick">More</button>
     </div>
     <div class="search-area">
       <span @click="OnCategoryChange">News</span>
@@ -30,6 +35,8 @@
 <script>
 import $ from 'jquery'
 import const_news from '../const.js'
+import axios from 'axios'
+import url from '../../server/url'
 export default {
   name: 'footballNews',
   data() {
@@ -38,6 +45,8 @@ export default {
       searchKey: '',
       label: '',
       category: const_news.Category.News,
+      intervalDay: 10,
+      currentMinDate: new Date(),
     }
   },
   computed: {
@@ -55,6 +64,7 @@ export default {
     }
   },
   methods: {
+
     OnLabelChange: function (event) {
       $('button.button-press').removeClass('button-press')
       var self = this;
@@ -69,6 +79,7 @@ export default {
       })
       $(event.target).addClass('button-press');
     },
+
     OnCategoryChange: function () {
       $('span.button-press').removeClass('button-press')
       var self = this;
@@ -87,75 +98,144 @@ export default {
       })
       $(event.target).addClass('button-press');
     },
+
     OnResetSearch: function () {
       var self = this;
       this.$nextTick(function () {
         self.searchKey = '';
       })
-    }
+    },
+
+    formatRequestDate: function (minDate, index) {
+      let date = new Date(minDate)
+      date.setDate(date.getDate() - index);
+      let month = date.getMonth() + 1;
+      let day = date.getDate();
+      if (month < 10) month = '0' + month;
+      if (day < 10) day = '0' + day;
+      return date.getFullYear() + '-' + month + '-' + day;
+    },
+
+    getMore: function () {
+      var self = this;
+      this.$nextTick(function () {
+        if (self.intervalDay > 100) self.intervalDay = 100;
+        var promiseArray = [];
+        for (var i = 0; i < self.intervalDay; i++) {
+          promiseArray.push(self.moreRequest(self.formatRequestDate(self.currentMinDate, i)));
+        }
+        Promise.all(promiseArray).then(function (resps) {
+          console.log(resps)
+          resps.forEach(x => {
+            if (x) {
+              self.footballNews = self.footballNews.concat(x)
+            }
+          })
+          self.currentMinDate.setDate(self.currentMinDate.getDate() - self.intervalDay);
+          console.log(self.intervalDay)
+          console.log(self.currentMinDate)
+        }).catch(err => {
+          console.log('Promise.all error:')
+          console.log(err)
+        })
+      })
+    },
+
+    moreRequest: function (date) {
+      var self = this;
+      return new Promise((resolve, reject) => {
+        axios.post(url.getNewsData, { host: 'news.zhibo8.cc', path: '/zuqiu/json/' + date + '.htm' })
+          .then(resp => {
+            var data = resp.data.data;
+            console.log(data);
+            console.log('get data')
+            let footballData = data.video_arr.filter(x => x.type == 'zuqiu');
+            let videoData = data.video_arr.filter(x => x.type == 'zuqiujijin' && self.isTop5League(x.lable));
+            let internationalData = footballData.filter(x => self.isTop5League(x.lable));
+            let international_official = internationalData.filter(x => self.isOfficial(x.title));
+            let international_conclusion = internationalData.filter(x => self.isConclusion(x.title));
+            let _international = self.getFormatNewsData(const_news.Category.News, internationalData)
+            let _official = self.getFormatNewsData(const_news.Category.Official, international_official)
+            let _conclusion = self.getFormatNewsData(const_news.Category.Conclusion, international_conclusion)
+            let _videoData = self.getFormatNewsData(const_news.Category.Video, videoData, 'video')
+            resolve([_international, _videoData, _official, _conclusion])
+          }).catch(err => {
+            reject(err);
+          })
+      }).catch(err => {
+        console.error(err);
+      })
+    },
+
+    moreNewsOnClick: function () {
+      this.getMore();
+    },
+
+    getFormatNewsData: function (category, rawData, urlType = 'news') {
+      var self = this;
+      return {
+        category: category,
+        news: rawData.map(function (x) {
+          return {
+            title: x.title,
+            url: (urlType == 'news'? 'https://www.zhibo8.cc' : 'https://news.zhibo8.cc') + x.url,
+            time: self.formatTime(x.updatetime),
+            lable: x.lable,
+            isLeo: x.title.indexOf('梅西') != -1 || x.title.toLowerCase().indexOf('messi') != -1
+          }
+        })
+      }
+    },
+    isTop5League: function (str) {
+      if (str.indexOf('英超') != -1 || str.indexOf('西甲') != -1 || str.indexOf('德甲') != -1 || str.indexOf('法甲') != -1 || str.indexOf('意甲') != -1) {
+        return true;
+      }
+      return false;
+    },
+    isChampionLeague: function (str) {
+      if (str.indexOf('欧冠') != -1) {
+        return true;
+      }
+    },
+    isOfficial: function (str) {
+      if (str.indexOf('官方') != -1) {
+        return true;
+      }
+    },
+    isConclusion: function (str) {
+      if (str.indexOf('盘点') != -1) {
+        return true;
+      }
+    },
+    formatTime: function (dateTime) {
+      let date = new Date(dateTime)
+      return date.getMonth() + 1 + '.' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
+    },
+
   },
   created: function () {
+    var self = this;
     //https://soccer.hupu.com/home/latest-news?league=%E8%A5%BF%E7%94%B2&page=1
     var ajaxPromise = new Promise(function (resolve, reject) {
       $.ajax({
         url: 'https://m.zhibo8.cc/json/hot/24hours.htm',
         dataType: "json",
         success: function (data) {
-
-          let videoData = data.video.filter(x => x.type == 'zuqiujijin' && isTop5League(x.lable));
+          let videoData = data.video.filter(x => x.type == 'zuqiujijin' && self.isTop5League(x.lable));
           let footballData = data.news.filter(x => x.type == 'zuqiu');
-          let internationalData = footballData.filter(x => isTop5League(x.lable));
-          let championLeagueData = footballData.filter(x => isChampionLeague(x.lable));
-          let international_official = internationalData.filter(x => isOfficial(x.title));
-          let international_conclusion = internationalData.filter(x => isConclusion(x.title));
+          let internationalData = footballData.filter(x => self.isTop5League(x.lable));
+          // let championLeagueData = footballData.filter(x => isChampionLeague(x.lable));
+          let international_official = internationalData.filter(x => self.isOfficial(x.title));
+          let international_conclusion = internationalData.filter(x => self.isConclusion(x.title));
 
-          let _international = getFormatNewsData(const_news.Category.News, internationalData)
-          let _official = getFormatNewsData(const_news.Category.Official, international_official)
-          let _conclusion = getFormatNewsData(const_news.Category.Conclusion, international_conclusion)
-          let _videoData = getFormatNewsData(const_news.Category.Video, videoData, true)
+          let _international = self.getFormatNewsData(const_news.Category.News, internationalData)
+          let _official = self.getFormatNewsData(const_news.Category.Official, international_official)
+          let _conclusion = self.getFormatNewsData(const_news.Category.Conclusion, international_conclusion)
+          let _videoData = self.getFormatNewsData(const_news.Category.Video, videoData, true)
           resolve([_international, _videoData, _official, _conclusion])
         }
       })
     })
-    let getFormatNewsData = function (category, rawData, isVideo = false) {
-      return {
-        category: category,
-        news: rawData.map(function (x) {
-          return {
-            title: x.title,
-            url: (isVideo ? 'https://www.zhibo8.cc' : 'https://news.zhibo8.cc') + x.url,
-            time: formatTime(x.updatetime),
-            lable: x.lable,
-            isLeo: x.title.indexOf('梅西') != -1 || x.title.toLowerCase().indexOf('messi') != -1
-          }
-        })
-      }
-    }
-    let isTop5League = function (str) {
-      if (str.indexOf('英超') != -1 || str.indexOf('西甲') != -1 || str.indexOf('德甲') != -1 || str.indexOf('法甲') != -1 || str.indexOf('意甲') != -1) {
-        return true;
-      }
-      return false;
-    }
-    let isChampionLeague = function (str) {
-      if (str.indexOf('欧冠') != -1) {
-        return true;
-      }
-    }
-    let isOfficial = function (str) {
-      if (str.indexOf('官方') != -1) {
-        return true;
-      }
-    }
-    let isConclusion = function (str) {
-      if (str.indexOf('盘点') != -1) {
-        return true;
-      }
-    }
-    let formatTime = function (dateTime) {
-      let date = new Date(dateTime)
-      return date.getMonth() + 1 + '.' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
-    }
 
     var self = this;
     ajaxPromise.then(function (res) {

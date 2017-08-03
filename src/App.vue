@@ -60,7 +60,6 @@ export default {
 }
 
 .search-area {
-  margin-left: 15px;
   padding-bottom: 5px;
 }
 
