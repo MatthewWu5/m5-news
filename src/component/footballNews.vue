@@ -13,6 +13,7 @@
       <input type="text" v-model="intervalDay" style="width:120px"></input>
       Days
       <button @click="moreNewsOnClick">More</button>
+      {{requestStatus}}
     </div>
     <div class="search-area">
       <span @click="OnCategoryChange">News</span>
@@ -45,8 +46,9 @@ export default {
       searchKey: '',
       label: '',
       category: const_news.Category.News,
-      intervalDay: 10,
+      intervalDay: 3,
       currentMinDate: new Date(),
+      requestStatus: ''
     }
   },
   computed: {
@@ -118,6 +120,7 @@ export default {
 
     getMore: function () {
       var self = this;
+      self.requestStatus = 'loading...';
       this.$nextTick(function () {
         if (self.intervalDay > 100) self.intervalDay = 100;
         var promiseArray = [];
@@ -132,8 +135,7 @@ export default {
             }
           })
           self.currentMinDate.setDate(self.currentMinDate.getDate() - self.intervalDay);
-          console.log(self.intervalDay)
-          console.log(self.currentMinDate)
+          self.requestStatus = '';
         }).catch(err => {
           console.log('Promise.all error:')
           console.log(err)

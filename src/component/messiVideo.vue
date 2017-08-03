@@ -5,6 +5,7 @@
         <input type="text" v-model="intervalDay" style="width:120px"></input>
         Days
         <button @click="moreVideoOnClick">More</button>
+        {{requestStatus}}
         <div class="content-container">
             <div v-for="n in leoVideo" v-bind:key="n">
                 <a :href="n.url" target="_blank">{{n.title}}</a>
@@ -25,6 +26,7 @@ export default {
             leoVideo: [],
             intervalDay: 10,
             currentMinDate: new Date(),
+            requestStatus: ''
         }
     },
     methods: {
@@ -40,6 +42,7 @@ export default {
 
         getMoreVideo: function () {
             var self = this;
+            self.requestStatus = 'loading...';
             this.$nextTick(function () {
                 if (self.intervalDay > 100) self.intervalDay = 100;
                 var promiseArray = [];
@@ -54,8 +57,7 @@ export default {
                         }
                     })
                     self.currentMinDate.setDate(self.currentMinDate.getDate() - self.intervalDay);
-                    console.log(self.intervalDay)
-                    console.log(self.currentMinDate)
+                    self.requestStatus = '';
                 }).catch(err => {
                     console.log('Promise.all error:')
                     console.log(err)
