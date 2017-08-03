@@ -20,7 +20,7 @@
       <span @click="OnCategoryChange">Official</span>
       <span @click="OnCategoryChange">Conclusion</span>
     </div>
-    <div class="fixed-width">
+    <div class="content-container">
       <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-12">
         <!--{{item.category}}-->
         <div v-for="n in item.news" v-bind:key="n">

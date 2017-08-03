@@ -39,6 +39,10 @@ export default {
   .search-area i.removeBtn {
     margin-left: -45px !important;
   }
+  .content-container{
+    height: 1300px;
+    overflow: auto;
+  }
 }
 
 #app {

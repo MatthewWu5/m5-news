@@ -5,9 +5,11 @@
         <input type="text" v-model="intervalDay" style="width:120px"></input>
         Days
         <button @click="moreVideoOnClick">More</button>
-        <div v-for="n in leoVideo" v-bind:key="n">
-            <a :href="n.url" target="_blank">{{n.title}}</a>
-            <span>{{n.time}}</span>
+        <div class="content-container">
+            <div v-for="n in leoVideo" v-bind:key="n">
+                <a :href="n.url" target="_blank">{{n.title}}</a>
+                <span>{{n.time}}</span>
+            </div>
         </div>
     </div>
 </template>
