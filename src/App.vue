@@ -40,7 +40,7 @@ export default {
     margin-left: -45px !important;
   }
   #app .content-container{
-    height: 1150px;
+    height: 1100px;
     overflow: auto;
     font-size: 40px;
     border-bottom: solid 2px #a8c6e2;
