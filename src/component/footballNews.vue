@@ -17,18 +17,22 @@
     </div>
     <div class="search-area">
       <span @click="OnCategoryChange">News</span>
-      <span @click="OnCategoryChange">Video</span>
       <span @click="OnCategoryChange">Official</span>
       <span @click="OnCategoryChange">Conclusion</span>
+      <span @click="OnCategoryChange">24Hours-Video</span>
     </div>
     <div class="content-container">
       <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-12">
         <!--{{item.category}}-->
-        <div v-for="n in item.news" v-bind:key="n">
+        <div v-for="n in item.news" v-bind:key="n" :title="n.time">
           <a :href="n.url" target="_blank" :class="n.isLeo?'leo-news-color':''">{{n.title}}</a>
-          <span>{{n.time}}</span>
+          <!--<span>{{n.time}}</span>-->
         </div>
       </div>
+    </div>
+    <div style="color: #a8c6e2;
+          font-weight: bold;">
+      {{'Min Time: '+_currentMinDateString}}
     </div>
   </div>
 </template>
@@ -46,7 +50,7 @@ export default {
       searchKey: '',
       label: '',
       category: const_news.Category.News,
-      intervalDay: 3,
+      intervalDay: 2,
       currentMinDate: new Date(),
       requestStatus: ''
     }
@@ -63,10 +67,15 @@ export default {
           news: x.news.filter(y => (y.title.indexOf(key) != -1 && y.lable.indexOf(label) != -1))
         }
       })
+    },
+
+    _currentMinDateString: function () {
+      var minDate = this.currentMinDate;
+      console.log('computed:', minDate)
+      return this.formatTime(minDate) + '不好使不更新时间啊啊啊啊啊'
     }
   },
   methods: {
-
     OnLabelChange: function (event) {
       $('button.button-press').removeClass('button-press')
       var self = this;
@@ -88,7 +97,7 @@ export default {
       this.$nextTick(function () {
         if (event.target.innerText == 'News') {
           self.category = const_news.Category.News;
-        } else if (event.target.innerText == 'Video') {
+        } else if (event.target.innerText == '24Hours-Video') {
           self.category = const_news.Category.Video;
         } else if (event.target.innerText == 'Official') {
           self.category = const_news.Category.Official;
@@ -102,10 +111,17 @@ export default {
     },
 
     OnResetSearch: function () {
-      var self = this;
-      this.$nextTick(function () {
-        self.searchKey = '';
-      })
+      
+      //Both ok
+      // var self = this;
+      // this.$nextTick(function () {
+      //   self.searchKey = '';
+      // })
+      // setTimeout(function () {
+      //   self.searchKey = '';
+      // }, 5000)
+
+      this.searchKey = '';
     },
 
     formatRequestDate: function (minDate, index) {
@@ -121,14 +137,14 @@ export default {
     getMore: function () {
       var self = this;
       self.requestStatus = 'loading...';
-      this.$nextTick(function () {
-        if (self.intervalDay > 100) self.intervalDay = 100;
-        var promiseArray = [];
-        for (var i = 0; i < self.intervalDay; i++) {
-          promiseArray.push(self.moreRequest(self.formatRequestDate(self.currentMinDate, i)));
-        }
-        Promise.all(promiseArray).then(function (resps) {
-          console.log(resps)
+
+      if (self.intervalDay > 30) self.intervalDay = 30;
+      var promiseArray = [];
+      for (var i = 1; i < self.intervalDay + 1; i++) {
+        promiseArray.push(self.moreRequest(self.formatRequestDate(self.currentMinDate, i)));
+      }
+      Promise.all(promiseArray).then(function (resps) {
+        self.$nextTick(function () {
           resps.forEach(x => {
             if (x) {
               self.footballNews = self.footballNews.concat(x)
@@ -136,10 +152,10 @@ export default {
           })
           self.currentMinDate.setDate(self.currentMinDate.getDate() - self.intervalDay);
           self.requestStatus = '';
-        }).catch(err => {
-          console.log('Promise.all error:')
-          console.log(err)
+          console.log('why cannot call the computed prop _currentMinDateString, current min date after request =>', self.currentMinDate)
         })
+      }).catch(err => {
+        console.error('Promise.all:', err)
       })
     },
 
@@ -149,8 +165,6 @@ export default {
         axios.post(url.getNewsData, { host: 'news.zhibo8.cc', path: '/zuqiu/json/' + date + '.htm' })
           .then(resp => {
             var data = resp.data.data;
-            console.log(data);
-            console.log('get data')
             let footballData = data.video_arr.filter(x => x.type == 'zuqiu');
             let videoData = data.video_arr.filter(x => x.type == 'zuqiujijin' && self.isTop5League(x.lable));
             let internationalData = footballData.filter(x => self.isTop5League(x.lable));
@@ -180,8 +194,9 @@ export default {
         news: rawData.map(function (x) {
           return {
             title: x.title,
-            url: (urlType == 'news'? 'https://news.zhibo8.cc' : 'https://www.zhibo8.cc') + x.url,
+            url: (urlType == 'news' ? 'https://news.zhibo8.cc' : 'https://www.zhibo8.cc') + x.url,
             time: self.formatTime(x.updatetime),
+            updatetime: x.updatetime,
             lable: x.lable,
             isLeo: x.title.indexOf('梅西') != -1 || x.title.toLowerCase().indexOf('messi') != -1
           }
@@ -234,14 +249,18 @@ export default {
           let _official = self.getFormatNewsData(const_news.Category.Official, international_official)
           let _conclusion = self.getFormatNewsData(const_news.Category.Conclusion, international_conclusion)
           let _videoData = self.getFormatNewsData(const_news.Category.Video, videoData, 'video')
-          resolve([_international, _videoData, _official, _conclusion])
+          let minDate = new Date()
+          let newsList = _international.news;
+          if (newsList.length > 0) minDate = new Date(newsList[newsList.length - 1].updatetime)
+          resolve({ source: [_international, _videoData, _official, _conclusion], minDate: minDate })
         }
       })
     })
 
     var self = this;
     ajaxPromise.then(function (res) {
-      self.footballNews = res;
+      self.footballNews = res.source;
+      self.currentMinDate = res.minDate;
     })
   }
 }

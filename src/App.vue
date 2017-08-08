@@ -34,14 +34,17 @@ export default {
     font-size: 35px;
   }
   .leo-news-color {
-    font-size: 40px !important;
+    font-size: 45px !important;
   }
   .search-area i.removeBtn {
     margin-left: -45px !important;
   }
-  .content-container{
-    height: 1300px;
+  #app .content-container{
+    height: 1150px;
     overflow: auto;
+    font-size: 40px;
+    border-bottom: solid 2px #a8c6e2;
+    margin-right: 25px;
   }
 }
 
