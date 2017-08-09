@@ -31,21 +31,37 @@ export default {
 <style>
 @media (max-width: 992px) {
   #app {
-    font-size: 35px;
+    font-size: 40px;
   }
   .leo-news-color {
     font-size: 45px !important;
   }
+  .search-area {
+    font-size: 30px !important;
+    margin-bottom: 10px;
+  }
+  .search-area .search-input {
+    width: 200px;
+  }
+  .search-area .interval-days {
+    width: 95px !important;
+    text-align: center;
+  }
   .search-area i.removeBtn {
     margin-left: -45px !important;
   }
-  #app .content-container{
-    height: 1100px;
+  #app .content-container {
+    height: 1157px;
     overflow: auto;
     font-size: 40px;
     border-top: solid 2px #a8c6e2;
     border-bottom: solid 2px #a8c6e2;
     margin-right: 25px;
+  }
+  .tab-container span {
+    font-size: 40px;
+    border: solid 2px #a8c6e2;
+    border-bottom: initial;
   }
 }
 
@@ -67,14 +83,14 @@ export default {
   color: red;
 }
 
-.search-area {
-  padding-bottom: 5px;
-}
-
 .search-area i.removeBtn {
   width: 10px;
   height: 10px;
   margin-left: -18px
+}
+
+.search-area .interval-days {
+  width: 53px;
 }
 
 .button-press {

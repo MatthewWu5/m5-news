@@ -2,24 +2,26 @@
   <div class="row" style="margin-left:15px">
     <div class="search-area">
       <div>
-        <input type="text" placeholder="Search" v-model="searchKey"></input>
+        <button @click="OnLabelChange">Barca</button>
+        <button @click="OnLabelChange">Mancity</button>
+        <button @click="OnLabelChange">All</button>
+        <input type="text" placeholder="Search" v-model="searchKey" class="search-input"></input>
         <i class="fa fa-times removeBtn" @click="OnResetSearch"></i>
       </div>
-      <button @click="OnLabelChange">Barca</button>
-      <button @click="OnLabelChange">Mancity</button>
-      <button @click="OnLabelChange">All</button>
+      <div>
+        <input type="text" v-model="intervalDay" class="interval-days"></input>
+        Days
+        <button @click="moreNewsOnClick">More</button>
+        {{requestStatus}}
+      </div>
     </div>
-    <div>
-      <input type="text" v-model="intervalDay" style="width:120px"></input>
-      Days
-      <button @click="moreNewsOnClick">More</button>
-      {{requestStatus}}
-    </div>
-    <div class="search-area">
+  
+    <div class="tab-container">
       <span @click="OnCategoryChange">News</span>
       <span @click="OnCategoryChange">Official</span>
       <span @click="OnCategoryChange">Conclusion</span>
-      <span @click="OnCategoryChange">24Hours-Video</span>
+      <span @click="OnCategoryChange">FunnyTime</span>
+      <span @click="OnCategoryChange">HotVideo</span>
     </div>
     <div class="content-container">
       <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-12">
@@ -31,7 +33,7 @@
       </div>
     </div>
     <div style="color: #a8c6e2;
-            font-weight: bold;">
+                          font-weight: bold;">
       {{'Min Time: '+_currentMinDateString}}
     </div>
   </div>
@@ -96,13 +98,15 @@ export default {
       this.$nextTick(function () {
         if (event.target.innerText == 'News') {
           self.category = const_news.Category.News;
-        } else if (event.target.innerText == '24Hours-Video') {
+        } else if (event.target.innerText == 'HotVideo') {
           self.category = const_news.Category.Video;
         } else if (event.target.innerText == 'Official') {
           self.category = const_news.Category.Official;
         } else if (event.target.innerText == 'Conclusion') {
           self.category = const_news.Category.Conclusion;
-        } else {
+        } else if (event.target.innerText == 'FunnyTime') {
+          self.category = const_news.Category.FunnyTime;
+        }else {
           self.category = '';
         }
       })
@@ -167,15 +171,8 @@ export default {
           .then(resp => {
             var data = resp.data.data;
             let footballData = data.video_arr.filter(x => x.type == 'zuqiu');
-            let videoData = data.video_arr.filter(x => x.type == 'zuqiujijin' && self.isTop5League(x.lable));
-            let internationalData = footballData.filter(x => self.isTop5League(x.lable));
-            let international_official = internationalData.filter(x => self.isOfficial(x.title));
-            let international_conclusion = internationalData.filter(x => self.isConclusion(x.title));
-            let _international = self.getFormatNewsData(const_news.Category.News, internationalData)
-            let _official = self.getFormatNewsData(const_news.Category.Official, international_official)
-            let _conclusion = self.getFormatNewsData(const_news.Category.Conclusion, international_conclusion)
-            let _videoData = self.getFormatNewsData(const_news.Category.Video, videoData, 'video')
-            resolve([_international, _videoData, _official, _conclusion])
+            var result = self.assembleFootballData(footballData)
+            resolve(self.toArray(result))
           }).catch(err => {
             reject(err);
           })
@@ -210,26 +207,48 @@ export default {
       }
       return false;
     },
-    isChampionLeague: function (str) {
-      if (str.indexOf('欧冠') != -1) {
+    indexOf: function (sourceStr, indexStr) {
+      if (sourceStr.indexOf(indexStr) != -1) {
         return true;
       }
     },
-    isOfficial: function (str) {
-      if (str.indexOf('官方') != -1) {
-        return true;
+    filterTabData: (str) => {
+      if (str.indexOf('官方') != -1 || str.indexOf('盘点') != -1 || str.indexOf('趣图') != -1 || str.indexOf('GIF-') != -1) {
+        return false;
       }
-    },
-    isConclusion: function (str) {
-      if (str.indexOf('盘点') != -1) {
-        return true;
-      }
+      return true;
     },
     formatTime: function (dateTime) {
       let date = new Date(dateTime)
       return date.getMonth() + 1 + '.' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
     },
+    assembleFootballData: function (footballData) {
+      var self = this;
+      let top5LeagueData = footballData.filter(x => self.isTop5League(x.lable))
+      let internationalData = top5LeagueData.filter(x => self.filterTabData(x.title))
+      let international_official = top5LeagueData.filter(x => self.indexOf(x.title, '官方'))
+      let international_conclusion = top5LeagueData.filter(x => self.indexOf(x.title, '盘点'))
+      let international_funnyTime = footballData.filter(x => self.indexOf(x.title, '趣图'))
 
+      let _international = self.getFormatNewsData(const_news.Category.News, internationalData)
+      let _official = self.getFormatNewsData(const_news.Category.Official, international_official)
+      let _conclusion = self.getFormatNewsData(const_news.Category.Conclusion, international_conclusion)
+      let _funnyTime = self.getFormatNewsData(const_news.Category.FunnyTime, international_funnyTime)
+
+      return {
+        _international: _international,
+        _official: _official,
+        _conclusion: _conclusion,
+        _funnyTime: _funnyTime,
+      }
+    },
+    toArray: (obj) => {
+      var arr = [];
+      for (var item in obj) {
+        arr.push(obj[item]);
+      }
+      return arr;
+    }
   },
   created: function () {
     var self = this;
@@ -241,19 +260,14 @@ export default {
         success: function (data) {
           let videoData = data.video.filter(x => x.type == 'zuqiujijin' && self.isTop5League(x.lable));
           let footballData = data.news.filter(x => x.type == 'zuqiu');
-          let internationalData = footballData.filter(x => self.isTop5League(x.lable));
-          // let championLeagueData = footballData.filter(x => isChampionLeague(x.lable));
-          let international_official = internationalData.filter(x => self.isOfficial(x.title));
-          let international_conclusion = internationalData.filter(x => self.isConclusion(x.title));
-
-          let _international = self.getFormatNewsData(const_news.Category.News, internationalData)
-          let _official = self.getFormatNewsData(const_news.Category.Official, international_official)
-          let _conclusion = self.getFormatNewsData(const_news.Category.Conclusion, international_conclusion)
+          var result = self.assembleFootballData(footballData)
           let _videoData = self.getFormatNewsData(const_news.Category.Video, videoData, 'video')
           let minDate = new Date()
-          let newsList = _international.news;
+          let newsList = result._international.news;
           if (newsList.length > 0) minDate = new Date(newsList[newsList.length - 1].updatetime)
-          resolve({ source: [_international, _videoData, _official, _conclusion], minDate: minDate })
+          let resultArray = self.toArray(result)
+          resultArray.push(_videoData)
+          resolve({ source: resultArray, minDate: minDate })
         }
       })
     })
