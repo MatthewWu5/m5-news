@@ -33,7 +33,7 @@
       </div>
     </div>
     <div style="color: #a8c6e2;
-                            font-weight: bold;">
+                                    font-weight: bold;">
       {{'Min Time: '+_currentMinDateString}}
     </div>
   </div>
@@ -147,17 +147,18 @@ export default {
           promiseArray.push(self.moreRequest(self.formatRequestDate(self.currentMinDate, i)));
         }
         Promise.all(promiseArray).then(function (resps) {
+          // for(let i = 0; i<resps.length;i++){
+          //   if (resps[i]) self.appendNews(self.footballNews, resps[i])
+          // }
           resps.forEach(x => {
-            if (x) {
-              self.footballNews = self.footballNews.concat(x)
-            }
-
-            var currentDate = self.currentMinDate;
-            currentDate.setDate(currentDate.getDate() - self.intervalDay);
-            self.requestStatus = '';
-            //in order to call computed prop
-            self.currentMinDate = new Date(currentDate.getFullYear() + '.' + self.formatTime(currentDate))
+            if (x) self.appendNews(self.footballNews, x)
           })
+
+          self.requestStatus = '';
+          //in order to call computed prop
+          var currentDate = self.currentMinDate;
+          currentDate.setDate(currentDate.getDate() - self.intervalDay);
+          self.currentMinDate = new Date(currentDate.getFullYear() + '.' + self.formatTime(currentDate))
         }).catch(err => {
           console.error('Promise.all:', err)
         })
@@ -248,6 +249,13 @@ export default {
         arr.push(obj[item]);
       }
       return arr;
+    },
+    appendNews: (footballNews, item) => {
+      item.forEach(i => {
+        footballNews.filter(x => x.category == i.category).forEach(x => {
+          if (x) x.news = x.news.concat(i.news)
+        });
+      })
     }
   },
   created: function () {
