@@ -31,7 +31,7 @@
       </div>
     </div>
     <div style="color: #a8c6e2;
-          font-weight: bold;">
+            font-weight: bold;">
       {{'Min Time: '+_currentMinDateString}}
     </div>
   </div>
@@ -70,9 +70,8 @@ export default {
     },
 
     _currentMinDateString: function () {
-      var minDate = this.currentMinDate;
-      console.log('computed:', minDate)
-      return this.formatTime(minDate) + '不好使不更新时间啊啊啊啊啊'
+      var date = this.currentMinDate;
+      return date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDate()
     }
   },
   methods: {
@@ -111,7 +110,7 @@ export default {
     },
 
     OnResetSearch: function () {
-      
+
       //Both ok
       // var self = this;
       // this.$nextTick(function () {
@@ -150,9 +149,11 @@ export default {
               self.footballNews = self.footballNews.concat(x)
             }
           })
-          self.currentMinDate.setDate(self.currentMinDate.getDate() - self.intervalDay);
+          var currentDate = self.currentMinDate;
+          currentDate.setDate(currentDate.getDate() - self.intervalDay);
           self.requestStatus = '';
-          console.log('why cannot call the computed prop _currentMinDateString, current min date after request =>', self.currentMinDate)
+          //in order to call computed prop
+          self.currentMinDate = new Date(currentDate.getFullYear() + '.' + self.formatTime(currentDate))
         })
       }).catch(err => {
         console.error('Promise.all:', err)

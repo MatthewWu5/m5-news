@@ -43,6 +43,7 @@ export default {
     height: 1100px;
     overflow: auto;
     font-size: 40px;
+    border-top: solid 2px #a8c6e2;
     border-bottom: solid 2px #a8c6e2;
     margin-right: 25px;
   }
