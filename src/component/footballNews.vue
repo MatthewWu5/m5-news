@@ -33,7 +33,7 @@
       </div>
     </div>
     <div style="color: #a8c6e2;
-                          font-weight: bold;">
+                            font-weight: bold;">
       {{'Min Time: '+_currentMinDateString}}
     </div>
   </div>
@@ -106,7 +106,7 @@ export default {
           self.category = const_news.Category.Conclusion;
         } else if (event.target.innerText == 'FunnyTime') {
           self.category = const_news.Category.FunnyTime;
-        }else {
+        } else {
           self.category = '';
         }
       })
@@ -140,27 +140,27 @@ export default {
     getMore: function () {
       var self = this;
       self.requestStatus = 'loading...';
-
-      if (self.intervalDay > 30) self.intervalDay = 30;
-      var promiseArray = [];
-      for (var i = 1; i < self.intervalDay + 1; i++) {
-        promiseArray.push(self.moreRequest(self.formatRequestDate(self.currentMinDate, i)));
-      }
-      Promise.all(promiseArray).then(function (resps) {
-        self.$nextTick(function () {
+      self.$nextTick(function () {
+        if (self.intervalDay > 30) self.intervalDay = 30;
+        var promiseArray = [];
+        for (var i = 1; i < self.intervalDay + 1; i++) {
+          promiseArray.push(self.moreRequest(self.formatRequestDate(self.currentMinDate, i)));
+        }
+        Promise.all(promiseArray).then(function (resps) {
           resps.forEach(x => {
             if (x) {
               self.footballNews = self.footballNews.concat(x)
             }
+
+            var currentDate = self.currentMinDate;
+            currentDate.setDate(currentDate.getDate() - self.intervalDay);
+            self.requestStatus = '';
+            //in order to call computed prop
+            self.currentMinDate = new Date(currentDate.getFullYear() + '.' + self.formatTime(currentDate))
           })
-          var currentDate = self.currentMinDate;
-          currentDate.setDate(currentDate.getDate() - self.intervalDay);
-          self.requestStatus = '';
-          //in order to call computed prop
-          self.currentMinDate = new Date(currentDate.getFullYear() + '.' + self.formatTime(currentDate))
+        }).catch(err => {
+          console.error('Promise.all:', err)
         })
-      }).catch(err => {
-        console.error('Promise.all:', err)
       })
     },
 

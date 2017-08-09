@@ -33,9 +33,6 @@ export default {
   #app {
     font-size: 40px;
   }
-  .leo-news-color {
-    font-size: 45px !important;
-  }
   .search-area {
     font-size: 30px !important;
     margin-bottom: 10px;
@@ -53,7 +50,7 @@ export default {
   #app .content-container {
     height: 1157px;
     overflow: auto;
-    font-size: 40px;
+    font-size: 50px;
     border-top: solid 2px #a8c6e2;
     border-bottom: solid 2px #a8c6e2;
     margin-right: 25px;
@@ -100,7 +97,6 @@ export default {
 
 .leo-news-color {
   color: #f7f71a;
-  font-size: 20px;
   font-weight: bolder;
 }
 </style>
