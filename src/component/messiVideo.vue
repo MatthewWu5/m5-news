@@ -67,8 +67,8 @@ export default {
 
         moreVideoRequest: function (date) {
             return new Promise((resolve, reject) => {
-                // axios.post(url.getNewsData, { host: 'news.zhibo8.cc', path: '/zuqiu/json/2017-07-20.htm' })
-                axios.post(url.getNewsData, { host: 'www.zhibo8.cc', path: '/zuqiu/json/' + date + '.htm' })
+                // axios.post(url.getJsonData, { host: 'news.zhibo8.cc', path: '/zuqiu/json/2017-07-20.htm' })
+                axios.post(url.getJsonData, { host: 'www.zhibo8.cc', path: '/zuqiu/json/' + date + '.htm' })
                     .then(resp => {
                         let respData = resp.data;
                         let videoData = respData.data.video_arr.filter(x => x.type == 'zuqiujijin' && x.lable.indexOf('梅西') != -1);

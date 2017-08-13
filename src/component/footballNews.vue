@@ -1,41 +1,47 @@
 <template>
-  <div class="row" style="margin-left:15px">
-    <div class="search-area">
-      <div>
-        <button @click="OnLabelChange">Barca</button>
-        <button @click="OnLabelChange">Mancity</button>
-        <button @click="OnLabelChange">All</button>
-        <input type="text" placeholder="Search" v-model="searchKey" class="search-input"></input>
-        <i class="fa fa-times removeBtn" @click="OnResetSearch"></i>
-      </div>
-      <div>
-        <input type="text" v-model="intervalDay" class="interval-days"></input>
-        Days
-        <button @click="moreNewsOnClick">More</button>
-        {{requestStatus}}
-      </div>
-    </div>
-  
-    <div class="tab-container">
-      <span @click="OnCategoryChange">News</span>
-      <span @click="OnCategoryChange">Official</span>
-      <span @click="OnCategoryChange">Conclusion</span>
-      <span @click="OnCategoryChange">FunnyTime</span>
-      <span @click="OnCategoryChange">HotVideo</span>
-    </div>
-    <div class="content-container">
-      <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-12">
-        <!--{{item.category}}-->
-        <div v-for="n in item.news" v-bind:key="n" :title="n.time">
-          <a :href="n.url" target="_blank" :class="n.isLeo?'leo-news-color':''">{{n.title}}</a>
-          <!--<span>{{n.time}}</span>-->
+  <div>
+    <div class="row" v-show="!gotoPage">
+      <div class="search-area">
+        <div>
+          <button @click="OnLabelChange">Barca</button>
+          <button @click="OnLabelChange">Mancity</button>
+          <button @click="OnLabelChange">Barclays</button>
+          <button @click="OnLabelChange">All</button>
+          <input type="text" placeholder="Search" v-model="searchKey" class="search-input"></input>
+          <i class="fa fa-times removeBtn" @click="OnResetSearch"></i>
+        </div>
+        <div>
+          <input type="text" v-model="intervalDay" class="interval-days"></input>
+          Days
+          <button @click="moreNewsOnClick">More</button>
+          {{requestStatus}}
+        </div>
+        <div>
+          <button @click="gotoPage = !gotoPage">Go Page</button>
+          <input type="checkbox" v-model="original" style="width:30px;height:30px">Original</input>
         </div>
       </div>
+  
+      <div class="tab-container">
+        <span @click="OnCategoryChange">News</span>
+        <span @click="OnCategoryChange">Official</span>
+        <span @click="OnCategoryChange">Conclusion</span>
+        <span @click="OnCategoryChange">FunnyTime</span>
+        <span @click="OnCategoryChange">HotVideo</span>
+      </div>
+      <div class="content-container">
+        <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-12">
+          <div v-for="n in item.news" v-bind:key="n" :title="n.time">
+            <a href="#" :class="n.isLeo?'leo-news-color':''" @click="OnPageClick(n.host,n.path,n.url)">{{n.title}}</a>
+            <!--<span>{{n.time}}</span>-->
+          </div>
+        </div>
+      </div>
+      <div style="color: #a8c6e2;font-weight: bold;">
+        {{'Min Time: '+_currentMinDateString}}
+      </div>
     </div>
-    <div style="color: #a8c6e2;
-                                    font-weight: bold;">
-      {{'Min Time: '+_currentMinDateString}}
-    </div>
+    <newsPage :page="page" :comments="comments" v-show="gotoPage" v-on:listenToChildEvent="messageFromChild"></newsPage>
   </div>
 </template>
 
@@ -44,8 +50,10 @@ import $ from 'jquery'
 import const_news from '../const.js'
 import axios from 'axios'
 import url from '../../server/url'
+import newsPage from './newsPage'
 export default {
   name: 'footballNews',
+  components: { newsPage },
   data() {
     return {
       footballNews: [],
@@ -54,7 +62,13 @@ export default {
       category: const_news.Category.News,
       intervalDay: 2,
       currentMinDate: new Date(),
-      requestStatus: ''
+      requestStatus: '',
+
+      original: true,
+
+      page: '',
+      comments: [],
+      gotoPage: false,
     }
   },
   computed: {
@@ -85,6 +99,8 @@ export default {
           self.label = '巴塞罗那';
         } else if (event.target.innerText == 'Mancity') {
           self.label = '曼城';
+        } else if (event.target.innerText == 'Barclays') {
+          self.label = '英超';
         } else {
           self.label = '';
         }
@@ -127,6 +143,24 @@ export default {
       this.searchKey = '';
     },
 
+    OnPageClick: function (host, path, url) {
+      let self = this;
+      if (self.original) {
+        window.open(url)
+      } else {
+        self.requestStatus = 'goto page...';
+        axios.post(url.getPageData, { host: host, path: path })
+          .then(resp => {
+            self.$nextTick(function () {
+              self.page = resp.data.data.page;
+              self.comments = resp.data.data.comments;
+              self.requestStatus = '';
+              self.gotoPage = true;
+            })
+          })
+      }
+    },
+
     formatRequestDate: function (minDate, index) {
       let date = new Date(minDate)
       date.setDate(date.getDate() - index);
@@ -166,9 +200,10 @@ export default {
     },
 
     moreRequest: function (date) {
+      console.log('more request date:', date)
       var self = this;
       return new Promise((resolve, reject) => {
-        axios.post(url.getNewsData, { host: 'news.zhibo8.cc', path: '/zuqiu/json/' + date + '.htm' })
+        axios.post(url.getJsonData, { host: 'news.zhibo8.cc', path: '/zuqiu/json/' + date + '.htm' })
           .then(resp => {
             var data = resp.data.data;
             let footballData = data.video_arr.filter(x => x.type == 'zuqiu');
@@ -194,6 +229,8 @@ export default {
           return {
             title: x.title,
             url: (urlType == 'news' ? 'https://news.zhibo8.cc' : 'https://www.zhibo8.cc') + x.url,
+            host: (urlType == 'news' ? 'news.zhibo8.cc' : 'www.zhibo8.cc'),
+            path: x.url,
             time: self.formatTime(x.updatetime),
             updatetime: x.updatetime,
             lable: x.lable,
@@ -256,6 +293,9 @@ export default {
           if (x) x.news = x.news.concat(i.news)
         });
       })
+    },
+    messageFromChild: function () {
+      this.gotoPage = false;
     }
   },
   created: function () {

@@ -22,22 +22,12 @@ export default {
     },
     methods: {
         testCrossDomain: function () {
-            // this.$http.jsonp('https://api.douban.com/v2/movie/in_theaters')
-            //     .then(function (response) {
-            //         this.guodu = false
-            //         this.in_theaters_data = response
-            //         this.in_theaters_data_body = response.body
-            //         this.in_theaters_data_body_subjects = response.body.subjects
-            //     })
-            //     .catch(function (response) {
-            //         console.log(response)
-            //     })
+            // function jCallback(result) {
+            //     console.log(result)
+            //     console.log('jCallback')
+            // }
 
-            function jCallback(result) {
-                console.log(result)
-                console.log('jCallback')
-            }
-
+            var self = this;
             $.ajax({
                 // url: 'https://api.douban.com/v2/movie/in_theaters',
                 //wrong way by zhibo8 site
@@ -47,24 +37,22 @@ export default {
                 jsonp: "callback",
                 // jsonpCallback: 'jCallback',
                 success: function (data) {
-                    this.ajaxResult = data
-                    console.log(data)
+                    self.ajaxResult = data
                 },
                 error: function (err, res) {
-                    console.log(err, res)
-                    console.log('err')
+                    console.error(err, res)
                 }
             })
 
-            // $.getJSON('https://api.douban.com/v2/movie/in_theaters?callback=?', function (res) {
+            // $.getJSON('https://news.zhibo8.cc/zuqiu/2017-08-13/599012840c5c0.htm?callback=?', function (res) {
             //     console.log(res)
             // })
         },
 
         axiosRequest: function () {
             return new Promise((resolve, reject) => {
-                // axios.post(url.getNewsData, { host: 'news.zhibo8.cc', path: '/zuqiu/json/2017-07-20.htm' })
-                axios.post(url.getNewsData, { host: 'www.zhibo8.cc', path: '/zuqiu/json/2017-07-20.htm' })
+                axios.post(url.getJsonData, { host: 'news.zhibo8.cc', path: '/zuqiu/2017-08-13/599012840c5c0.htm' })
+                    // axios.post(url.getPageData, { host: 'news.zhibo8.cc', path: '/zuqiu/2017-08-12/598ec61e92a37.htm' })
                     .then(resp => {
                         resolve(resp.data);
                     })
@@ -75,12 +63,12 @@ export default {
         },
     },
     created: function () {
-        //this.testCrossDomain()
+        this.testCrossDomain()
 
-        var self = this;
-        this.axiosRequest().then(function (res) {
-            self.ajaxResult = res;
-        })
+        // var self = this;
+        // this.axiosRequest().then(function (res) {
+        //     self.ajaxResult = res;
+        // })
     }
 }
 </script>
