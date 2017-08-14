@@ -143,10 +143,10 @@ export default {
       this.searchKey = '';
     },
 
-    OnPageClick: function (host, path, url) {
+    OnPageClick: function (host, path, linkUrl) {
       let self = this;
       if (self.original) {
-        window.open(url)
+        window.open(linkUrl)
       } else {
         self.requestStatus = 'goto page...';
         axios.post(url.getPageData, { host: host, path: path })
@@ -157,6 +157,8 @@ export default {
               self.requestStatus = '';
               self.gotoPage = true;
             })
+          }).catch(err => {
+            console.error(err)
           })
       }
     },

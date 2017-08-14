@@ -53,7 +53,6 @@ module.exports = {
         })
     },
     getPageData: function (req, res) {
-        console.log('begin', new Date().toString())
         //https://news.zhibo8.cc/zuqiu/2017-08-12/598ec61e92a37.htm
         //https://cache.zhibo8.cc/json/2017_08_12/news/zuqiu/598ec61e92a37_hot.htm
         let splits = req.body.path.split('/')
@@ -90,7 +89,6 @@ module.exports = {
                     } catch (err) {
                         console.error(err)
                     }
-                    console.log('end', new Date().toString())
                     res.send({ code: 200, msg: 'done', data: { page: $('#signals').html(), comments: comments } })
                 }
                 else {
