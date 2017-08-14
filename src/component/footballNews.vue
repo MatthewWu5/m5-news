@@ -64,7 +64,7 @@ export default {
       currentMinDate: new Date(),
       requestStatus: '',
 
-      original: true,
+      original: false,
 
       page: '',
       comments: [],
