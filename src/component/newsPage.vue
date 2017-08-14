@@ -21,10 +21,11 @@ export default {
     props: {
         page: String,
         comments: Array,
+        showComment: Boolean,
     },
     data() {
         return {
-            showComment: false
+            //showComment: false
         }
     },
     computed: {
@@ -52,9 +53,17 @@ export default {
     margin-top: 10px;
     margin-right: 20px;
 }
-.page img{
-    width:800px;
-    height:400px;
+
+.page img {
+    width: 800px;
+    height: 400px;
     max-width: 1000px !important;
+}
+
+@media (max-width: 992px) {
+    .page h1 {
+        font-size: 50px;
+        margin-bottom: 20px
+    }
 }
 </style>

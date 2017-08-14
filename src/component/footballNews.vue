@@ -17,7 +17,7 @@
           {{requestStatus}}
         </div>
         <div>
-          <button @click="gotoPage = !gotoPage">Go Page</button>
+          <button @click="OnGoPageClick">Go Page</button>
           <input type="checkbox" v-model="original" style="width:30px;height:30px">Original</input>
         </div>
       </div>
@@ -41,13 +41,13 @@
         {{'Min Time: '+_currentMinDateString}}
       </div>
     </div>
-    <newsPage :page="page" :comments="comments" v-show="gotoPage" v-on:listenToChildEvent="messageFromChild"></newsPage>
+    <newsPage :page="page" :comments="comments" :showComment="showComment" v-show="gotoPage" v-on:listenToChildEvent="messageFromChild"></newsPage>
   </div>
 </template>
 
 <script>
 import $ from 'jquery'
-import const_news from '../const.js'
+import const_news from '../../server/const'
 import axios from 'axios'
 import url from '../../server/url'
 import newsPage from './newsPage'
@@ -69,6 +69,7 @@ export default {
       page: '',
       comments: [],
       gotoPage: false,
+      showComment: false,
     }
   },
   computed: {
@@ -76,7 +77,6 @@ export default {
       var key = this.searchKey;
       var label = this.label;
       var category = this.category;
-
       return this.footballNews.filter(f => f.category.indexOf(category) != -1).map(function (x) {
         return {
           category: x.category,
@@ -163,6 +163,11 @@ export default {
       }
     },
 
+    OnGoPageClick: function () {
+      this.gotoPage = !this.gotoPage;
+      this.showComment = false;
+    },
+
     formatRequestDate: function (minDate, index) {
       let date = new Date(minDate)
       date.setDate(date.getDate() - index);
@@ -225,20 +230,22 @@ export default {
 
     getFormatNewsData: function (category, rawData, urlType = 'news') {
       var self = this;
+      var result = rawData.map(function (x) {
+        return {
+          title: x.title,
+          url: (urlType == 'news' ? 'https://news.zhibo8.cc' : 'https://www.zhibo8.cc') + x.url,
+          host: (urlType == 'news' ? 'news.zhibo8.cc' : 'www.zhibo8.cc'),
+          path: x.url,
+          time: self.formatTime(x.updatetime),
+          updatetime: x.updatetime,
+          lable: x.lable,
+          isLeo: x.title.indexOf('梅西') != -1 || x.title.toLowerCase().indexOf('messi') != -1
+        }
+      }).sort((x, y) => { return new Date(x.updatetime) < new Date(y.updatetime) ? 1 : -1; })
+
       return {
         category: category,
-        news: rawData.map(function (x) {
-          return {
-            title: x.title,
-            url: (urlType == 'news' ? 'https://news.zhibo8.cc' : 'https://www.zhibo8.cc') + x.url,
-            host: (urlType == 'news' ? 'news.zhibo8.cc' : 'www.zhibo8.cc'),
-            path: x.url,
-            time: self.formatTime(x.updatetime),
-            updatetime: x.updatetime,
-            lable: x.lable,
-            isLeo: x.title.indexOf('梅西') != -1 || x.title.toLowerCase().indexOf('messi') != -1
-          }
-        })
+        news: result
       }
     },
     isTop5League: function (str) {
@@ -301,8 +308,21 @@ export default {
     }
   },
   created: function () {
-    var self = this;
     //https://soccer.hupu.com/home/latest-news?league=%E8%A5%BF%E7%94%B2&page=1
+    var self = this;
+    //Server
+    axios.post(url.getHot24Data, { host: 'm.zhibo8.cc', path: '/json/hot/24hours.htm' })
+      .then(resp => {
+        self.$nextTick(function () {
+          self.footballNews = resp.data.data.source;
+          self.currentMinDate = new Date(resp.data.data.minDate)
+        })
+      }).catch(err => {
+        console.error(err)
+      })
+    return;
+
+    //Client
     var ajaxPromise = new Promise(function (resolve, reject) {
       $.ajax({
         url: 'https://m.zhibo8.cc/json/hot/24hours.htm',

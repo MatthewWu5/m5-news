@@ -1,8 +1,9 @@
 var https = require('https')
 var url = require('url')
 var cheerio = require('cheerio')
+var util = require('./util')
+var const_news = require('./const')
 var getRequestData = function (host, path) {
-    console.log('begin=>', new Date().toString(), path)
     return new Promise(function (resolve, reject) {
         // var options = url.parse('https://news.zhibo8.cc/zuqiu/json/2017-07-20.htm');
         // options.headers = {};
@@ -26,7 +27,6 @@ var getRequestData = function (host, path) {
                 var wholeData = Buffer.concat(buffers);
                 var dataStr = wholeData.toString('utf8');
                 // var dataStr = wholeData.toString();
-                console.log('end=>', new Date().toString(), path)
                 resolve({ data: dataStr, path: path })
             })
         })
@@ -35,10 +35,10 @@ var getRequestData = function (host, path) {
 }
 
 module.exports = {
-    getTestData1: function (req, res) {
+    getData1: function (req, res) {
         res.send({ code: 200, msg: 'done', data: { hehe: '1', hehe2: req.body.pData2 } });
     },
-    getTestData2: function (req, res) {
+    getData2: function (req, res) {
         res.send({ code: 200, msg: 'done', data: { hehe: '2', hehe2: req.body.pData2 } });
     },
     getJsonData: function (req, res) {
@@ -76,6 +76,7 @@ module.exports = {
 
                     try {
                         $ = cheerio.load(htmlData, { decodeEntities: false })
+                        var container = $('<div id="container"></div>')
                         $('#signals img').each(function (i, x) {
                             var src = $(x).attr('src')
                             if (src.indexOf('http') == -1) {
@@ -84,12 +85,15 @@ module.exports = {
                                 src = src.replace('http', 'https')
                             }
                             $(x).attr('src', src)
+                            $(x).attr('alt', '')
                         })
+                        container.append($('.title h1'))
+                        container.append($('#signals'))
                         comments = JSON.parse(commentData)
                     } catch (err) {
                         console.error(err)
                     }
-                    res.send({ code: 200, msg: 'done', data: { page: $('#signals').html(), comments: comments } })
+                    res.send({ code: 200, msg: 'done', data: { page: container.html(), comments: comments } })
                 }
                 else {
                     res.send({ code: 200, msg: 'error', data: {} })
@@ -97,5 +101,27 @@ module.exports = {
             }).catch(function (err) {
                 console.error(err)
             })
+    },
+
+    getHot24Data: function (req, res) {
+        getRequestData(req.body.host, req.body.path).then(function (respData) {
+            try {
+                let data = JSON.parse(respData.data)
+                let videoData = data.video.filter(x => x.type == 'zuqiujijin' && util.isTop5League(x.lable));
+                let footballData = data.news.filter(x => x.type == 'zuqiu');
+                var result = util.assembleFootballData(footballData)
+                let _videoData = util.getFormatNewsData(const_news.Category.Video, videoData, 'video')
+                let minDate = new Date()
+                let newsList = result._international.news;
+                if (newsList.length > 0) minDate = new Date(newsList[newsList.length - 1].updatetime)
+                let resultArray = util.toArray(result)
+                resultArray.push(_videoData)
+                res.send({ code: 200, msg: 'done', data: { source: resultArray, minDate: minDate.toString() } });
+            }
+            catch (err) {
+                console.error(err)
+                res.send({ code: 200, msg: 'error', data: {} });
+            }
+        })
     }
 }
