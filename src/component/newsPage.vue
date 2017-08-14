@@ -54,6 +54,7 @@ export default {
 }
 .page img{
     width:800px;
-    height:400px
+    height:400px;
+    max-width: 1000px !important;
 }
 </style>
