@@ -55,12 +55,6 @@ export default {
     border-bottom: solid 2px #a8c6e2;
     margin-right: 25px;
   }
-  #app .news-page-container {
-    height: 1320px;
-    overflow: auto;
-    font-size: 50px;
-    border-bottom: solid 2px #a8c6e2;
-  }
   .tab-container span {
     font-size: 40px;
     border: solid 2px #a8c6e2;

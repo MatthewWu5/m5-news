@@ -3,7 +3,10 @@
         <button @click="OnBackClick">Back</button>
         <button @click="showComment = !showComment">{{'showComment:'+showComment}}</button>
         <div class="news-page-container">
-            <div class="page" v-html="_page" v-show="!showComment" style="margin-top:10px"></div>
+            <div class="page" v-show="!showComment">
+                <div class="time">{{time}}</div>
+                <div v-html="_page"></div>
+            </div>
             <div class="comment" v-show="showComment">
                 <div class="row" v-for="comment in comments" v-bind:key="comment" style="margin-top:10px;margin-bottom:10px;border-bottom:solid 2px #a8c6e2">
                     <div class="col-sm-2" style="color:#a8c6e2">{{comment.up}}</div>
@@ -22,6 +25,7 @@ export default {
         page: String,
         comments: Array,
         showComment: Boolean,
+        time: String,
     },
     data() {
         return {
@@ -54,6 +58,10 @@ export default {
     margin-right: 20px;
 }
 
+.page {
+    margin-top: 10px
+}
+
 .page img {
     width: 800px;
     height: 400px;
@@ -61,8 +69,24 @@ export default {
 }
 
 @media (max-width: 992px) {
-    .page h1 {
+    .news-page-container {
         font-size: 50px;
+        height: 1320px;
+        border-bottom: solid 2px #a8c6e2;
+    }
+    .news-page-container .page {
+        height: 1270px;
+        overflow: auto;
+    }
+    .news-page-container .page .time {
+        font-size: 40px;
+    }
+    .news-page-container .comment {
+        height: 1270px;
+        overflow: auto;
+    }
+    .news-page-container .page h1 {
+        font-size: 40px;
         margin-bottom: 20px
     }
 }

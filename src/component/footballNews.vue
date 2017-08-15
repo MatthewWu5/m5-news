@@ -32,7 +32,7 @@
       <div class="content-container">
         <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-12">
           <div v-for="n in item.news" v-bind:key="n" :title="n.time">
-            <a href="#" :class="n.isLeo?'leo-news-color':''" @click="OnPageClick(n.host,n.path,n.url)">{{n.title}}</a>
+            <a href="#" :class="n.isLeo?'leo-news-color':''" @click="OnPageClick(n.host,n.path,n.time,n.url)">{{n.title}}</a>
             <!--<span>{{n.time}}</span>-->
           </div>
         </div>
@@ -41,7 +41,7 @@
         {{'Min Time: '+_currentMinDateString}}
       </div>
     </div>
-    <newsPage :page="page" :comments="comments" :showComment="showComment" v-show="gotoPage" v-on:listenToChildEvent="messageFromChild"></newsPage>
+    <newsPage :page="page" :comments="comments" :showComment="showComment" :time="newsTime" v-show="gotoPage" v-on:listenToChildEvent="messageFromChild"></newsPage>
   </div>
 </template>
 
@@ -70,6 +70,7 @@ export default {
       comments: [],
       gotoPage: false,
       showComment: false,
+      newsTime: ''
     }
   },
   computed: {
@@ -143,7 +144,7 @@ export default {
       this.searchKey = '';
     },
 
-    OnPageClick: function (host, path, linkUrl) {
+    OnPageClick: function (host, path, updatetime, linkUrl) {
       let self = this;
       if (self.original) {
         window.open(linkUrl)
@@ -156,6 +157,7 @@ export default {
               self.comments = resp.data.data.comments;
               self.requestStatus = '';
               self.gotoPage = true;
+              self.newsTime = updatetime;
             })
           }).catch(err => {
             console.error(err)
