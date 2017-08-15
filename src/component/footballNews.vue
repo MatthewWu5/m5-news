@@ -20,8 +20,8 @@
           <button @click="OnGoPageClick">Go Page</button>
           <input type="checkbox" v-model="original" style="width:30px;height:30px">Original</input>
           <span style="color: #a8c6e2;font-weight: bold;margin-left:10px">
-            {{'Min Time: '+_currentMinDateString}}
-          </span>
+                                {{'Min Time: '+_currentMinDateString}}
+                              </span>
         </div>
       </div>
   
@@ -170,6 +170,14 @@ export default {
       this.showComment = false;
     },
 
+    messageFromChild: function () {
+      this.gotoPage = false;
+    },
+
+    moreNewsOnClick: function () {
+      this.getMore2();
+    },
+
     formatRequestDate: function (minDate, index) {
       let date = new Date(minDate)
       date.setDate(date.getDate() - index);
@@ -178,6 +186,33 @@ export default {
       if (month < 10) month = '0' + month;
       if (day < 10) day = '0' + day;
       return date.getFullYear() + '-' + month + '-' + day;
+    },
+
+    getMore2: function () {
+      var self = this;
+      self.requestStatus = 'loading...';
+      axios.post(url.getMoreData, { currentMinDate: self.currentMinDate, intervalDay: self.intervalDay })
+        .then(resp => {
+          let source = resp.data.data.source;
+          let objKeys = Object.keys(source)
+          self.$nextTick(function () {
+            for (let i = 0; i < objKeys.length; i++) {
+              var current = self.footballNews.find(x => x.category == objKeys[i])
+              console.log(current)
+              current.news = current.news.concat(source[objKeys[i]].news)
+            }
+            self.currentMinDate = new Date(resp.data.data.minDate)
+          })
+          // self.$nextTick(function () {
+          //   for (assembleProp in source) {
+          //     console.log('assembleProp', assembleProp)
+          //     self.footballNews[assembleProp].news = self.footballNews[assembleProp].news.concat(source[assembleProp].news)
+          //   }
+          //   self.currentMinDate = new Date(resp.data.data.minDate)
+          // })
+        }).catch(err => {
+          console.error(err)
+        })
     },
 
     getMore: function () {
@@ -207,7 +242,6 @@ export default {
         })
       })
     },
-
     moreRequest: function (date) {
       console.log('more request date:', date)
       var self = this;
@@ -225,11 +259,6 @@ export default {
         console.error(err);
       })
     },
-
-    moreNewsOnClick: function () {
-      this.getMore();
-    },
-
     getFormatNewsData: function (category, rawData, urlType = 'news') {
       var self = this;
       var result = rawData.map(function (x) {
@@ -298,22 +327,19 @@ export default {
       }
       return arr;
     },
-    appendNews: (footballNews, item) => {
-      item.forEach(i => {
-        footballNews.filter(x => x.category == i.category).forEach(x => {
-          if (x) x.news = x.news.concat(i.news)
-        });
-      })
+    appendNews: (footballNews, assembleItem) => {
+      for (prop of assembleItem) {
+        footballNews.filter(x => x.category == prop.category).forEach(x => {
+          if (x) x.news = x.news.concat(prop.news)
+        })
+      }
     },
-    messageFromChild: function () {
-      this.gotoPage = false;
-    }
   },
   created: function () {
     //https://soccer.hupu.com/home/latest-news?league=%E8%A5%BF%E7%94%B2&page=1
     var self = this;
     //Server
-    axios.post(url.getHot24Data, { host: 'm.zhibo8.cc', path: '/json/hot/24hours.htm' })
+    axios.post(url.getHot24Data)
       .then(resp => {
         self.$nextTick(function () {
           self.footballNews = resp.data.data.source;

@@ -1,4 +1,11 @@
 var const_news = require('./const')
+var parseJson = function (str) {
+    try {
+        return JSON.parse(str)
+    } catch (err) {
+        console.error('parseJson', err)
+    }
+}
 var formatTime = function (dateTime) {
     let date = new Date(dateTime)
     return date.getMonth() + 1 + '.' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
@@ -39,55 +46,56 @@ var getFormatNewsData = function (category, rawData, urlType = 'news') {
         news: result
     }
 }
+var formatRequestDate = function (minDate, index) {
+    let date = new Date(minDate)
+    date.setDate(date.getDate() - index);
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    if (month < 10) month = '0' + month;
+    if (day < 10) day = '0' + day;
+    return date.getFullYear() + '-' + month + '-' + day;
+}
+var assembleFootballData = function (footballData) {
+    let top5LeagueData = footballData.filter(x => isTop5League(x.lable))
+    let internationalData = top5LeagueData.filter(x => filterTabData(x.title))
+    let international_official = top5LeagueData.filter(x => indexOf(x.title, '官方'))
+    let international_conclusion = top5LeagueData.filter(x => indexOf(x.title, '盘点'))
+    let international_funnyTime = footballData.filter(x => indexOf(x.title, '趣图'))
+
+    let _international = getFormatNewsData(const_news.Category.News, internationalData)
+    let _official = getFormatNewsData(const_news.Category.Official, international_official)
+    let _conclusion = getFormatNewsData(const_news.Category.Conclusion, international_conclusion)
+    let _funnyTime = getFormatNewsData(const_news.Category.FunnyTime, international_funnyTime)
+
+    return {
+        _international: _international,
+        _official: _official,
+        _conclusion: _conclusion,
+        _funnyTime: _funnyTime,
+    }
+}
+var sortandAssembleItem = function (assembleItem, newOne) {
+    for (prop in assembleItem) {
+        assembleItem[prop].news = assembleItem[prop].news.concat(newOne[prop].news)
+        assembleItem[prop].news.sort((x, y) => { return new Date(x.updatetime) < new Date(y.updatetime) ? 1 : -1; })
+    }
+}
 
 module.exports = {
+    parseJson: parseJson,
     getFormatNewsData: getFormatNewsData,
     isTop5League: isTop5League,
     indexOf: indexOf,
     filterTabData: filterTabData,
     formatTime: formatTime,
-    formatRequestDate: function (minDate, index) {
-        let date = new Date(minDate)
-        date.setDate(date.getDate() - index);
-        let month = date.getMonth() + 1;
-        let day = date.getDate();
-        if (month < 10) month = '0' + month;
-        if (day < 10) day = '0' + day;
-        return date.getFullYear() + '-' + month + '-' + day;
-    },
-    // getMore: function () {
-    // moreRequest: function (date) {
-    assembleFootballData: function (footballData) {
-        let top5LeagueData = footballData.filter(x => isTop5League(x.lable))
-        let internationalData = top5LeagueData.filter(x => filterTabData(x.title))
-        let international_official = top5LeagueData.filter(x => indexOf(x.title, '官方'))
-        let international_conclusion = top5LeagueData.filter(x => indexOf(x.title, '盘点'))
-        let international_funnyTime = footballData.filter(x => indexOf(x.title, '趣图'))
-
-        let _international = getFormatNewsData(const_news.Category.News, internationalData)
-        let _official = getFormatNewsData(const_news.Category.Official, international_official)
-        let _conclusion = getFormatNewsData(const_news.Category.Conclusion, international_conclusion)
-        let _funnyTime = getFormatNewsData(const_news.Category.FunnyTime, international_funnyTime)
-
-        return {
-            _international: _international,
-            _official: _official,
-            _conclusion: _conclusion,
-            _funnyTime: _funnyTime,
-        }
-    },
+    formatRequestDate: formatRequestDate,
+    assembleFootballData: assembleFootballData,
+    sortandAssembleItem: sortandAssembleItem,
     toArray: (obj) => {
         var arr = [];
         for (var item in obj) {
             arr.push(obj[item]);
         }
         return arr;
-    },
-    appendNews: (footballNews, item) => {
-        item.forEach(i => {
-            footballNews.filter(x => x.category == i.category).forEach(x => {
-                if (x) x.news = x.news.concat(i.news)
-            });
-        })
     },
 }

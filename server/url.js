@@ -4,4 +4,5 @@ module.exports = {
     getJsonData: '/getJsonData',
     getPageData: '/getPageData',
     getHot24Data: '/getHot24Data',
+    getMoreData: '/getMoreData',
 }

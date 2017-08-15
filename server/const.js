@@ -1,9 +1,9 @@
 module.exports = {
   Category: {
-      News: 'News',
-      Official: 'Official',
-      Conclusion: 'Conclusion',
-      FunnyTime: 'Funny-Time',
-      Video: 'Hot-Video',
+      News: '_international',
+      Official: '_official',
+      Conclusion: '_conclusion',
+      FunnyTime: '_funnyTime',
+      Video: '_hotVideo',
   }
 }

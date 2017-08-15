@@ -43,12 +43,7 @@ module.exports = {
     },
     getJsonData: function (req, res) {
         getRequestData(req.body.host, req.body.path).then(function (data) {
-            var jsonResult;
-            try {
-                jsonResult = JSON.parse(data.data)
-            } catch (err) {
-                console.error(err)
-            }
+            let jsonResult = util.parseJson(data.data)
             res.send({ code: 200, msg: 'done', data: jsonResult });
         })
     },
@@ -89,7 +84,7 @@ module.exports = {
                         })
                         container.append($('.title h1'))
                         container.append($('#signals'))
-                        comments = JSON.parse(commentData)
+                        comments = util.parseJson(commentData)
                     } catch (err) {
                         console.error(err)
                     }
@@ -104,9 +99,9 @@ module.exports = {
     },
 
     getHot24Data: function (req, res) {
-        getRequestData(req.body.host, req.body.path).then(function (respData) {
+        getRequestData('m.zhibo8.cc', '/json/hot/24hours.htm').then(function (respData) {
             try {
-                let data = JSON.parse(respData.data)
+                let data = util.parseJson(respData.data)
                 let videoData = data.video.filter(x => x.type == 'zuqiujijin' && util.isTop5League(x.lable));
                 let footballData = data.news.filter(x => x.type == 'zuqiu');
                 var result = util.assembleFootballData(footballData)
@@ -117,6 +112,40 @@ module.exports = {
                 let resultArray = util.toArray(result)
                 resultArray.push(_videoData)
                 res.send({ code: 200, msg: 'done', data: { source: resultArray, minDate: minDate.toString() } });
+            }
+            catch (err) {
+                console.error(err)
+                res.send({ code: 200, msg: 'error', data: {} });
+            }
+        })
+    },
+
+    getMoreData: function (req, res) {
+        var currentMinDate = new Date(req.body.currentMinDate)
+        var intervalDay = parseInt(req.body.intervalDay)
+        if (intervalDay > 30) intervalDay = 30;
+
+        var promiseArray = [];
+        for (var i = 1; i < intervalDay + 1; i++) {
+            var date = util.formatRequestDate(currentMinDate, i)
+            promiseArray.push(getRequestData('news.zhibo8.cc', '/zuqiu/json/' + date + '.htm'))
+        }
+        Promise.all(promiseArray).then(function (respDataArray) {
+            try {
+                let resultAssembleItem;
+                for (respData of respDataArray) {
+                    let data = util.parseJson(respData.data)
+                    let footballData = data.video_arr.filter(x => x.type == 'zuqiu');
+                    let result = util.assembleFootballData(footballData)
+                    if (!resultAssembleItem) {
+                        resultAssembleItem = result;
+                    } else {
+                        util.sortandAssembleItem(resultAssembleItem, result)
+                    }
+                }
+                currentMinDate.setDate(currentMinDate.getDate() - intervalDay);
+
+                res.send({ code: 200, msg: 'done', data: { source: resultAssembleItem, minDate: currentMinDate.toString() } });
             }
             catch (err) {
                 console.error(err)
