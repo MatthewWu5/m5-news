@@ -126,7 +126,7 @@ module.exports = {
             try {
                 let data = util.parseJson(respData.data)
                 let videoData = data.video.filter(x => x.type == 'zuqiujijin' && util.isTop5League(x.lable) && new Date(x.updatetime)
-                    > maxDateList.find(x => x.category == const_news.Category.Video).maxDate)
+                    > new Date(maxDateList.find(x => x.category == const_news.Category.Video).maxDate))
                 let footballData = data.news.filter(x => x.type == 'zuqiu');
                 var result = util.assembleFootballData(footballData, maxDateList)
                 let _videoData = util.getFormatNewsData(const_news.Category.Video, videoData, 'video')

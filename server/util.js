@@ -47,7 +47,7 @@ var getFormatNewsData = function (category, rawData, urlType = 'news') {
     return {
         category: category,
         news: result,
-        maxDate: result.length > 0 ? new Date(result[0].updatetime) : undefined
+        maxDate: result.length > 0 ? new Date(result[0].updatetime).toString() : ''
     }
 }
 var formatRequestDate = function (minDate, index) {
@@ -67,10 +67,10 @@ var assembleFootballData = function (footballData, maxDateList) {
         let officialMaxDate = maxDateList.find(x => x.category == const_news.Category.Official).maxDate;
         let conclusionMaxDate = maxDateList.find(x => x.category == const_news.Category.Conclusion).maxDate;
         let funnyTimeMaxDate = maxDateList.find(x => x.category == const_news.Category.FunnyTime).maxDate;
-        internationalData = top5LeagueData.filter(x => filterTabData(x.title) && new Date(x.updatetime) > internationalMaxDate)
-        international_official = top5LeagueData.filter(x => indexOf(x.title, '官方') && new Date(x.updatetime) > officialMaxDate)
-        international_conclusion = top5LeagueData.filter(x => indexOf(x.title, '盘点') && new Date(x.updatetime) > conclusionMaxDate)
-        international_funnyTime = footballData.filter(x => indexOf(x.title, '趣图') && new Date(x.updatetime) > funnyTimeMaxDate)
+        internationalData = top5LeagueData.filter(x => filterTabData(x.title) && new Date(x.updatetime) > new Date(internationalMaxDate))
+        international_official = top5LeagueData.filter(x => indexOf(x.title, '官方') && new Date(x.updatetime) > new Date(officialMaxDate))
+        international_conclusion = top5LeagueData.filter(x => indexOf(x.title, '盘点') && new Date(x.updatetime) > new Date(conclusionMaxDate))
+        international_funnyTime = footballData.filter(x => indexOf(x.title, '趣图') && new Date(x.updatetime) > new Date(funnyTimeMaxDate))
     } else {
         internationalData = top5LeagueData.filter(x => filterTabData(x.title))
         international_official = top5LeagueData.filter(x => indexOf(x.title, '官方'))
