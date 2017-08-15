@@ -105,12 +105,12 @@ module.exports = {
                 let videoData = data.video.filter(x => x.type == 'zuqiujijin' && util.isTop5League(x.lable));
                 let footballData = data.news.filter(x => x.type == 'zuqiu');
                 var result = util.assembleFootballData(footballData)
-                let _videoData = util.getFormatNewsData(const_news.Category.Video, videoData, 'video')
+                let _hotVideo = util.getFormatNewsData(const_news.Category.Video, videoData, 'video')
                 let minDate = new Date()
                 let newsList = result._international.news;
                 if (newsList.length > 0) minDate = new Date(newsList[newsList.length - 1].updatetime)
                 let resultArray = util.toArray(result)
-                resultArray.push(_videoData)
+                resultArray.push(_hotVideo)
                 res.send({ code: 200, msg: 'done', data: { source: resultArray, minDate: minDate.toString() } });
             }
             catch (err) {
@@ -129,8 +129,8 @@ module.exports = {
                     > new Date(maxDateList.find(x => x.category == const_news.Category.Video).maxDate))
                 let footballData = data.news.filter(x => x.type == 'zuqiu');
                 var result = util.assembleFootballData(footballData, maxDateList)
-                let _videoData = util.getFormatNewsData(const_news.Category.Video, videoData, 'video')
-                result._videoData = _videoData;
+                let _hotVideo = util.getFormatNewsData(const_news.Category.Video, videoData, 'video')
+                result._hotVideo = _hotVideo;
                 res.send({ code: 200, msg: 'done', data: { source: result } });
             }
             catch (err) {

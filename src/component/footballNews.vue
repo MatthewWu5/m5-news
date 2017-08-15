@@ -271,12 +271,12 @@ export default {
     //       let videoData = data.video.filter(x => x.type == 'zuqiujijin' && self.isTop5League(x.lable));
     //       let footballData = data.news.filter(x => x.type == 'zuqiu');
     //       var result = self.assembleFootballData(footballData)
-    //       let _videoData = self.getFormatNewsData(const_news.Category.Video, videoData, 'video')
+    //       let _hotVideo = self.getFormatNewsData(const_news.Category.Video, videoData, 'video')
     //       let minDate = new Date()
     //       let newsList = result._international.news;
     //       if (newsList.length > 0) minDate = new Date(newsList[newsList.length - 1].updatetime)
     //       let resultArray = self.toArray(result)
-    //       resultArray.push(_videoData)
+    //       resultArray.push(_hotVideo)
     //       resolve({ source: resultArray, minDate: minDate })
     //     }
     //   })
