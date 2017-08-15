@@ -37,6 +37,10 @@ export default {
             if (this.page) {
                 this.showComment = false;
                 var container = $('<div></div>')
+                //TODO: ineffective scroll top
+                $('.page').scrollTop(0)
+                $('.comment').scrollTop(0)
+
                 $(this.page).each(function (index, element) {
                     container.append($(element))
                 })
@@ -47,6 +51,12 @@ export default {
     methods: {
         OnBackClick: function () {
             this.$emit('listenToChildEvent')
+        },
+        ScrollTop: function () {
+            //TODO: how to call subcomponent's method by parent
+            console.log('scroll top')
+            $('.page').scrollTop(0)
+            $('.comment').scrollTop(0)
         }
     }
 }

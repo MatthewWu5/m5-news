@@ -19,10 +19,9 @@
         </div>
         <div>
           <button @click="OnGoPageClick">Go Page</button>
-          <input type="checkbox" v-model="original" style="width:30px;height:30px">Original</input>
           <span style="color: #a8c6e2;font-weight: bold;margin-left:10px">
-                                                    {{'Min Time: '+_currentMinDateString}}
-                                                  </span>
+            {{'Min Time: '+_currentMinDateString}}
+          </span>
         </div>
       </div>
   
@@ -36,13 +35,13 @@
       <div class="content-container">
         <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-12">
           <div v-for="n in item.news" v-bind:key="n" :title="n.time">
-            <a href="#" :class="n.isLeo?'leo-news-color':''" @click="OnPageClick(n.host,n.path,n.time,n.url)">{{n.title}}</a>
+            <a href="#" :class="getClass(n)" @click="OnPageClick(n)">{{n.title}}</a>
             <!--<span>{{n.time}}</span>-->
           </div>
         </div>
       </div>
     </div>
-    <newsPage :page="page" :comments="comments" :showComment="showComment" :time="newsTime" v-show="gotoPage" v-on:listenToChildEvent="messageFromChild"></newsPage>
+    <newsPage :page="page" :comments="comments" :showComment="showComment" :time="newsTime" v-show="gotoPage" v-on:listenToChildEvent="messageFromChild" ref="newsPage"></newsPage>
   </div>
 </template>
 
@@ -64,8 +63,6 @@ export default {
       intervalDay: 2,
       currentMinDate: new Date(),
       requestStatus: '',
-
-      original: false,
 
       page: '',
       comments: [],
@@ -90,9 +87,38 @@ export default {
     _currentMinDateString: function () {
       var date = this.currentMinDate;
       return date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDate()
+    },
+
+    _class: function () {
+      //i want subscope but 'this' always be global scope
+      console.log('_class', this)
+      let _class = '';
+      if (this.isLeo) {
+        _class += 'leo-news-color ';
+      }
+      if (this.isIncremental) {
+        _class += 'incremental ';
+      }
+      if (this.isReaded) {
+        _class += 'readed ';
+      }
+      return _class;
     }
   },
   methods: {
+    getClass: function (n) {
+      let _class = '';
+      if (n.isLeo) {
+        _class += 'leo-news-color ';
+      }
+      if (n.isIncremental) {
+        _class += 'incremental ';
+      }
+      if (n.isReaded) {
+        _class += 'readed ';
+      }
+      return _class;
+    },
     OnLabelChange: function (event) {
       $('button.button-press').removeClass('button-press')
       var self = this;
@@ -106,10 +132,10 @@ export default {
         } else {
           self.label = '';
         }
+        $('.content-container').scrollTop(0)
       })
       $(event.target).addClass('button-press');
     },
-
     OnCategoryChange: function () {
       $('span.button-press').removeClass('button-press')
       var self = this;
@@ -127,12 +153,11 @@ export default {
         } else {
           self.category = '';
         }
+        $('.content-container').scrollTop(0)
       })
       $(event.target).addClass('button-press');
     },
-
     OnResetSearch: function () {
-
       //Both ok
       // var self = this;
       // this.$nextTick(function () {
@@ -141,40 +166,35 @@ export default {
       // setTimeout(function () {
       //   self.searchKey = '';
       // }, 5000)
-
       this.searchKey = '';
+      $('.content-container').scrollTop(0)
     },
-
-    OnPageClick: function (host, path, updatetime, linkUrl) {
+    OnPageClick: function (n) {
+      let host = n.host, path = n.path, updatetime = n.time;
       let self = this;
-      if (self.original) {
-        window.open(linkUrl)
-      } else {
-        self.requestStatus = 'goto page...';
-        axios.post(url.getPageData, { host: host, path: path })
-          .then(resp => {
-            self.$nextTick(function () {
-              self.page = resp.data.data.page;
-              self.comments = resp.data.data.comments;
-              self.requestStatus = '';
-              self.gotoPage = true;
-              self.newsTime = updatetime;
-            })
-          }).catch(err => {
-            console.error(err)
+      self.requestStatus = 'goto page...';
+      axios.post(url.getPageData, { host: host, path: path })
+        .then(resp => {
+          self.$nextTick(function () {
+            self.page = resp.data.data.page;
+            self.comments = resp.data.data.comments;
+            self.requestStatus = '';
+            self.gotoPage = true;
+            self.newsTime = updatetime;
+            n.isReaded = true;
+            //self.$refs,newsPage.ScrollTop()
           })
-      }
+        }).catch(err => {
+          console.error(err)
+        })
     },
-
     OnGoPageClick: function () {
       this.gotoPage = !this.gotoPage;
       this.showComment = false;
     },
-
     messageFromChild: function () {
       this.gotoPage = false;
     },
-
     moreNewsOnClick: function () {
       var self = this;
       self.requestStatus = 'loading...';
@@ -194,7 +214,6 @@ export default {
           console.error(err)
         })
     },
-
     refreshOnClick: function () {
       var self = this;
       self.requestStatus = 'loading...';
@@ -210,12 +229,14 @@ export default {
           self.$nextTick(function () {
             for (let i = 0; i < self.footballNews.length; i++) {
               var item = self.footballNews[i];
-              console.log(incremental[item.category])
-              var currentIncremental = incremental[item.category].news;
-              console.log('currentIncremental', currentIncremental)
-              if (currentIncremental && currentIncremental.length > 0) {
-                console.log('item', item)
-                item.news = incremental[item.category].news.concat(item.news)
+              if (item.category != const_news.Category.Video && incremental[item.category]) {
+                var currentIncrementalNews = incremental[item.category].news;
+                if (currentIncrementalNews && currentIncrementalNews.length > 0) {
+                  currentIncrementalNews.forEach(function (element) {
+                    element.isIncremental = true;
+                  })
+                  item.news = currentIncrementalNews.concat(item.news)
+                }
               }
             }
             self.requestStatus = '';
@@ -229,11 +250,13 @@ export default {
     //https://soccer.hupu.com/home/latest-news?league=%E8%A5%BF%E7%94%B2&page=1
     var self = this;
     //Server
+    self.requestStatus = 'initing...';
     axios.post(url.getHot24Data)
       .then(resp => {
         self.$nextTick(function () {
           self.footballNews = resp.data.data.source;
           self.currentMinDate = new Date(resp.data.data.minDate)
+          self.requestStatus = '';
         })
       }).catch(err => {
         console.error(err)

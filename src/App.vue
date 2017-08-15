@@ -99,4 +99,12 @@ export default {
   color: #f7f71a;
   font-weight: bolder;
 }
+
+.incremental {
+  color: #e0ad16;
+}
+
+.readed {
+  color: #c1cbd4;
+}
 </style>
