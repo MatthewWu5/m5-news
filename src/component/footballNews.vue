@@ -19,6 +19,9 @@
         <div>
           <button @click="OnGoPageClick">Go Page</button>
           <input type="checkbox" v-model="original" style="width:30px;height:30px">Original</input>
+          <span style="color: #a8c6e2;font-weight: bold;margin-left:10px">
+            {{'Min Time: '+_currentMinDateString}}
+          </span>
         </div>
       </div>
   
@@ -36,9 +39,6 @@
             <!--<span>{{n.time}}</span>-->
           </div>
         </div>
-      </div>
-      <div style="color: #a8c6e2;font-weight: bold;">
-        {{'Min Time: '+_currentMinDateString}}
       </div>
     </div>
     <newsPage :page="page" :comments="comments" :showComment="showComment" :time="newsTime" v-show="gotoPage" v-on:listenToChildEvent="messageFromChild"></newsPage>

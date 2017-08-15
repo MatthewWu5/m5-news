@@ -8,7 +8,7 @@
                 <div v-html="_page"></div>
             </div>
             <div class="comment" v-show="showComment">
-                <div class="row" v-for="comment in comments" v-bind:key="comment" style="margin-top:10px;margin-bottom:10px;border-bottom:solid 2px #a8c6e2">
+                <div class="row" v-for="comment in comments" v-bind:key="comment">
                     <div class="col-sm-2" style="color:#a8c6e2">{{comment.up}}</div>
                     <div class="col-sm-10">{{comment.content}}</div>
                 </div>
@@ -88,6 +88,12 @@ export default {
     .news-page-container .page h1 {
         font-size: 40px;
         margin-bottom: 20px
+    }
+    .news-page-container .comment .row {
+        margin-top: 10px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        border-bottom: solid 2px #a8c6e2
     }
 }
 </style>
