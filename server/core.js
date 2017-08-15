@@ -120,6 +120,26 @@ module.exports = {
         })
     },
 
+    getIncrementalData: function (req, res) {
+        var maxDateList = req.body.maxDateList;
+        getRequestData('m.zhibo8.cc', '/json/hot/24hours.htm').then(function (respData) {
+            try {
+                let data = util.parseJson(respData.data)
+                let videoData = data.video.filter(x => x.type == 'zuqiujijin' && util.isTop5League(x.lable) && new Date(x.updatetime)
+                    > maxDateList.find(x => x.category == const_news.Category.Video).maxDate)
+                let footballData = data.news.filter(x => x.type == 'zuqiu');
+                var result = util.assembleFootballData(footballData, maxDateList)
+                let _videoData = util.getFormatNewsData(const_news.Category.Video, videoData, 'video')
+                result._videoData = _videoData;
+                res.send({ code: 200, msg: 'done', data: { source: result } });
+            }
+            catch (err) {
+                console.error(err)
+                res.send({ code: 200, msg: 'error', data: {} });
+            }
+        })
+    },
+
     getMoreData: function (req, res) {
         var currentMinDate = new Date(req.body.currentMinDate)
         var intervalDay = parseInt(req.body.intervalDay)
@@ -152,5 +172,55 @@ module.exports = {
                 res.send({ code: 200, msg: 'error', data: {} });
             }
         })
-    }
+    },
+
+    getMoreVideoData: function (req, res) {
+        var currentMinDate = new Date(req.body.currentMinDate)
+        var intervalDay = parseInt(req.body.intervalDay)
+        if (intervalDay > 30) intervalDay = 30;
+
+        var promiseArray = [];
+        for (var i = 1; i < intervalDay + 1; i++) {
+            var date = util.formatRequestDate(currentMinDate, i)
+            promiseArray.push(getRequestData('www.zhibo8.cc', '/zuqiu/json/' + date + '.htm'))
+        }
+        Promise.all(promiseArray).then(function (respDataArray) {
+            try {
+                let resultArray = [];
+                for (respData of respDataArray) {
+                    let data = util.parseJson(respData.data)
+                    let videoData = data.video_arr.filter(x => x.type == 'zuqiujijin' && x.lable.indexOf('梅西') != -1);
+                    let result = videoData.map(function (x) {
+                        return {
+                            title: x.title,
+                            url: 'https://www.zhibo8.cc' + x.url,
+                            time: util.formatTime(x.updatetime),
+                            updatetime: x.updatetime,
+                        }
+                    })
+                    result.sort(util.sortByTimeDesc)
+                    if (result.length > 0) {
+                        if (resultArray.length > 0) {
+                            if (new Date(resultArray[0].updatetime) > new Date(result[0].updatetime)) {
+                                resultArray = resultArray.concat(result)
+                            } else {
+                                resultArray = result.concat(resultArray)
+                            }
+
+                        } else {
+                            //first time
+                            resultArray = result;
+                        }
+                    }
+                }
+                currentMinDate.setDate(currentMinDate.getDate() - intervalDay)
+
+                res.send({ code: 200, msg: 'done', data: { source: resultArray, minDate: currentMinDate.toString() } })
+            }
+            catch (err) {
+                console.error(err)
+                res.send({ code: 200, msg: 'error', data: {} });
+            }
+        })
+    },
 }

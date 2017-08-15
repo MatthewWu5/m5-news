@@ -5,11 +5,13 @@
         <input type="text" v-model="intervalDay" style="width:120px"></input>
         Days
         <button @click="moreVideoOnClick">More</button>
-        {{requestStatus}}
+        <span style="color: #a8c6e2;font-weight: bold;margin-left:10px">
+                                          {{'Min Time: '+_currentMinDateString}}
+                                        </span> {{requestStatus}}
         <div class="content-container">
             <div v-for="n in leoVideo" v-bind:key="n">
                 <a :href="n.url" target="_blank">{{n.title}}</a>
-                <span>{{n.time}}</span>
+                <!--<span>{{n.time}}</span>-->
             </div>
         </div>
     </div>
@@ -29,6 +31,12 @@ export default {
             requestStatus: ''
         }
     },
+    computed: {
+        _currentMinDateString: function () {
+            var date = this.currentMinDate;
+            return date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDate()
+        }
+    },
     methods: {
         formatRequestDate: function (minDate, index) {
             let date = new Date(minDate)
@@ -43,6 +51,21 @@ export default {
         getMoreVideo: function () {
             var self = this;
             self.requestStatus = 'loading...';
+            axios.post(url.getMoreVideoData, { currentMinDate: self.currentMinDate, intervalDay: self.intervalDay })
+                .then(resp => {
+                    self.$nextTick(function () {
+                        self.leoVideo = self.leoVideo.concat(resp.data.data.source)
+                        self.currentMinDate = new Date(resp.data.data.minDate)
+                        self.requestStatus = '';
+                    })
+                }).catch(err => {
+                    console.error(err)
+                })
+            return;
+
+
+
+
             this.$nextTick(function () {
                 if (self.intervalDay > 100) self.intervalDay = 100;
                 var promiseArray = [];

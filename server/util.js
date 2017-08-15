@@ -6,6 +6,9 @@ var parseJson = function (str) {
         console.error('parseJson', err)
     }
 }
+var sortByTimeDesc = function (x, y) {
+    return new Date(x.updatetime) < new Date(y.updatetime) ? 1 : -1;
+}
 var formatTime = function (dateTime) {
     let date = new Date(dateTime)
     return date.getMonth() + 1 + '.' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
@@ -43,7 +46,8 @@ var getFormatNewsData = function (category, rawData, urlType = 'news') {
 
     return {
         category: category,
-        news: result
+        news: result,
+        maxDate: result.length > 0 ? new Date(result[0].updatetime) : undefined
     }
 }
 var formatRequestDate = function (minDate, index) {
@@ -55,12 +59,24 @@ var formatRequestDate = function (minDate, index) {
     if (day < 10) day = '0' + day;
     return date.getFullYear() + '-' + month + '-' + day;
 }
-var assembleFootballData = function (footballData) {
+var assembleFootballData = function (footballData, maxDateList) {
     let top5LeagueData = footballData.filter(x => isTop5League(x.lable))
-    let internationalData = top5LeagueData.filter(x => filterTabData(x.title))
-    let international_official = top5LeagueData.filter(x => indexOf(x.title, '官方'))
-    let international_conclusion = top5LeagueData.filter(x => indexOf(x.title, '盘点'))
-    let international_funnyTime = footballData.filter(x => indexOf(x.title, '趣图'))
+    let internationalData, international_official, international_conclusion, international_funnyTime;
+    if (maxDateList) {
+        let internationalMaxDate = maxDateList.find(x => x.category == const_news.Category.News).maxDate;
+        let officialMaxDate = maxDateList.find(x => x.category == const_news.Category.Official).maxDate;
+        let conclusionMaxDate = maxDateList.find(x => x.category == const_news.Category.Conclusion).maxDate;
+        let funnyTimeMaxDate = maxDateList.find(x => x.category == const_news.Category.FunnyTime).maxDate;
+        internationalData = top5LeagueData.filter(x => filterTabData(x.title) && new Date(x.updatetime) > internationalMaxDate)
+        international_official = top5LeagueData.filter(x => indexOf(x.title, '官方') && new Date(x.updatetime) > officialMaxDate)
+        international_conclusion = top5LeagueData.filter(x => indexOf(x.title, '盘点') && new Date(x.updatetime) > conclusionMaxDate)
+        international_funnyTime = footballData.filter(x => indexOf(x.title, '趣图') && new Date(x.updatetime) > funnyTimeMaxDate)
+    } else {
+        internationalData = top5LeagueData.filter(x => filterTabData(x.title))
+        international_official = top5LeagueData.filter(x => indexOf(x.title, '官方'))
+        international_conclusion = top5LeagueData.filter(x => indexOf(x.title, '盘点'))
+        international_funnyTime = footballData.filter(x => indexOf(x.title, '趣图'))
+    }
 
     let _international = getFormatNewsData(const_news.Category.News, internationalData)
     let _official = getFormatNewsData(const_news.Category.Official, international_official)
@@ -77,12 +93,13 @@ var assembleFootballData = function (footballData) {
 var sortandAssembleItem = function (assembleItem, newOne) {
     for (prop in assembleItem) {
         assembleItem[prop].news = assembleItem[prop].news.concat(newOne[prop].news)
-        assembleItem[prop].news.sort((x, y) => { return new Date(x.updatetime) < new Date(y.updatetime) ? 1 : -1; })
+        assembleItem[prop].news.sort(sortByTimeDesc)
     }
 }
 
 module.exports = {
     parseJson: parseJson,
+    sortByTimeDesc: sortByTimeDesc,
     getFormatNewsData: getFormatNewsData,
     isTop5League: isTop5League,
     indexOf: indexOf,

@@ -14,14 +14,15 @@
           <input type="text" v-model="intervalDay" class="interval-days"></input>
           Days
           <button @click="moreNewsOnClick">More</button>
+          <button @click="refreshOnClick">Refresh</button>
           {{requestStatus}}
         </div>
         <div>
           <button @click="OnGoPageClick">Go Page</button>
           <input type="checkbox" v-model="original" style="width:30px;height:30px">Original</input>
           <span style="color: #a8c6e2;font-weight: bold;margin-left:10px">
-                                  {{'Min Time: '+_currentMinDateString}}
-                                </span>
+                                                    {{'Min Time: '+_currentMinDateString}}
+                                                  </span>
         </div>
       </div>
   
@@ -175,20 +176,6 @@ export default {
     },
 
     moreNewsOnClick: function () {
-      this.getMore();
-    },
-
-    formatRequestDate: function (minDate, index) {
-      let date = new Date(minDate)
-      date.setDate(date.getDate() - index);
-      let month = date.getMonth() + 1;
-      let day = date.getDate();
-      if (month < 10) month = '0' + month;
-      if (day < 10) day = '0' + day;
-      return date.getFullYear() + '-' + month + '-' + day;
-    },
-
-    getMore: function () {
       var self = this;
       self.requestStatus = 'loading...';
       axios.post(url.getMoreData, { currentMinDate: self.currentMinDate, intervalDay: self.intervalDay })
@@ -201,6 +188,36 @@ export default {
               current.news = current.news.concat(source[objKeys[i]].news)
             }
             self.currentMinDate = new Date(resp.data.data.minDate)
+            self.requestStatus = '';
+          })
+        }).catch(err => {
+          console.error(err)
+        })
+    },
+
+    refreshOnClick: function () {
+      var self = this;
+      self.requestStatus = 'loading...';
+      var maxDateList = self.footballNews.map(x => {
+        return {
+          category: x.category,
+          maxDate: x.maxDate,
+        }
+      })
+      axios.post(url.getIncrementalData, { maxDateList: maxDateList })
+        .then(resp => {
+          var incremental = resp.data.data.source;
+          self.$nextTick(function () {
+            for (let i = 0; i < self.footballNews.length; i++) {
+              var item = self.footballNews[i];
+              console.log(incremental[item.category])
+              var currentIncremental = incremental[item.category].news;
+              console.log('currentIncremental', currentIncremental)
+              if (currentIncremental && currentIncremental.length > 0) {
+                console.log('item', item)
+                item.news = incremental[item.category].news.concat(item.news)
+              }
+            }
             self.requestStatus = '';
           })
         }).catch(err => {

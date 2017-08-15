@@ -5,4 +5,6 @@ module.exports = {
     getPageData: '/getPageData',
     getHot24Data: '/getHot24Data',
     getMoreData: '/getMoreData',
+    getMoreVideoData: '/getMoreVideoData',
+    getIncrementalData: '/getIncrementalData',
 }
