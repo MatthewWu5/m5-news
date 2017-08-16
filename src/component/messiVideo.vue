@@ -8,7 +8,7 @@
         <span style="color: #a8c6e2;font-weight: bold;margin-left:10px">
                                           {{'Min Time: '+_currentMinDateString}}
                                         </span> {{requestStatus}}
-        <div class="content-container">
+        <div class="content-container leo-container">
             <div v-for="n in leoVideo" v-bind:key="n">
                 <a :href="n.url" target="_blank">{{n.title}}</a>
                 <!--<span>{{n.time}}</span>-->

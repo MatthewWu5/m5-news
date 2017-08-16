@@ -36,6 +36,7 @@ export default {
   .search-area {
     font-size: 30px !important;
     margin-bottom: 10px;
+    margin-right: 50px
   }
   .search-area .search-input {
     width: 200px;
@@ -47,6 +48,10 @@ export default {
   .search-area i.removeBtn {
     margin-left: -45px !important;
   }
+  .search-area .fa-refresh {
+    float: right;
+    font-size: 50px
+  }
   #app .content-container {
     height: 1157px;
     overflow: auto;
@@ -54,6 +59,9 @@ export default {
     border-top: solid 2px #a8c6e2;
     border-bottom: solid 2px #a8c6e2;
     margin-right: 25px;
+  }
+  #app .leo-container{
+    height: 1300px !important;
   }
   .tab-container span {
     font-size: 40px;

@@ -9,19 +9,19 @@
           <button @click="OnLabelChange">All</button>
           <input type="text" placeholder="Search" v-model="searchKey" class="search-input"></input>
           <i class="fa fa-times removeBtn" @click="OnResetSearch"></i>
+          <i class="fa fa-refresh" @click="refreshOnClick"></i>
         </div>
         <div>
           <input type="text" v-model="intervalDay" class="interval-days"></input>
           Days
           <button @click="moreNewsOnClick">More</button>
-          <button @click="refreshOnClick">Refresh</button>
           {{requestStatus}}
         </div>
         <div>
           <button @click="OnGoPageClick">Go Page</button>
           <span style="color: #a8c6e2;font-weight: bold;margin-left:10px">
-            {{'Min Time: '+_currentMinDateString}}
-          </span>
+              {{'Min Time: '+_currentMinDateString}}
+            </span>
         </div>
       </div>
   
