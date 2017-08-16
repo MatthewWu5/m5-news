@@ -118,7 +118,8 @@ export default {
 }
 
 .incremental {
-  color: #e0ad16;
+  /*color: #e0ad16;*/
+  color: #0888f7;
 }
 
 .readed {

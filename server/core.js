@@ -50,10 +50,26 @@ module.exports = {
     getPageData: function (req, res) {
         //https://news.zhibo8.cc/zuqiu/2017-08-12/598ec61e92a37.htm
         //https://cache.zhibo8.cc/json/2017_08_12/news/zuqiu/598ec61e92a37_hot.htm
-        let splits = req.body.path.split('/')
-        let tailUrl = splits[splits.length - 1].split('.')[0];
-        let commentPath = '/json/' + splits[splits.length - 2].replace(/-/g, '_') + '/news/zuqiu/'
-            + tailUrl + '_hot.htm';
+
+        //https://www.zhibo8.cc/zuqiu/2017/0816-fangshou.htm
+        //https://cache.zhibo8.cc/json/2017/zuqiujijin/0816/fangshou_hot.htm
+
+        let commentPath;
+        if (req.body.host == 'news.zhibo8.cc') {
+            let splits = req.body.path.split('/')
+            let tailUrl = splits[splits.length - 1].split('.')[0];
+            commentPath = '/json/' + splits[splits.length - 2].replace(/-/g, '_') + '/news/zuqiu/'
+                + tailUrl + '_hot.htm';
+        } else if (req.body.host == 'www.zhibo8.cc') {
+            let splits = req.body.path.split('/')
+            //0816-fangshou
+            let tailUrl = splits[splits.length - 1].split('.')[0];
+            let subStrs = tailUrl.split('-')
+            commentPath = '/json/' + splits[splits.length - 2] + '/zuqiujijin/'
+                + subStrs[0] + '/' + subStrs[1] + '_hot.htm';
+        } else {
+            return;
+        }
 
         Promise.all([getRequestData(req.body.host, req.body.path), getRequestData('cache.zhibo8.cc', commentPath)])
             .then(function (data) {
@@ -99,9 +115,12 @@ module.exports = {
     },
 
     getHot24Data: function (req, res) {
+        console.log('begin hot24', new Date().toString())
         getRequestData('m.zhibo8.cc', '/json/hot/24hours.htm').then(function (respData) {
+            console.log('get respData', new Date().toString())
             try {
                 let data = util.parseJson(respData.data)
+                console.log('after parseJson', new Date().toString())
                 let videoData = data.video.filter(x => x.type == 'zuqiujijin' && util.isTop5League(x.lable));
                 let footballData = data.news.filter(x => x.type == 'zuqiu');
                 var result = util.assembleFootballData(footballData)
@@ -111,6 +130,7 @@ module.exports = {
                 if (newsList.length > 0) minDate = new Date(newsList[newsList.length - 1].updatetime)
                 let resultArray = util.toArray(result)
                 resultArray.push(_hotVideo)
+                console.log('return', new Date().toString())
                 res.send({ code: 200, msg: 'done', data: { source: resultArray, minDate: minDate.toString() } });
             }
             catch (err) {
