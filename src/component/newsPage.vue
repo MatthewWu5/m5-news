@@ -85,14 +85,14 @@ export default {
         border-bottom: solid 2px #a8c6e2;
     }
     .news-page-container .page {
-        height: 1270px;
+        height: 1320px;
         overflow: auto;
     }
     .news-page-container .page .time {
         font-size: 40px;
     }
     .news-page-container .comment {
-        height: 1270px;
+        height: 1320px;
         overflow: auto;
     }
     .news-page-container .page h1 {

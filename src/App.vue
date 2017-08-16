@@ -36,7 +36,7 @@ export default {
   .search-area {
     font-size: 30px !important;
     margin-bottom: 10px;
-    margin-right: 50px
+    margin-right: 45px
   }
   .search-area .search-input {
     width: 200px;
