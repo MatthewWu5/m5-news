@@ -236,6 +236,7 @@ export default {
                     element.isIncremental = true;
                   })
                   item.news = currentIncrementalNews.concat(item.news)
+                  item.maxDate = incremental[item.category].maxDate;
                 }
               }
             }

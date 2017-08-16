@@ -59,7 +59,16 @@ export default {
     border-top: solid 2px #a8c6e2;
     border-bottom: solid 2px #a8c6e2;
     margin-right: 25px;
+
+    /*background:url(./assets/leo1.jpg) no-repeat;
+    background-size: 103%;
+    background-position-x: -11px;*/
   }
+  /*#app .content-container a {
+    color: #faff19;
+    background-color: #12ad12;
+    color: black;
+  }*/
   #app .leo-container{
     height: 1300px !important;
   }
