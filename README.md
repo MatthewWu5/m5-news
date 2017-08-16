@@ -36,6 +36,22 @@ password my-password
 
 # Fetch code in bash step:
  - git clone https://github.com/MatthewWu5/project-test.git
+# Commit and Push
+ - git config --global user.name "MatthewWu5" 
+ - git config --global user.email "123456789@gmail.com"
+ - git commit -m "commit by git bush"
+ - git push -u origin master
+
+创建 git 仓库:
+
+mkdir wap
+cd wap
+git init
+touch README.md
+git add README.md
+git commit -m "first commit"
+git remote add origin https://git.oschina.net/name/package.git
+git push -u origin master
 
  # The football news revision (Write a football news web app by call zhibo8's web request)
  - Requirements
