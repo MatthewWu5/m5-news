@@ -235,8 +235,9 @@ export default {
                   currentIncrementalNews.forEach(function (element) {
                     element.isIncremental = true;
                   })
-                  item.news = currentIncrementalNews.concat(item.news)
+                  item.news = currentIncrementalNews.concat(item.news).distinct('path')
                   item.maxDate = incremental[item.category].maxDate;
+                  $('.content-container').scrollTop(0)
                 }
               }
             }
