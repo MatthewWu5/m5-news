@@ -243,4 +243,17 @@ module.exports = {
             }
         })
     },
+
+    getImageData: function (req, res) {
+        getRequestData('tu.qiumibao.com', '/uploads/day_170817/5994c9ed1e9d9.jpg').then(function (respData) {
+            try {
+                res.setHeader("Content-Type", 'image/jpeg');
+                res.send({ code: 200, msg: 'done', data: { source: result } });
+            }
+            catch (err) {
+                console.error(err)
+                res.send({ code: 200, msg: 'error', data: {} });
+            }
+        })
+    }
 }

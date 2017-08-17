@@ -1,5 +1,7 @@
 <template>
   <div>
+    <div v-html="imageData"></div>
+    <button @click="OnImageChange">Image</button>
     <div class="row" v-show="!gotoPage">
       <div class="search-area">
         <div>
@@ -20,8 +22,8 @@
         <div>
           <button @click="OnGoPageClick">Go Page</button>
           <span style="color: #a8c6e2;font-weight: bold;margin-left:10px">
-              {{'Min Time: '+_currentMinDateString}}
-            </span>
+                    {{'Min Time: '+_currentMinDateString}}
+                  </span>
         </div>
       </div>
   
@@ -68,7 +70,9 @@ export default {
       comments: [],
       gotoPage: false,
       showComment: false,
-      newsTime: ''
+      newsTime: '',
+
+      imageData: [],
     }
   },
   computed: {
@@ -247,6 +251,14 @@ export default {
           console.error(err)
         })
     },
+    OnImageChange: function () {
+      var self = this;
+      axios.post(url.getImageData).then(resp => {
+        self.$nextTick(function () {
+          self.imageData = resp.data.data.source;
+        })
+      })
+    }
   },
   created: function () {
     //https://soccer.hupu.com/home/latest-news?league=%E8%A5%BF%E7%94%B2&page=1
