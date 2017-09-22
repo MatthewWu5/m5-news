@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-html="imageData"></div>
-    <button @click="OnImageChange">Image</button>
+    <!--<div v-html="imageData"></div>
+    <button @click="OnImageChange">Image</button>-->
     <div class="row" v-show="!gotoPage">
       <div class="search-area">
         <div>
