@@ -1,7 +1,7 @@
 <template>
     <div>
         <button @click="OnBackClick">Back</button>
-        <button v-show="comments && comments.length>0" @click="showComment = !showComment">{{'showComment:'+showComment}}</button>
+        <button v-show="comments && comments.length>0" @click="showComment = !showComment">{{'Comment:'+showComment}}</button>
         <div class="news-page-container">
             <div class="page" v-show="!showComment">
                 <div class="time">{{time}}</div>

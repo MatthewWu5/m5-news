@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="">
-  
+
       <!--<div v-for="item in v_for_data">{{item.prop1+' '+item.prop2}}</div>-->
       <router-view>
       </router-view>
@@ -22,7 +22,7 @@ export default {
       console.log('inputMethod: ' + x)
     }
   },
-  mounted: function () {
+  mounted: function() {
     this.v_for_data = [{ prop1: '1', prop2: '2' }]
   }
 }
@@ -34,12 +34,12 @@ export default {
     font-size: 40px;
   }
   .search-area {
-    font-size: 30px !important;
+    font-size: 35px !important;
     margin-bottom: 10px;
     margin-right: 45px
   }
   .search-area .search-input {
-    width: 200px;
+    width: 400px;
   }
   .search-area .interval-days {
     width: 95px !important;
@@ -53,7 +53,7 @@ export default {
     font-size: 50px
   }
   #app .content-container {
-    height: 1157px;
+    height: 1173px;
     overflow: auto;
     font-size: 50px;
     border-top: solid 2px #a8c6e2;
@@ -64,18 +64,23 @@ export default {
     background-size: 103%;
     background-position-x: -11px;*/
   }
+  #app .content-container-showOption {
+    height: 1100px !important;
+  }
   /*#app .content-container a {
     color: #faff19;
     background-color: #12ad12;
     color: black;
   }*/
-  #app .leo-container{
+  #app .leo-container {
     height: 1300px !important;
   }
   .tab-container span {
     font-size: 40px;
     border: solid 2px #a8c6e2;
     border-bottom: initial;
+    display: inline-block;
+    width: calc(100%/4);
   }
 }
 

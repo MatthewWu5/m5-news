@@ -1,40 +1,39 @@
 <template>
   <div>
     <!--<div v-html="imageData"></div>
-    <button @click="OnImageChange">Image</button>-->
+          <button @click="OnImageChange">Image</button>-->
+    <input type="checkbox" v-show="!gotoPage" @click="OnCheck" style="position:absolute; top:26px;left:400px; -webkit-transform: scale(2);">
     <div class="row" v-show="!gotoPage">
       <div class="search-area">
         <div>
-          <button @click="OnLabelChange">Barca</button>
           <button @click="OnLabelChange">Mancity</button>
+          <button @click="OnLabelChange">Barca</button>
           <button @click="OnLabelChange">Barclays</button>
           <button @click="OnLabelChange">All</button>
-          <input type="text" placeholder="Search" v-model="searchKey" class="search-input"></input>
-          <i class="fa fa-times removeBtn" @click="OnResetSearch"></i>
-          <i class="fa fa-refresh" @click="refreshOnClick"></i>
+          <i class="fa fa-refresh" @click="refreshOnClick" style="margin-top:5px"></i>
         </div>
-        <div>
+        <div v-show="showOption" style="margin-top:5px">
           <input type="text" v-model="intervalDay" class="interval-days"></input>
           Days
           <button @click="moreNewsOnClick">More</button>
-          {{requestStatus}}
+          <input type="text" placeholder="Search" v-model="searchKey" class="search-input" v-show="showOption"></input>
+          <i class="fa fa-times removeBtn" @click="OnResetSearch" v-show="showOption"></i>
         </div>
-        <div>
-          <button @click="OnGoPageClick">Go Page</button>
+        <div style="margin-top:5px">
+          <button @click="OnGoPageClick">Page</button>
           <span style="color: #a8c6e2;font-weight: bold;margin-left:10px">
-                    {{'Min Time: '+_currentMinDateString}}
-                  </span>
+            {{'Min Time: '+_currentMinDateString}}
+          </span>
+          <span style="margin-left:10px">{{requestStatus}}</span>
         </div>
       </div>
-  
+
       <div class="tab-container">
         <span @click="OnCategoryChange">News</span>
-        <span @click="OnCategoryChange">Official</span>
-        <span @click="OnCategoryChange">Conclusion</span>
-        <span @click="OnCategoryChange">FunnyTime</span>
         <span @click="OnCategoryChange">HotVideo</span>
+        <span @click="OnCategoryChange">Others</span>
       </div>
-      <div class="content-container">
+      <div class="content-container" :class="showOption?'content-container-showOption':''">
         <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-12">
           <div v-for="n in item.news" v-bind:key="n" :title="n.time">
             <a href="#" :class="getClass(n)" @click="OnPageClick(n)">{{n.title}}</a>
@@ -61,7 +60,7 @@ export default {
       footballNews: [],
       searchKey: '',
       label: '',
-      category: const_news.Category.News,
+      categories: [const_news.Category.News],
       intervalDay: 2,
       currentMinDate: new Date(),
       requestStatus: '',
@@ -70,30 +69,31 @@ export default {
       comments: [],
       gotoPage: false,
       showComment: false,
+      showOption: false,
       newsTime: '',
 
       imageData: [],
     }
   },
   computed: {
-    _filteredNews: function () {
+    _filteredNews: function() {
       var key = this.searchKey;
       var label = this.label;
-      var category = this.category;
-      return this.footballNews.filter(f => f.category.indexOf(category) != -1).map(function (x) {
+      var categories = this.categories;
+      return this.footballNews.filter(f => categories.indexOf(f.category) != -1).map(function(x) {
         return {
           category: x.category,
-          news: x.news.filter(y => (y.title.indexOf(key) != -1 && y.lable.indexOf(label) != -1))
+          news: x.news.filter(y => (y.title.indexOf(key) != -1 && y.lable.indexOf(label) != -1 && (label == "英超" ? y.lable.indexOf("曼城") == -1 : y.lable != '')))
         }
       })
     },
 
-    _currentMinDateString: function () {
+    _currentMinDateString: function() {
       var date = this.currentMinDate;
       return date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDate()
     },
 
-    _class: function () {
+    _class: function() {
       //i want subscope but 'this' always be global scope
       console.log('_class', this)
       let _class = '';
@@ -110,7 +110,7 @@ export default {
     }
   },
   methods: {
-    getClass: function (n) {
+    getClass: function(n) {
       let _class = '';
       if (n.isLeo) {
         _class += 'leo-news-color ';
@@ -123,10 +123,10 @@ export default {
       }
       return _class;
     },
-    OnLabelChange: function (event) {
+    OnLabelChange: function(event) {
       $('button.button-press').removeClass('button-press')
       var self = this;
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         if (event.target.innerText == 'Barca') {
           self.label = '巴塞罗那';
         } else if (event.target.innerText == 'Mancity') {
@@ -140,28 +140,27 @@ export default {
       })
       $(event.target).addClass('button-press');
     },
-    OnCategoryChange: function () {
+    OnCategoryChange: function() {
       $('span.button-press').removeClass('button-press')
       var self = this;
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         if (event.target.innerText == 'News') {
-          self.category = const_news.Category.News;
+          self.categories = [const_news.Category.News];
         } else if (event.target.innerText == 'HotVideo') {
-          self.category = const_news.Category.Video;
-        } else if (event.target.innerText == 'Official') {
-          self.category = const_news.Category.Official;
-        } else if (event.target.innerText == 'Conclusion') {
-          self.category = const_news.Category.Conclusion;
-        } else if (event.target.innerText == 'FunnyTime') {
-          self.category = const_news.Category.FunnyTime;
+          self.categories = [const_news.Category.Video];
+        } else if (event.target.innerText == 'Others') {
+          self.categories = [const_news.Category.Official, const_news.Category.Conclusion, const_news.Category.FunnyTime];
         } else {
-          self.category = '';
+          self.categories = []
         }
         $('.content-container').scrollTop(0)
       })
       $(event.target).addClass('button-press');
     },
-    OnResetSearch: function () {
+    OnCheck: function (){
+      this.showOption = event.target.checked
+    },
+    OnResetSearch: function() {
       //Both ok
       // var self = this;
       // this.$nextTick(function () {
@@ -173,13 +172,13 @@ export default {
       this.searchKey = '';
       $('.content-container').scrollTop(0)
     },
-    OnPageClick: function (n) {
+    OnPageClick: function(n) {
       let host = n.host, path = n.path, updatetime = n.time;
       let self = this;
       self.requestStatus = 'goto page...';
       axios.post(url.getPageData, { host: host, path: path })
         .then(resp => {
-          self.$nextTick(function () {
+          self.$nextTick(function() {
             self.page = resp.data.data.page;
             self.comments = resp.data.data.comments;
             self.requestStatus = '';
@@ -192,21 +191,21 @@ export default {
           console.error(err)
         })
     },
-    OnGoPageClick: function () {
+    OnGoPageClick: function() {
       this.gotoPage = !this.gotoPage;
       this.showComment = false;
     },
-    messageFromChild: function () {
+    messageFromChild: function() {
       this.gotoPage = false;
     },
-    moreNewsOnClick: function () {
+    moreNewsOnClick: function() {
       var self = this;
       self.requestStatus = 'loading...';
       axios.post(url.getMoreData, { currentMinDate: self.currentMinDate, intervalDay: self.intervalDay })
         .then(resp => {
           let source = resp.data.data.source;
           let objKeys = Object.keys(source)
-          self.$nextTick(function () {
+          self.$nextTick(function() {
             for (let i = 0; i < objKeys.length; i++) {
               var current = self.footballNews.find(x => x.category == objKeys[i])
               current.news = current.news.concat(source[objKeys[i]].news)
@@ -218,7 +217,7 @@ export default {
           console.error(err)
         })
     },
-    refreshOnClick: function () {
+    refreshOnClick: function() {
       var self = this;
       self.requestStatus = 'loading...';
       var maxDateList = self.footballNews.map(x => {
@@ -230,13 +229,13 @@ export default {
       axios.post(url.getIncrementalData, { maxDateList: maxDateList })
         .then(resp => {
           var incremental = resp.data.data.source;
-          self.$nextTick(function () {
+          self.$nextTick(function() {
             for (let i = 0; i < self.footballNews.length; i++) {
               var item = self.footballNews[i];
               if (item.category != const_news.Category.Video && incremental[item.category]) {
                 var currentIncrementalNews = incremental[item.category].news;
                 if (currentIncrementalNews && currentIncrementalNews.length > 0) {
-                  currentIncrementalNews.forEach(function (element) {
+                  currentIncrementalNews.forEach(function(element) {
                     element.isIncremental = true;
                   })
                   item.news = currentIncrementalNews.concat(item.news).distinct('path')
@@ -251,23 +250,23 @@ export default {
           console.error(err)
         })
     },
-    OnImageChange: function () {
+    OnImageChange: function() {
       var self = this;
       axios.post(url.getImageData).then(resp => {
-        self.$nextTick(function () {
+        self.$nextTick(function() {
           self.imageData = resp.data.data.source;
         })
       })
     }
   },
-  created: function () {
+  created: function() {
     //https://soccer.hupu.com/home/latest-news?league=%E8%A5%BF%E7%94%B2&page=1
     var self = this;
     //Server
     self.requestStatus = 'initing...';
     axios.post(url.getHot24Data)
       .then(resp => {
-        self.$nextTick(function () {
+        self.$nextTick(function() {
           self.footballNews = resp.data.data.source;
           self.currentMinDate = new Date(resp.data.data.minDate)
           self.requestStatus = '';
