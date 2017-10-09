@@ -104,6 +104,7 @@ module.exports = {
                     } catch (err) {
                         console.error(err)
                     }
+                    //res.setHeader('Content-Type', 'image/jpeg')
                     res.send({ code: 200, msg: 'done', data: { page: container.html(), comments: comments } })
                 }
                 else {
@@ -115,12 +116,9 @@ module.exports = {
     },
 
     getHot24Data: function (req, res) {
-        console.log('begin hot24', new Date().toString())
         getRequestData('m.zhibo8.cc', '/json/hot/24hours.htm').then(function (respData) {
-            console.log('get respData', new Date().toString())
             try {
                 let data = util.parseJson(respData.data)
-                console.log('after parseJson', new Date().toString())
                 let videoData = data.video.filter(x => x.type == 'zuqiujijin' && util.isTop5League(x.lable));
                 let footballData = data.news.filter(x => x.type == 'zuqiu');
                 var result = util.assembleFootballData(footballData)
@@ -130,7 +128,6 @@ module.exports = {
                 if (newsList.length > 0) minDate = new Date(newsList[newsList.length - 1].updatetime)
                 let resultArray = util.toArray(result)
                 resultArray.push(_hotVideo)
-                console.log('return', new Date().toString())
                 res.send({ code: 200, msg: 'done', data: { source: resultArray, minDate: minDate.toString() } });
             }
             catch (err) {

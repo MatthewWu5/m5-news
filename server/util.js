@@ -3,7 +3,7 @@ var parseJson = function (str) {
     try {
         return JSON.parse(str)
     } catch (err) {
-        console.error('parseJson', err)
+        console.error('parseJson error =======> ', err)
     }
 }
 var sortByTimeDesc = function (x, y) {

@@ -7,6 +7,7 @@ import Component2 from '../component/c2.vue'
 import FootballNews from '../component/footballNews.vue'
 import MessiVideo from '../component/messiVideo.vue'
 import NewsBase from '../component/newsBase.vue'
+import Video from '../component/video.vue'
 
 Vue.use(Router)
 
@@ -59,9 +60,14 @@ export default new Router({
             ]
         },
         {
-            path: '*',
-            redirect: '/news/'
-        }
+            path: '/video',
+            name: 'Video',
+            component: Video,
+        },
+        // {
+        //     path: '*',
+        //     redirect: '/news/'
+        // }
     ]
     // routes: [
     //     {
