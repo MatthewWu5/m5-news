@@ -6,8 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
-    "start": "node build/dev-server.js",
-    "prod": "node build/index.js",
+    "start": "node build/index.js",
     "build": "node build/build.js",
     "pack": "webpack --config build/webpack.dev.conf.js",
     "pack-prod": "webpack --config build/webpack.prod.conf.js"
