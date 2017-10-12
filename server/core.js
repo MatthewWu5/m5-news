@@ -260,23 +260,27 @@ module.exports = {
             $ = cheerio.load(data.data, { decodeEntities: false })
             $('.schedule_container>div.box').each(function (i, box) {
                 var time = $(box).find('.titlebar h2').attr('title')
+                var matchPerDay = []
                 $(box).find('.content ul>li').each(function (liIndex, liEle) {
                     if ($(liEle).find('b').length > 0) {
                         let label = $(liEle).attr('label')
-                        if (util.isTop5League(label) && util.indexOf(label, '足球')) {
-                            var strIndex = liEle.innerHTML.indexOf('<a')
-                            collection.push({
-                                //text: liEle.innerText,
-                                text: liEle.innerHTML.subString(0, strIndex),
-                                href: $(liEle).children(':first').attr('href')
+                        if (util.isMatchInLive(label)) {
+                            matchPerDay.push({
+                                text: $(liEle).text(),
+                                href: 'https://www.zhibo8.cc' + $($(liEle).children('a')[0]).attr('href'),
+                                myFollow: util.indexOf(label, '曼城') || util.indexOf(label, '巴塞罗那')
                             })
                         }
                     }
                 })
+                if (matchPerDay.length > 0) {
+                    collection.push({ date: time + ' 星期' + new Date(time).getDay(), match: matchPerDay })
+                }
             })
             res.send({ code: 200, msg: 'done', data: collection })
         }).catch(function (err) {
             console.error(err)
+            res.send({ code: 200, msg: 'error' })
         })
     },
 }

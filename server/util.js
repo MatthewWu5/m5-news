@@ -19,6 +19,12 @@ var isTop5League = function (str) {
     }
     return false;
 }
+var isMatchInLive = function (str) {
+    if (str.indexOf('英超') != -1 || str.indexOf('巴塞罗那') != -1 || str.indexOf('皇马') != -1 || str.indexOf('巴黎圣日耳曼') != -1 || str.indexOf('拜仁慕尼黑') != -1) {
+        return true
+    }
+    return false
+}
 var filterTabData = function (str) {
     if (str.indexOf('官方') != -1 || str.indexOf('盘点') != -1 || str.indexOf('趣图') != -1 || str.indexOf('GIF-') != -1) {
         return false;
@@ -102,6 +108,7 @@ module.exports = {
     sortByTimeDesc: sortByTimeDesc,
     getFormatNewsData: getFormatNewsData,
     isTop5League: isTop5League,
+    isMatchInLive: isMatchInLive,
     indexOf: indexOf,
     filterTabData: filterTabData,
     formatTime: formatTime,

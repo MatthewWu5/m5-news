@@ -58,7 +58,7 @@ export default {
     font-size: 50px;
     border-top: solid 2px #a8c6e2;
     border-bottom: solid 2px #a8c6e2;
-    margin-right: 25px;
+    margin-right: 25px !important;
 
     /*background:url(./assets/leo1.jpg) no-repeat;
     background-size: 103%;
@@ -74,6 +74,9 @@ export default {
   }*/
   #app .leo-container {
     height: 1300px !important;
+  }
+  .liveMatch {
+    height: 1370px !important
   }
   .tab-container span {
     font-size: 40px;
@@ -118,7 +121,7 @@ export default {
 }
 
 .leo-news-color {
-  color: #f7f71a;
+  color: #12abf7;
   font-weight: bolder;
 }
 
