@@ -7,5 +7,6 @@ module.exports = {
     getMoreData: '/getMoreData',
     getMoreVideoData: '/getMoreVideoData',
     getIncrementalData: '/getIncrementalData',
-    getImageData: '/getImageData'
+    getImageData: '/getImageData',
+    getLiveData: '/getLiveData',
 }

@@ -7,6 +7,7 @@ import Component2 from '../component/c2.vue'
 import FootballNews from '../component/footballNews.vue'
 import MessiVideo from '../component/messiVideo.vue'
 import NewsBase from '../component/newsBase.vue'
+import LiveMatch from '../component/liveMatch.vue'
 import Video from '../component/video.vue'
 
 Vue.use(Router)
@@ -35,6 +36,11 @@ export default new Router({
                     path: 'leoVideo',
                     name: 'MessiVideo',
                     component: MessiVideo
+                },
+                {
+                    path: 'liveMatch',
+                    name: 'LiveMatch',
+                    component: LiveMatch
                 },
             ]
         },
