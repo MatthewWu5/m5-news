@@ -10,10 +10,8 @@
 
 
 <script>
-import FootballNews from './footballNews'
 export default {
-    name: 'base',
-    components: { FootballNews },
+    name: 'newsBase',
 }
 </script>
 <style>

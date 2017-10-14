@@ -9,4 +9,5 @@ module.exports = {
     getIncrementalData: '/getIncrementalData',
     getImageData: '/getImageData',
     getLiveData: '/getLiveData',
+    getLivePageData: '/getLivePageData',
 }

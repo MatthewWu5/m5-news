@@ -72,11 +72,8 @@ export default {
     background-color: #12ad12;
     color: black;
   }*/
-  #app .leo-container {
+  #app .leo-container, .liveMatch {
     height: 1300px !important;
-  }
-  .liveMatch {
-    height: 1370px !important
   }
   .tab-container span {
     font-size: 40px;

@@ -16,17 +16,13 @@ export default new Router({
     routes: [
         {
             path: '/',
-            redirect: '/news/'
+            redirect: '/news/football'
         },
         {
             path: '/news',
             name: 'NewsBase',
             component: NewsBase,
             children: [
-                {
-                    path: '',
-                    redirect: '/news/football'
-                },
                 {
                     path: 'football',
                     name: 'FootballNews',
@@ -70,18 +66,5 @@ export default new Router({
             name: 'Video',
             component: Video,
         },
-        // {
-        //     path: '*',
-        //     redirect: '/news/'
-        // }
     ]
-    // routes: [
-    //     {
-    //         path: '/test1',
-    //         component: Component1
-    //     },
-    //     {
-    //         path: '/test2',
-    //         component: Component2
-    //     }]
 })

@@ -179,6 +179,7 @@ export default {
       axios.post(url.getPageData, { host: host, path: path })
         .then(resp => {
           self.$nextTick(function() {
+            console.log(resp.data.data)
             self.page = resp.data.data.page;
             self.comments = resp.data.data.comments;
             self.requestStatus = '';

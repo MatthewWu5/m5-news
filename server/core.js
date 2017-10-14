@@ -34,6 +34,9 @@ var getRequestData = function (host, path) {
     })
 }
 
+var hot24HoursCache = {}
+var liveDataCache = {}
+
 module.exports = {
     getData1: function (req, res) {
         res.send({ code: 200, msg: 'done', data: { hehe: '1', hehe2: req.body.pData2 } });
@@ -115,7 +118,16 @@ module.exports = {
             })
     },
 
+    getHot24Data2: function (req, res) {
+        setTimeout(function () { console.log('after 100000')}, 100000)
+    },
+
     getHot24Data: function (req, res) {
+        //should use 304
+        if (hot24HoursCache.date && (new Date().getTime() - hot24HoursCache.date.getTime()) / 1000 < 7200) {
+            res.send({ code: 200, msg: 'done', data: { source: hot24HoursCache.source, minDate: hot24HoursCache.minDate } })
+            return
+        }
         getRequestData('m.zhibo8.cc', '/json/hot/24hours.htm').then(function (respData) {
             try {
                 let data = util.parseJson(respData.data)
@@ -128,6 +140,9 @@ module.exports = {
                 if (newsList.length > 0) minDate = new Date(newsList[newsList.length - 1].updatetime)
                 let resultArray = util.toArray(result)
                 resultArray.push(_hotVideo)
+                hot24HoursCache.date = new Date()
+                hot24HoursCache.source = resultArray
+                hot24HoursCache.minDate = minDate.toString()
                 res.send({ code: 200, msg: 'done', data: { source: resultArray, minDate: minDate.toString() } });
             }
             catch (err) {
@@ -255,6 +270,10 @@ module.exports = {
     },
 
     getLiveData: function (req, res) {
+        if (liveDataCache.date && (new Date().getTime() - liveDataCache.date.getTime()) / 1000 / 3600 < 24) {
+            res.send({ code: 200, msg: 'done', data: liveDataCache.data })
+            return
+        }
         getRequestData('www.zhibo8.cc', '/index.html').then(function (data) {
             var collection = []
             $ = cheerio.load(data.data, { decodeEntities: false })
@@ -268,6 +287,8 @@ module.exports = {
                             matchPerDay.push({
                                 text: $(liEle).text(),
                                 href: 'https://www.zhibo8.cc' + $($(liEle).children('a')[0]).attr('href'),
+                                host: 'www.zhibo8.cc',
+                                path: $($(liEle).children('a')[0]).attr('href'),
                                 myFollow: util.indexOf(label, '曼城') || util.indexOf(label, '巴塞罗那')
                             })
                         }
@@ -277,10 +298,42 @@ module.exports = {
                     collection.push({ date: time + ' 星期' + new Date(time).getDay(), match: matchPerDay })
                 }
             })
+            liveDataCache.date = new Date()
+            liveDataCache.data = collection
             res.send({ code: 200, msg: 'done', data: collection })
         }).catch(function (err) {
             console.error(err)
             res.send({ code: 200, msg: 'error' })
         })
+    },
+
+    getLivePageData: function (req, res) {
+        //https://www.zhibo8.cc/zhibo/zuqiu/2017/1014liwupuvsmanlian.htm
+        //https://cache.zhibo8.cc/json/2017/zuqiu/1014liwupuvsmanlian_hot.htm
+        //div.ft_video
+
+        let splits = req.body.path.split('/')
+        let tailUrl = splits[splits.length - 1].split('.')[0]
+        let commentPath = '/json/' + splits[splits.length - 2] + '/zuqiu/' + tailUrl + '_hot.htm'
+        Promise.all([getRequestData(req.body.host, req.body.path), getRequestData('cache.zhibo8.cc', commentPath)])
+            .then(function (data) {
+                var commentData
+                var htmlData
+                if (data.length == 2) {
+                    if (data[0].path == req.body.path) {
+                        htmlData = data[0].data
+                        commentData = data[1].data
+                    } else {
+                        htmlData = data[1].data
+                        commentData = data[0].data
+                    }
+
+                    $ = cheerio.load(htmlData, { decodeEntities: false })
+                    res.send({ code: 200, msg: 'done', data: { page: $('div.ft_video').html(), comments: util.parseJson(commentData) } })
+                }
+            }).catch(function (err) {
+                console.error(err)
+                res.send({ code: 200, msg: 'error' })
+            })
     },
 }

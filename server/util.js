@@ -20,7 +20,12 @@ var isTop5League = function (str) {
     return false;
 }
 var isMatchInLive = function (str) {
-    if (str.indexOf('英超') != -1 || str.indexOf('巴塞罗那') != -1 || str.indexOf('皇马') != -1 || str.indexOf('巴黎圣日耳曼') != -1 || str.indexOf('拜仁慕尼黑') != -1) {
+    if (str.indexOf('曼城') != -1 || str.indexOf('曼联') != -1
+        || str.indexOf('阿森纳') != -1 || str.indexOf('切尔西') != -1
+        || str.indexOf('利物浦') != -1 || str.indexOf('热刺') != -1
+        || str.indexOf('巴塞罗那') != -1 || str.indexOf('皇家马德里') != -1
+        || str.indexOf('巴黎圣日耳曼') != -1
+        || str.indexOf('拜仁慕尼黑') != -1) {
         return true
     }
     return false
