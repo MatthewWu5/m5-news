@@ -72,7 +72,8 @@ export default {
     background-color: #12ad12;
     color: black;
   }*/
-  #app .leo-container, .liveMatch {
+  #app .leo-container,
+  .liveMatch {
     height: 1300px !important;
   }
   .tab-container span {
@@ -81,6 +82,9 @@ export default {
     border-bottom: initial;
     display: inline-block;
     width: calc(100%/4);
+  }
+  .live-link-overflow {
+    height: 70px !important;
   }
 }
 
@@ -129,5 +133,19 @@ export default {
 
 .readed {
   color: #c1cbd4;
+}
+
+.live-link-overflow {
+  height: 25px;
+  overflow-y: hidden;
+}
+
+.content-container {
+  height: 500px;
+  overflow: auto;
+  border-top: solid 1px #a8c6e2;
+  border-bottom: solid 1px #a8c6e2;
+  padding-left: 20px;
+  margin-top: 5px;
 }
 </style>

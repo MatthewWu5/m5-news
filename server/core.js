@@ -63,6 +63,7 @@ module.exports = {
             let tailUrl = splits[splits.length - 1].split('.')[0];
             commentPath = '/json/' + splits[splits.length - 2].replace(/-/g, '_') + '/news/zuqiu/'
                 + tailUrl + '_hot.htm';
+            var isMatchContent = parseInt(tailUrl) > 0
         } else if (req.body.host == 'www.zhibo8.cc') {
             let splits = req.body.path.split('/')
             //0816-fangshou
@@ -91,18 +92,35 @@ module.exports = {
                     try {
                         $ = cheerio.load(htmlData, { decodeEntities: false })
                         var container = $('<div id="container"></div>')
-                        $('#signals img').each(function (i, x) {
-                            var src = $(x).attr('src')
-                            if (src.indexOf('http') == -1) {
-                                src = 'https:' + src
-                            } else {
-                                src = src.replace('http', 'https')
-                            }
-                            $(x).attr('src', src)
-                            $(x).attr('alt', '')
-                        })
-                        container.append($('.title h1'))
-                        container.append($('#signals'))
+                        if (isMatchContent && !$('#signals').html()) {
+                            $('.zb_left img').each(function (i, x) {
+                                var src = $(x).attr('src')
+                                if (src.indexOf('http') == -1) {
+                                    src = 'https:' + src
+                                } else {
+                                    src = src.replace('http', 'https')
+                                }
+                                $(x).attr('src', src)
+                                $(x).attr('alt', '')
+                            })
+                            $('.jijin-link').attr('target', '_blank')
+                            container.append($('.zb_left .tzhanbao .title'))
+                            container.append($('.zb_left .tzhanbao .content'))
+                        } else {
+                            $('#signals img').each(function (i, x) {
+                                var src = $(x).attr('src')
+                                if (src.indexOf('http') == -1) {
+                                    src = 'https:' + src
+                                } else {
+                                    src = src.replace('http', 'https')
+                                }
+                                $(x).attr('src', src)
+                                $(x).attr('alt', '')
+                            })
+                            container.append($('.title h1'))
+                            container.append($('#signals'))
+                        }
+
                         comments = util.parseJson(commentData)
                     } catch (err) {
                         console.error(err)
@@ -119,7 +137,7 @@ module.exports = {
     },
 
     getHot24Data2: function (req, res) {
-        setTimeout(function () { console.log('after 100000')}, 100000)
+        setTimeout(function () { console.log('after 100000') }, 100000)
     },
 
     getHot24Data: function (req, res) {
@@ -163,6 +181,22 @@ module.exports = {
                 var result = util.assembleFootballData(footballData, maxDateList)
                 let _hotVideo = util.getFormatNewsData(const_news.Category.Video, videoData, 'video')
                 result._hotVideo = _hotVideo;
+                if (hot24HoursCache.date) {
+                    var insertData = function (incrementalNews, source, category) {
+                        if (incrementalNews.length > 0) {
+                            var news = source.find(x => x.category == category).news
+                            incrementalNews.reverse()
+                            for (let incre of incrementalNews) {
+                                news.unshift(incre)
+                            }
+                        }
+                    }
+                    insertData(result._international.news, hot24HoursCache.source, '_international')
+                    insertData(result._hotVideo.news, hot24HoursCache.source, '_hotVideo')
+                    insertData(result._conclusion.news, hot24HoursCache.source, '_conclusion')
+                    insertData(result._funnyTime.news, hot24HoursCache.source, '_funnyTime')
+                    insertData(result._official.news, hot24HoursCache.source, '_official')
+                }
                 res.send({ code: 200, msg: 'done', data: { source: result } });
             }
             catch (err) {

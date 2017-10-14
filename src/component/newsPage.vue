@@ -33,7 +33,7 @@ export default {
         }
     },
     computed: {
-        _page: function () {
+        _page: function() {
             if (this.page) {
                 this.showComment = false;
                 var container = $('<div></div>')
@@ -41,7 +41,7 @@ export default {
                 $('.page').scrollTop(0)
                 $('.comment').scrollTop(0)
 
-                $(this.page).each(function (index, element) {
+                $(this.page).each(function(index, element) {
                     container.append($(element))
                 })
                 return container.html()
@@ -49,10 +49,10 @@ export default {
         }
     },
     methods: {
-        OnBackClick: function () {
+        OnBackClick: function() {
             this.$emit('listenToChildEvent')
         },
-        ScrollTop: function () {
+        ScrollTop: function() {
             //TODO: how to call subcomponent's method by parent
             console.log('scroll top')
             $('.page').scrollTop(0)
@@ -78,31 +78,46 @@ export default {
     max-width: 1000px !important;
 }
 
+.news-page-container,
+.news-page-container .page,
+.news-page-container .comment {
+    height: 560px;
+}
+
+.news-page-container .page,
+.news-page-container .comment {
+    overflow: auto;
+}
+
+.news-page-container {
+    border-bottom: solid 1px #a8c6e2;
+}
+
+.news-page-container .comment .row {
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border-bottom: solid 1px #a8c6e2
+}
+
 @media (max-width: 992px) {
     .news-page-container {
         font-size: 50px;
-        height: 1320px;
         border-bottom: solid 2px #a8c6e2;
     }
-    .news-page-container .page {
-        height: 1320px;
-        overflow: auto;
+    .news-page-container,
+    .news-page-container .page,
+    .news-page-container .comment {
+        height: 1320px !important;
     }
     .news-page-container .page .time {
         font-size: 40px;
-    }
-    .news-page-container .comment {
-        height: 1320px;
-        overflow: auto;
     }
     .news-page-container .page h1 {
         font-size: 40px;
         margin-bottom: 20px
     }
     .news-page-container .comment .row {
-        margin-top: 10px;
-        margin-right: 10px;
-        margin-bottom: 10px;
         border-bottom: solid 2px #a8c6e2
     }
 }

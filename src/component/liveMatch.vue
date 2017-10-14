@@ -43,7 +43,7 @@ export default {
     },
     created: function() {
         var self = this
-        self.requestStatus = 'loading'
+        self.requestStatus = 'loading...'
         axios.post(url.getLiveData).then(resp => {
             self.$nextTick(function() {
                 self.liveData = resp.data.data
@@ -88,11 +88,6 @@ export default {
 }
 </script>
 <style>
-.live-link-overflow {
-    height: 70px;
-    overflow-y: hidden;
-}
-
 .live-link-overflow>p.my-follow {
     color: #12abf7;
     font-weight: bolder;
@@ -100,5 +95,6 @@ export default {
 
 .p-link {
     color: #337ab7;
+    cursor: pointer;
 }
 </style>

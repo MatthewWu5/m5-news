@@ -34,7 +34,7 @@
         <span @click="OnCategoryChange">Others</span>
       </div>
       <div class="content-container" :class="showOption?'content-container-showOption':''">
-        <div v-for="item in _filteredNews" v-bind:key="item" class="col-md-3 col-xs-3 col-sm-12">
+        <div v-for="item in _filteredNews" v-bind:key="item">
           <div v-for="n in item.news" v-bind:key="n" :title="n.time">
             <a href="#" :class="getClass(n)" @click="OnPageClick(n)">{{n.title}}</a>
             <!--<span>{{n.time}}</span>-->
