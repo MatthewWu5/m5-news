@@ -61,11 +61,14 @@ export default {
             return ''
         },
         OnLivePageClick: function(n) {
+            let target = $(event.target)
+            target.addClass('clicked')
             let host = n.host, path = n.path
             let self = this
             self.requestStatus = 'goto page...'
             axios.post(url.getLivePageData, { host: host, path: path })
                 .then(resp => {
+                    target.removeClass('clicked')
                     self.$nextTick(function() {
                         self.page = resp.data.data.page
                         self.comments = resp.data.data.comments
@@ -96,5 +99,11 @@ export default {
 .p-link {
     color: #337ab7;
     cursor: pointer;
+}
+
+.clicked,
+.live-link-overflow>p.my-follow.clicked {
+    color: #23527c;
+    text-decoration: underline;
 }
 </style>

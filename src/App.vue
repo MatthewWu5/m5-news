@@ -50,7 +50,7 @@ export default {
   }
   .search-area .fa-refresh {
     float: right;
-    font-size: 50px
+    font-size: 50px !important;
   }
   #app .content-container {
     height: 1173px;
@@ -86,7 +86,12 @@ export default {
   .live-link-overflow {
     height: 70px !important;
   }
+  .checkbox-option {
+    top: 90px !important;
+    left: 530px !important;
+  }
 }
+/*end media on phone*/
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -147,5 +152,17 @@ export default {
   border-bottom: solid 1px #a8c6e2;
   padding-left: 20px;
   margin-top: 5px;
+}
+
+.checkbox-option {
+  position: absolute;
+  top: 38px;
+  left: 261px;
+  -webkit-transform: scale(2);
+}
+
+.search-area .fa-refresh {
+  font-size: 15px;
+  margin-left: 30px;
 }
 </style>

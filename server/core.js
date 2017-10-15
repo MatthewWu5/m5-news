@@ -3,6 +3,7 @@ var url = require('url')
 var cheerio = require('cheerio')
 var util = require('./util')
 var const_news = require('./const')
+require('./prototype')
 var getRequestData = function (host, path) {
     return new Promise(function (resolve, reject) {
         // var options = url.parse('https://news.zhibo8.cc/zuqiu/json/2017-07-20.htm');
@@ -189,6 +190,7 @@ module.exports = {
                             for (let incre of incrementalNews) {
                                 news.unshift(incre)
                             }
+                            source.find(x => x.category == category).news = news.distinct('path')
                         }
                     }
                     insertData(result._international.news, hot24HoursCache.source, '_international')

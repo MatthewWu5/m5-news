@@ -2,7 +2,7 @@
   <div>
     <!--<div v-html="imageData"></div>
           <button @click="OnImageChange">Image</button>-->
-    <input type="checkbox" v-show="!gotoPage" @click="OnCheck" style="position:absolute; top:26px;left:650px; -webkit-transform: scale(2);">
+    <input type="checkbox" v-show="!gotoPage" @click="OnCheck" class="checkbox-option">
     <div class="row" v-show="!gotoPage">
       <div class="search-area">
         <div>
