@@ -9,10 +9,10 @@ for (prop in url) {
     router.post(url[prop], core[prop])
 }
 router.get('/', function(req, res){
-  res.sendFile(__dirname + '/publish/index.html');
+  res.sendFile(__dirname + '/dist/index.html');
 });
 router.get('/app.js', function(req, res){
-  res.sendFile(__dirname + '/publish/app.js');
+  res.sendFile(__dirname + '/dist/app.js');
 });
 
 module.exports = router;
