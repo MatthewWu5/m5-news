@@ -2,7 +2,6 @@
   <div>
     <!--<div v-html="imageData"></div>
           <button @click="OnImageChange">Image</button>-->
-    <input type="checkbox" v-show="!gotoPage" @click="OnCheck" class="checkbox-option">
     <div class="row" v-show="!gotoPage">
       <div class="search-area">
         <div>
@@ -10,6 +9,9 @@
           <button @click="OnLabelChange">Barca</button>
           <button @click="OnLabelChange">Barclays</button>
           <button @click="OnLabelChange">All</button>
+          <div style="display:inline-block;position:relative">
+            <input type="checkbox" @click="OnCheck" class="checkbox-option">
+          </div>
           <i class="fa fa-refresh" @click="refreshOnClick" style="margin-top:5px"></i>
         </div>
         <div v-show="showOption" style="margin-top:5px">

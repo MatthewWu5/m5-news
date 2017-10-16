@@ -87,8 +87,8 @@ export default {
     height: 70px !important;
   }
   .checkbox-option {
-    top: 90px !important;
-    left: 530px !important;
+    top: -20px !important;
+    left: 10px !important;
   }
 }
 /*end media on phone*/
@@ -156,8 +156,8 @@ export default {
 
 .checkbox-option {
   position: absolute;
-  top: 38px;
-  left: 261px;
+  top: -15px;
+  left: 8px;
   -webkit-transform: scale(2);
 }
 
