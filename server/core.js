@@ -194,7 +194,7 @@ module.exports = {
     getHot24Data: function (req, res) {
         //should use 304
         if (hot24HoursCache.date && (new Date().getTime() - hot24HoursCache.date.getTime()) / 1000 < 7200) {
-            res.send({ code: 200, msg: 'done', data: { source: hot24HoursCache.source, minDate: hot24HoursCache.minDate } })
+            res.send({ code: 200, msg: 'done', data: { source: hot24HoursCache.source, minDate: hot24HoursCache.minDate, loadImage: hot24HoursCache.loadImage } })
             return
         }
         getRequestData('m.zhibo8.cc', '/json/hot/24hours.htm').then(function (respData) {
@@ -342,19 +342,6 @@ module.exports = {
         })
     },
 
-    getImageData: function (req, res) {
-        getRequestData('tu.qiumibao.com', '/uploads/day_170817/5994c9ed1e9d9.jpg').then(function (respData) {
-            try {
-                res.setHeader("Content-Type", 'image/jpeg');
-                res.send({ code: 200, msg: 'done', data: { source: result } });
-            }
-            catch (err) {
-                console.error(err)
-                res.send({ code: 200, msg: 'error', data: {} });
-            }
-        })
-    },
-
     getLiveData: function (req, res) {
         if (liveDataCache.date && (new Date().getTime() - liveDataCache.date.getTime()) / 1000 / 3600 < 24) {
             res.send({ code: 200, msg: 'done', data: liveDataCache.data })
@@ -421,5 +408,10 @@ module.exports = {
                 console.error(err)
                 res.send({ code: 200, msg: 'error' })
             })
+    },
+
+    sendImageLoadFlag: function (req, res) {
+        hot24HoursCache.loadImage = req.body.loadImage
+        res.send()
     },
 }

@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!--<div v-html="imageData"></div>
-            <button @click="OnImageChange">Image</button>-->
     <div class="row" v-show="!gotoPage">
       <div class="search-area">
         <div>
@@ -9,6 +7,7 @@
           <button @click="OnLabelChange">Barca</button>
           <button @click="OnLabelChange">Barclays</button>
           <button @click="OnLabelChange">All</button>
+          <button @click="OnLoadImageClick" :class="loadImage?'image-press':''">Image</button>
           <div style="display:inline-block;position:relative">
             <input type="checkbox" @click="OnCheck" class="checkbox-option">
           </div>
@@ -159,6 +158,17 @@ export default {
       })
       $(event.target).addClass('button-press');
     },
+    OnLoadImageClick: function() {
+      if ($(event.target).hasClass('image-press')) {
+        $('meta[name="referrer"]').attr('content', 'always')
+        $(event.target).removeClass('image-press')
+        axios.post(url.sendImageLoadFlag, { loadImage: false })
+      } else {
+        $('meta[name="referrer"]').attr('content', 'never')
+        $(event.target).addClass('image-press')
+        axios.post(url.sendImageLoadFlag, { loadImage: true })
+      }
+    },
     OnCheck: function() {
       this.showOption = event.target.checked
     },
@@ -260,14 +270,6 @@ export default {
           console.error(err)
         })
     },
-    OnImageChange: function() {
-      var self = this;
-      axios.post(url.getImageData).then(resp => {
-        self.$nextTick(function() {
-          self.imageData = resp.data.data.source;
-        })
-      })
-    }
   },
   created: function() {
     //https://soccer.hupu.com/home/latest-news?league=%E8%A5%BF%E7%94%B2&page=1
@@ -280,6 +282,12 @@ export default {
           self.footballNews = resp.data.data.source;
           self.currentMinDate = new Date(resp.data.data.minDate)
           self.requestStatus = '';
+          self.loadImage = resp.data.data.loadImage
+          if (self.loadImage) {
+            $('meta[name="referrer"]').attr('content', 'never')
+          } else {
+            $('meta[name="referrer"]').attr('content', 'always')
+          }
         })
       }).catch(err => {
         console.error(err)

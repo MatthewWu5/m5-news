@@ -121,7 +121,7 @@ export default {
   width: 53px;
 }
 
-.button-press {
+.button-press, .image-press {
   background-color: #a8c6e2;
   cursor: default;
 }
