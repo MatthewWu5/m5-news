@@ -1,7 +1,7 @@
 <template>
   <div>
     <!--<div v-html="imageData"></div>
-          <button @click="OnImageChange">Image</button>-->
+            <button @click="OnImageChange">Image</button>-->
     <div class="row" v-show="!gotoPage">
       <div class="search-area">
         <div>
@@ -159,7 +159,7 @@ export default {
       })
       $(event.target).addClass('button-press');
     },
-    OnCheck: function (){
+    OnCheck: function() {
       this.showOption = event.target.checked
     },
     OnResetSearch: function() {
@@ -178,17 +178,24 @@ export default {
       let host = n.host, path = n.path, updatetime = n.time;
       let self = this;
       self.requestStatus = 'goto page...';
-      axios.post(url.getPageData, { host: host, path: path })
+      axios.post(url.getPageData, { host: host, path: path, isPage: true })
         .then(resp => {
           self.$nextTick(function() {
-            console.log(resp.data.data)
             self.page = resp.data.data.page;
-            self.comments = resp.data.data.comments;
             self.requestStatus = '';
             self.gotoPage = true;
             self.newsTime = updatetime;
             n.isReaded = true;
             //self.$refs,newsPage.ScrollTop()
+          })
+        }).catch(err => {
+          console.error(err)
+        })
+
+      axios.post(url.getPageData, { host: host, path: path, isComment: true })
+        .then(resp => {
+          self.$nextTick(function() {
+            self.comments = resp.data.data.comments;
           })
         }).catch(err => {
           console.error(err)

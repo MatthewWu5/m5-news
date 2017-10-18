@@ -76,6 +76,56 @@ module.exports = {
             return;
         }
 
+        if (req.body.isPage) {
+            getRequestData(req.body.host, req.body.path).then(function (data) {
+                try {
+                    $ = cheerio.load(data.data, { decodeEntities: false })
+                    var container = $('<div id="container"></div>')
+                    if (isMatchContent && !$('#signals').html()) {
+                        $('.zb_left img').each(function (i, x) {
+                            var src = $(x).attr('src')
+                            if (src.indexOf('http') == -1) {
+                                src = 'https:' + src
+                            } else {
+                                src = src.replace('http', 'https')
+                            }
+                            $(x).attr('src', src)
+                            $(x).attr('alt', '')
+                        })
+                        $('.jijin-link').attr('target', '_blank')
+                        container.append($('.zb_left .tzhanbao .title'))
+                        container.append($('.zb_left .tzhanbao .content'))
+                    } else {
+                        $('#signals img').each(function (i, x) {
+                            var src = $(x).attr('src')
+                            if (src.indexOf('http') == -1) {
+                                src = 'https:' + src
+                            } else {
+                                src = src.replace('http', 'https')
+                            }
+                            $(x).attr('src', src)
+                            $(x).attr('alt', '')
+                        })
+                        container.append($('.title h1'))
+                        container.append($('#signals'))
+                    }
+                    //res.setHeader('Content-Type', 'image/jpeg')
+                    res.send({ code: 200, msg: 'done', data: { page: container.html() } })
+                } catch (err) {
+                    res.send({ code: 503, msg: 'error', data: { page: `Error: ${err}` } })
+                }
+            })
+        } else if (req.body.isComment) {
+            getRequestData('cache.zhibo8.cc', commentPath).then(function (data) {
+                try {
+                    res.send({ code: 200, msg: 'done', data: { comments: util.parseJson(data.data) } })
+                } catch (err) {
+                    res.send({ code: 503, msg: 'error', data: { comments: [], error: err } })
+                }
+            })
+        }
+        return
+
         Promise.all([getRequestData(req.body.host, req.body.path), getRequestData('cache.zhibo8.cc', commentPath)])
             .then(function (data) {
                 var comments;
