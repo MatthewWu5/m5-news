@@ -3,15 +3,15 @@
     <div class="row" v-show="!gotoPage">
       <div class="search-area">
         <div>
-          <button @click="OnLabelChange">Mancity</button>
-          <button @click="OnLabelChange">Barca</button>
-          <button @click="OnLabelChange">Barclays</button>
-          <button @click="OnLabelChange">All</button>
-          <button @click="OnLoadImageClick" :class="loadImage?'image-press':''">Image</button>
+          <button @click="OnLabelChange" tag="Mancity">City</button>
+          <button @click="OnLabelChange" tag="Barca">Barca</button>
+          <button @click="OnLabelChange" tag="Barclays">Eng</button>
+          <button @click="OnLabelChange" tag="All">All</button>
+          <button @click="OnLoadImageClick" :class="loadImage?'image-press':''">Img</button>
           <div style="display:inline-block;position:relative">
             <input type="checkbox" @click="OnCheck" class="checkbox-option">
           </div>
-          <i class="fa fa-refresh" @click="refreshOnClick" style="margin-top:5px"></i>
+          <i class="fa fa-refresh" @click="refreshOnClick"></i>
         </div>
         <div v-show="showOption" style="margin-top:5px">
           <input type="text" v-model="intervalDay" class="interval-days"></input>
@@ -128,11 +128,12 @@ export default {
       $('button.button-press').removeClass('button-press')
       var self = this;
       this.$nextTick(function() {
-        if (event.target.innerText == 'Barca') {
+        var tag = $(event.target).attr('tag')
+        if (tag == 'Barca') {
           self.label = '巴塞罗那';
-        } else if (event.target.innerText == 'Mancity') {
+        } else if (tag == 'Mancity') {
           self.label = '曼城';
-        } else if (event.target.innerText == 'Barclays') {
+        } else if (tag == 'Barclays') {
           self.label = '英超';
         } else {
           self.label = '';
@@ -187,7 +188,7 @@ export default {
     OnPageClick: function(n) {
       let host = n.host, path = n.path, updatetime = n.time;
       let self = this;
-      self.requestStatus = 'goto page...';
+      self.requestStatus = 'page going...';
       axios.post(url.getPageData, { host: host, path: path, isPage: true })
         .then(resp => {
           self.$nextTick(function() {

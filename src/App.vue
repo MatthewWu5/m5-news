@@ -49,8 +49,11 @@ export default {
     margin-left: -45px !important;
   }
   .search-area .fa-refresh {
-    float: right;
     font-size: 50px !important;
+    position: absolute;
+    top: 10px;
+    right: 35px;
+    margin-top: 5px;
   }
   #app .content-container {
     height: 1173px;
@@ -86,9 +89,13 @@ export default {
   .live-link-overflow {
     height: 70px !important;
   }
-  .checkbox-option {
-    top: -20px !important;
-    left: 10px !important;
+  .search-area .checkbox-option {
+    top: -23px;
+    left: 32px;
+    -webkit-transform: scale(3);
+  }
+  .margin>a {
+    font-size: 50px;
   }
 }
 /*end media on phone*/
@@ -121,7 +128,8 @@ export default {
   width: 53px;
 }
 
-.button-press, .image-press {
+.button-press,
+.image-press {
   background-color: #a8c6e2;
   cursor: default;
 }
@@ -158,11 +166,19 @@ export default {
   position: absolute;
   top: -15px;
   left: 8px;
-  -webkit-transform: scale(2);
+  -webkit-transform: scale(1.5);
 }
 
 .search-area .fa-refresh {
   font-size: 15px;
   margin-left: 30px;
+}
+
+.margin>a {
+  margin-left: 20px;
+}
+
+.margin>a:first-child {
+  margin-left: 0px;
 }
 </style>

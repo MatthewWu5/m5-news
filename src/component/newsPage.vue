@@ -73,8 +73,8 @@ export default {
 }
 
 .page img {
-    width: 800px;
-    height: 400px;
+    width: 600px;
+    height: 300px;
     max-width: 1000px !important;
 }
 
@@ -119,6 +119,10 @@ export default {
     }
     .news-page-container .comment .row {
         border-bottom: solid 2px #a8c6e2
+    }
+    .news-page-container .page img {
+        width: 1000px;
+        height: 500px;
     }
 }
 </style>
