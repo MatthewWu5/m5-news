@@ -90,12 +90,17 @@ export default {
     height: 70px !important;
   }
   .search-area .checkbox-option {
-    top: -23px;
-    left: 32px;
+    top: -20px;
+    left: 92px;
     -webkit-transform: scale(3);
   }
+  .search-area .fa-picture-o {
+    font-size: 47px !important;
+    top: -34px;
+    left: 10px;
+  }
   .margin>a {
-    font-size: 50px;
+    font-size: 45px;
   }
 }
 /*end media on phone*/
@@ -154,24 +159,31 @@ export default {
 }
 
 .content-container {
-  height: 500px;
+  height: 850px;
   overflow: auto;
   border-top: solid 1px #a8c6e2;
   border-bottom: solid 1px #a8c6e2;
   padding-left: 20px;
+  padding-bottom: 40px;
   margin-top: 5px;
 }
 
 .checkbox-option {
   position: absolute;
   top: -15px;
-  left: 8px;
+  left: 24px;
   -webkit-transform: scale(1.5);
+}
+
+.fa-picture-o {
+  position: absolute;
+  top: -15px;
+  font-size: 20px !important;
 }
 
 .search-area .fa-refresh {
   font-size: 15px;
-  margin-left: 30px;
+  margin-left: 43px;
 }
 
 .margin>a {

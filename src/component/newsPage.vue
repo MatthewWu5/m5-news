@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="newsPage">
         <button @click="OnBackClick">Back</button>
         <button v-show="comments && comments.length>0" @click="showComment = !showComment">{{'Comment:'+showComment}}</button>
         <div class="news-page-container">
@@ -63,6 +63,10 @@ export default {
 
 </script>
 <style>
+.newsPage {
+    margin-left: -15px;
+}
+
 .comment {
     margin-top: 10px;
     margin-right: 20px;
@@ -81,12 +85,13 @@ export default {
 .news-page-container,
 .news-page-container .page,
 .news-page-container .comment {
-    height: 560px;
+    height: 900px;
 }
 
 .news-page-container .page,
 .news-page-container .comment {
     overflow: auto;
+    padding-bottom: 40px;
 }
 
 .news-page-container {
@@ -121,8 +126,8 @@ export default {
         border-bottom: solid 2px #a8c6e2
     }
     .news-page-container .page img {
-        width: 1000px;
-        height: 500px;
+        width: 920px;
+        height: 460px;
     }
 }
 </style>

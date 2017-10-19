@@ -7,7 +7,9 @@
           <button @click="OnLabelChange" tag="Barca">Barca</button>
           <button @click="OnLabelChange" tag="Barclays">Eng</button>
           <button @click="OnLabelChange" tag="All">All</button>
-          <button @click="OnLoadImageClick" :class="loadImage?'image-press':''">Img</button>
+          <div style="display:inline-block;position:relative">
+            <i @click="OnLoadImageClick" class="fa fa-picture-o" :class="loadImage?'image-press':''"></i>
+          </div>
           <div style="display:inline-block;position:relative">
             <input type="checkbox" @click="OnCheck" class="checkbox-option">
           </div>
@@ -324,6 +326,8 @@ export default {
 </script>
 
 <style>
-
+.image-press {
+  color: #23527c;
+}
 </style>
 
