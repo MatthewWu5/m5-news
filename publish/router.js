@@ -9,13 +9,13 @@ for (prop in url) {
   router.post(url[prop], core[prop])
 }
 router.get('/', function (req, res) {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/dist/index.html');
 });
 router.get('/*', function (req, res) {
   if (req.url == '/__webpack_hmr') {
     res.send()
   } else {
-    res.sendFile(__dirname + req.url)
+    res.sendFile(__dirname + '/dist' + req.url)
   }
 });
 

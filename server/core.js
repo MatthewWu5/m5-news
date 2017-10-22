@@ -137,8 +137,8 @@ module.exports = {
                 }
             })
         }
-        return
 
+        /*
         Promise.all([getRequestData(req.body.host, req.body.path), getRequestData('cache.zhibo8.cc', commentPath)])
             .then(function (data) {
                 var comments;
@@ -198,10 +198,10 @@ module.exports = {
             }).catch(function (err) {
                 console.error(err)
             })
-    },
+    
 
-    getHot24Data2: function (req, res) {
-        setTimeout(function () { console.log('after 100000') }, 100000)
+
+        */
     },
 
     getHot24Data: function (req, res) {
