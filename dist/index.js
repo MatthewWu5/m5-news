@@ -6,7 +6,7 @@ http.listen(port, function(){
   console.log('listening on *:' + port);
 });
 
-var router = require('../router');
+var router = require('./router');
 var bodyParser = require('body-parser');
 
 app.use(bodyParser.json());

@@ -76,7 +76,7 @@ export default {
     margin-top: 10px
 }
 
-.page img {
+.page img:not(.jijin-img) {
     width: 600px;
     height: 300px;
     max-width: 1000px !important;
@@ -125,7 +125,7 @@ export default {
     .news-page-container .comment .row {
         border-bottom: solid 2px #a8c6e2
     }
-    .news-page-container .page img {
+    .news-page-container .page img:not(.jijin-img) {
         width: 920px;
         height: 460px;
     }

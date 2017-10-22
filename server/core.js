@@ -81,35 +81,48 @@ module.exports = {
                 try {
                     $ = cheerio.load(data.data, { decodeEntities: false })
                     var container = $('<div id="container"></div>')
-                    if (isMatchContent && !$('#signals').html()) {
-                        $('.zb_left img').each(function (i, x) {
-                            var src = $(x).attr('src')
-                            if (src.indexOf('http') == -1) {
-                                src = 'https:' + src
-                            } else {
-                                src = src.replace('http', 'https')
-                            }
-                            $(x).attr('src', src)
-                            $(x).attr('alt', '')
-                        })
-                        $('.jijin-link').attr('target', '_blank')
-                        container.append($('.zb_left .tzhanbao .title'))
-                        container.append($('.zb_left .tzhanbao .content'))
+                    if (hot24HoursCache.date && !hot24HoursCache.loadImage) {
+                        if (isMatchContent && !$('#signals').html()) {
+                            $('.zb_left img').remove()
+                            $('.jijin-link').attr('target', '_blank')
+                            container.append($('.zb_left .tzhanbao .title'))
+                            container.append($('.zb_left .tzhanbao .content'))
+                        }
+                        else {
+                            $('#signals img').remove()
+                            container.append($('.title h1'))
+                            container.append($('#signals'))
+                        }
                     } else {
-                        $('#signals img').each(function (i, x) {
-                            var src = $(x).attr('src')
-                            if (src.indexOf('http') == -1) {
-                                src = 'https:' + src
-                            } else {
-                                src = src.replace('http', 'https')
-                            }
-                            $(x).attr('src', src)
-                            $(x).attr('alt', '')
-                        })
-                        container.append($('.title h1'))
-                        container.append($('#signals'))
+                        if (isMatchContent && !$('#signals').html()) {
+                            $('.zb_left img').each(function (i, x) {
+                                var src = $(x).attr('src')
+                                if (src.indexOf('http') == -1) {
+                                    src = 'https:' + src
+                                } else {
+                                    src = src.replace('http', 'https')
+                                }
+                                $(x).attr('src', src)
+                                $(x).attr('alt', '')
+                            })
+                            $('.jijin-link').attr('target', '_blank')
+                            container.append($('.zb_left .tzhanbao .title'))
+                            container.append($('.zb_left .tzhanbao .content'))
+                        } else {
+                            $('#signals img').each(function (i, x) {
+                                var src = $(x).attr('src')
+                                if (src.indexOf('http') == -1) {
+                                    src = 'https:' + src
+                                } else {
+                                    src = src.replace('http', 'https')
+                                }
+                                $(x).attr('src', src)
+                                $(x).attr('alt', '')
+                            })
+                            container.append($('.title h1'))
+                            container.append($('#signals'))
+                        }
                     }
-                    //res.setHeader('Content-Type', 'image/jpeg')
                     res.send({ code: 200, msg: 'done', data: { page: container.html() } })
                 } catch (err) {
                     res.send({ code: 503, msg: 'error', data: { page: `Error: ${err}` } })
