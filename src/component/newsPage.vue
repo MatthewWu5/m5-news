@@ -3,24 +3,35 @@
         <button @click="OnBackClick">Back</button>
         <button v-show="comments && comments.length>0" @click="showComment = !showComment">{{'Comment:'+showComment}}</button>
         <div class="news-page-container">
-            <div class="page" v-show="!showComment">
-                <div class="time">{{time}}</div>
-                <div v-html="_page"></div>
-            </div>
-            <div class="comment" v-show="showComment">
-                <div class="row" v-for="comment in comments" v-bind:key="comment">
-                    <div class="col-sm-2" style="color:#a8c6e2">{{comment.up}}</div>
-                    <div class="col-sm-10">{{comment.content}}</div>
-                </div>
-            </div>
+            <swipe ref="mySwipe" :speed="100" :default-index="1" :auto="0" :continuous="false" :show-indicators="false" @change="changeSwipe">
+                <swipe-item></swipe-item>
+                <swipe-item>
+                    <div class="page">
+                        <div class="time">{{time}}</div>
+                        <div v-html="_page"></div>
+                    </div>
+                </swipe-item>
+                <swipe-item v-if="comments && comments.length>0">
+                    <div class="comment">
+                        <div class="row" v-for="comment in comments" v-bind:key="comment">
+                            <div class="col-sm-2" style="color:#a8c6e2">{{comment.up}}</div>
+                            <div class="col-sm-10">{{comment.content}}</div>
+                        </div>
+                    </div>
+                </swipe-item>
+            </swipe>
         </div>
     </div>
 </template>
 
 <script>
 import $ from 'jquery'
+// require('vue-swipe/dist/vue-swipe.css')
+// import { Swipe, SwipeItem } from 'vue-swipe'
+import { Swipe, SwipeItem } from '../lib/vue-swipe'
 export default {
     name: 'newsPage',
+    components: { Swipe, SwipeItem },
     props: {
         page: String,
         comments: Array,
@@ -54,11 +65,23 @@ export default {
         },
         ScrollTop: function() {
             //TODO: how to call subcomponent's method by parent
-            console.log('scroll top')
+            console.log('ScrollTop', $('.page'))
             $('.page').scrollTop(0)
             $('.comment').scrollTop(0)
+        },
+        changeSwipe: function(newIndex, oldIndex) {
+            if (oldIndex == 1 && newIndex == 0) {
+                this.$refs.mySwipe.goto(1)
+                this.OnBackClick()
+            }
+            else if (oldIndex == 1 && newIndex == 2) {
+                this.showComment = true
+            }
+            else if (oldIndex == 2 && newIndex == 1) {
+                this.showComment = false
+            }
         }
-    }
+    },
 }
 
 </script>
