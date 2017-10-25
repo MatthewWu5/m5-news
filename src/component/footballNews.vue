@@ -23,7 +23,7 @@
           <i class="fa fa-times removeBtn" @click="OnResetSearch" v-show="showOption"></i>
         </div>
         <div style="margin-top:5px">
-          <button @click="OnGoPageClick">Page</button>
+          <button class="page-btn" @click="OnGoPageClick">Page</button>
           <span style="color: #a8c6e2;font-weight: bold;margin-left:10px">
             {{'Min Time: '+_currentMinDateString}}
           </span>
@@ -37,15 +37,22 @@
         <span @click="OnCategoryChange">Others</span>
       </div>
       <div class="content-container" :class="showOption?'content-container-showOption':''">
-        <div v-for="item in _filteredNews" v-bind:key="item">
-          <div v-for="n in item.news" v-bind:key="n" :title="n.time">
-            <a href="#" :class="getClass(n)" @click="OnPageClick(n)">{{n.title}}</a>
-            <!--<span>{{n.time}}</span>-->
-          </div>
-        </div>
+        <swipe ref="homeSwipe" :speed="100" :default-index="0" :auto="0" :continuous="false" :show-indicators="false" @change="changeSwipe">
+          <swipe-item>
+            <div v-for="item in _filteredNews" v-bind:key="item">
+              <div v-for="n in item.news" v-bind:key="n" :title="n.time">
+                <a href="#" :class="getClass(n)" @click="OnPageClick(n)">{{n.title}}</a>
+                <!--<span>{{n.time}}</span>-->
+              </div>
+            </div>
+          </swipe-item>
+          <swipe-item></swipe-item>
+        </swipe>
       </div>
     </div>
+
     <newsPage :page="page" :comments="comments" :showComment="showComment" :time="newsTime" v-show="gotoPage" v-on:listenToChildEvent="messageFromChild" ref="newsPage"></newsPage>
+
   </div>
 </template>
 
@@ -55,9 +62,10 @@ import const_news from '../../server/const'
 import axios from 'axios'
 import url from '../../server/url'
 import newsPage from './newsPage'
+import { Swipe, SwipeItem } from '../lib/vue-swipe'
 export default {
   name: 'footballNews',
-  components: { newsPage },
+  components: { newsPage, Swipe, SwipeItem },
   data() {
     return {
       footballNews: [],
@@ -113,6 +121,12 @@ export default {
     }
   },
   methods: {
+    changeSwipe: function(newIndex, oldIndex) {
+      if (newIndex == 1) {
+        this.$refs.homeSwipe.goto(0)
+        this.OnGoPageClick()
+      }
+    },
     getClass: function(n) {
       let _class = '';
       if (n.isLeo) {

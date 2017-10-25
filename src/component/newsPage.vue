@@ -147,7 +147,7 @@ export default {
     .news-page-container,
     .news-page-container .page,
     .news-page-container .comment {
-        height: 1320px !important;
+        height: 1360px !important;
     }
     .news-page-container .page .time {
         font-size: 40px;
