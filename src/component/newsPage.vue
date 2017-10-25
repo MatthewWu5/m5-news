@@ -1,7 +1,7 @@
 <template>
     <div class="newsPage">
         <button @click="OnBackClick">Back</button>
-        <button v-show="comments && comments.length>0" @click="showComment = !showComment">{{'Comment:'+showComment}}</button>
+        <button v-show="comments && comments.length>0" @click="showComment">{{'Comment:'+showComment}}</button>
         <div class="news-page-container">
             <swipe ref="mySwipe" :speed="100" :default-index="1" :auto="0" :continuous="false" :show-indicators="false" @change="changeSwipe">
                 <swipe-item></swipe-item>
@@ -69,6 +69,14 @@ export default {
             $('.page').scrollTop(0)
             $('.comment').scrollTop(0)
         },
+        showComment: function() {
+            if (this.showComment) {
+                this.$refs.mySwipe.goto(1)
+            } else {
+                this.$refs.mySwipe.goto(2)
+            }
+            this.showComment = !this.showComment
+        },
         changeSwipe: function(newIndex, oldIndex) {
             if (oldIndex == 1 && newIndex == 0) {
                 this.$refs.mySwipe.goto(1)
@@ -129,6 +137,9 @@ export default {
 }
 
 @media (max-width: 992px) {
+    .newsPage>button {
+        display: none;
+    }
     .news-page-container {
         font-size: 50px;
         border-bottom: solid 2px #a8c6e2;
