@@ -55,6 +55,9 @@ export default {
     right: 35px;
     margin-top: 5px;
   }
+  .search-area .page-btn {
+    display: none;
+  }
   #app .content-container {
     height: 1173px;
     overflow: auto;
@@ -166,6 +169,10 @@ export default {
   padding-left: 20px;
   padding-bottom: 40px;
   margin-top: 5px;
+}
+
+.content-container .mint-swipe-item.is-active {
+  overflow: auto;
 }
 
 .checkbox-option {
