@@ -4,9 +4,16 @@
         <div v-show="!gotoPage">
             <div class="search-area">
                 <button @click="OnGoPageClick">Page</button>
+                <a style="margin-left:10px" href="https://www.zhibo8.cc/zuqiu/luxiang.htm" target="_blank">Record</a>
                 <span style="margin-left:10px">{{requestStatus}}</span>
             </div>
             <div class="liveMatch content-container">
+                <div v-for="item in endData" v-bind:key="item">
+                    <div>{{item.date}}</div>
+                    <div v-for="m in item.match" v-bind:key="m" class="live-link-overflow">
+                        <a v-bind:href="m.highlight" target="_blank" :class="getClass(m)" style="color:#c1cbd4">{{m.text}}</a>
+                    </div>
+                </div>
                 <div v-for="item in liveData" v-bind:key="item">
                     <div>{{item.date}}</div>
                     <div v-for="m in item.match" v-bind:key="m" class="live-link-overflow">
@@ -47,7 +54,16 @@ export default {
         axios.post(url.getLiveData).then(resp => {
             self.$nextTick(function() {
                 self.liveData = resp.data.data
-                self.requestStatus = ''
+                self.requestStatus = self.requestStatus == 'loading' ? '' : 'loading'
+            })
+        }).catch(err => {
+            console.error(err)
+        })
+
+        axios.post(url.getEndingData).then(resp => {
+            self.$nextTick(function() {
+                self.endData = resp.data.data
+                self.requestStatus = self.requestStatus == 'loading' ? '' : 'loading'
             })
         }).catch(err => {
             console.error(err)

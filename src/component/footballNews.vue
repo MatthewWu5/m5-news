@@ -37,7 +37,8 @@
         <span @click="OnCategoryChange">Others</span>
       </div>
       <div class="content-container" :class="showOption?'content-container-showOption':''">
-        <swipe ref="homeSwipe" :speed="100" :default-index="0" :auto="0" :continuous="false" :show-indicators="false" @change="changeSwipe">
+        <swipe ref="homeSwipe" :speed="100" :default-index="1" :auto="0" :continuous="false" :show-indicators="false" @change="changeSwipe">
+          <swipe-item>Back to page comment...</swipe-item>
           <swipe-item>
             <div v-for="item in _filteredNews" v-bind:key="item">
               <div v-for="n in item.news" v-bind:key="n" :title="n.time">
@@ -46,7 +47,7 @@
               </div>
             </div>
           </swipe-item>
-          <swipe-item></swipe-item>
+          <swipe-item>Go to page content...</swipe-item>
         </swipe>
       </div>
     </div>
@@ -121,12 +122,6 @@ export default {
     }
   },
   methods: {
-    changeSwipe: function(newIndex, oldIndex) {
-      if (newIndex == 1) {
-        this.$refs.homeSwipe.goto(0)
-        this.OnGoPageClick()
-      }
-    },
     getClass: function(n) {
       let _class = '';
       if (n.isLeo) {
@@ -179,11 +174,11 @@ export default {
       if ($(event.target).hasClass('image-press')) {
         $('meta[name="referrer"]').attr('content', 'always')
         $(event.target).removeClass('image-press')
-        axios.post(url.sendImageLoadFlag, { loadImage: false })
+        axios.post(url.sendLoadImageFlag, { loadImage: false })
       } else {
         $('meta[name="referrer"]').attr('content', 'never')
         $(event.target).addClass('image-press')
-        axios.post(url.sendImageLoadFlag, { loadImage: true })
+        axios.post(url.sendLoadImageFlag, { loadImage: true })
       }
     },
     OnCheck: function() {
@@ -205,10 +200,11 @@ export default {
       let host = n.host, path = n.path, updatetime = n.time;
       let self = this;
       self.requestStatus = 'page going...';
-      axios.post(url.getPageData, { host: host, path: path, isPage: true })
+      axios.post(url.getPageData, { host: host, path: path })
         .then(resp => {
           self.$nextTick(function() {
             self.page = resp.data.data.page;
+            self.comments = resp.data.data.comments;
             self.requestStatus = '';
             self.gotoPage = true;
             self.newsTime = updatetime;
@@ -218,19 +214,18 @@ export default {
         }).catch(err => {
           console.error(err)
         })
-
-      axios.post(url.getPageData, { host: host, path: path, isComment: true })
-        .then(resp => {
-          self.$nextTick(function() {
-            self.comments = resp.data.data.comments;
-          })
-        }).catch(err => {
-          console.error(err)
-        })
     },
     OnGoPageClick: function() {
-      this.gotoPage = !this.gotoPage;
-      this.showComment = false;
+      this.gotoPage = true
+      this.$refs.newsPage.GotoPageContent()
+    },
+    changeSwipe: function(newIndex, oldIndex) {
+      this.$refs.homeSwipe.goto(1)
+      this.gotoPage = true
+      this.showComment = newIndex == 0
+      if(newIndex == 0){
+        this.$refs.newsPage.GotoPageComment()
+      }
     },
     messageFromChild: function() {
       this.gotoPage = false;

@@ -8,8 +8,8 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${file}"
-            //"program": "${workspaceRoot}\\build\\dev-server.js"
+            // "program": "${file}"
+            "program": "${workspaceRoot}\\build\\dev-server.js"
         },
     ]
 }

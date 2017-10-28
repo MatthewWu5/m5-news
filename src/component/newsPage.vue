@@ -1,24 +1,26 @@
 <template>
     <div class="newsPage">
         <button @click="OnBackClick">Back</button>
-        <button v-show="comments && comments.length>0" @click="showComment">{{'Comment:'+showComment}}</button>
+        <button v-show="comments && comments.length>0" @click="OnCommentClick">{{'Comment:'+showComment}}</button>
         <div class="news-page-container">
             <swipe ref="mySwipe" :speed="100" :default-index="1" :auto="0" :continuous="false" :show-indicators="false" @change="changeSwipe">
-                <swipe-item></swipe-item>
+                <swipe-item>Previous to home page...</swipe-item>
                 <swipe-item>
                     <div class="page">
                         <div class="time">{{time}}</div>
                         <div v-html="_page"></div>
                     </div>
                 </swipe-item>
-                <swipe-item v-if="comments && comments.length>0">
-                    <div class="comment">
+                <swipe-item>
+                    <div class="comment" v-if="comments && comments.length>0">
                         <div class="row" v-for="comment in comments" v-bind:key="comment">
                             <div class="col-sm-2" style="color:#a8c6e2">{{comment.up}}</div>
                             <div class="col-sm-10">{{comment.content}}</div>
                         </div>
                     </div>
+                    <div v-else>'in comment swipe' To home page...</div>
                 </swipe-item>
+                <swipe-item v-if="comments && comments.length>0">To home page...</swipe-item>
             </swipe>
         </div>
     </div>
@@ -57,7 +59,13 @@ export default {
                 })
                 return container.html()
             }
-        }
+        },
+        // _showCommentFlag: function() {
+        //     if (this.showComment) {
+        //         this.$refs.mySwipe.goto(2)
+        //     }
+        //     return this.showComment
+        // }
     },
     methods: {
         OnBackClick: function() {
@@ -69,7 +77,19 @@ export default {
             $('.page').scrollTop(0)
             $('.comment').scrollTop(0)
         },
-        showComment: function() {
+        GotoPageContent: function() {
+            this.$refs.mySwipe.goto(1)
+        },
+        GotoPageComment: function() {
+            if (this.comments && this.comments.length > 0) {
+                this.$refs.mySwipe.goto(2)
+            }
+            else {
+                this.$refs.mySwipe.goto(1)
+            }
+        },
+        OnCommentClick: function() {
+            console.log(this.showComment)
             if (this.showComment) {
                 this.$refs.mySwipe.goto(1)
             } else {
@@ -83,10 +103,21 @@ export default {
                 this.OnBackClick()
             }
             else if (oldIndex == 1 && newIndex == 2) {
-                this.showComment = true
+                if (this.comments && this.comments.length > 0) {
+                    this.showComment = true
+                } else {
+                    this.$refs.mySwipe.goto(1)
+                    this.OnBackClick()
+                }
             }
             else if (oldIndex == 2 && newIndex == 1) {
-                this.showComment = false
+                if (this.comments && this.comments.length > 0) {
+                    this.showComment = false
+                }
+            }
+            else if (oldIndex == 2 && newIndex == 3) {
+                this.$refs.mySwipe.goto(1)
+                this.OnBackClick()
             }
         }
     },

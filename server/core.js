@@ -52,9 +52,11 @@ module.exports = {
         })
     },
     getPageData: function (req, res) {
+        //news
         //https://news.zhibo8.cc/zuqiu/2017-08-12/598ec61e92a37.htm
         //https://cache.zhibo8.cc/json/2017_08_12/news/zuqiu/598ec61e92a37_hot.htm
 
+        //video
         //https://www.zhibo8.cc/zuqiu/2017/0816-fangshou.htm
         //https://cache.zhibo8.cc/json/2017/zuqiujijin/0816/fangshou_hot.htm
 
@@ -76,6 +78,7 @@ module.exports = {
             return;
         }
 
+        /*
         if (req.body.isPage) {
             getRequestData(req.body.host, req.body.path).then(function (data) {
                 try {
@@ -137,8 +140,8 @@ module.exports = {
                 }
             })
         }
+        */
 
-        /*
         Promise.all([getRequestData(req.body.host, req.body.path), getRequestData('cache.zhibo8.cc', commentPath)])
             .then(function (data) {
                 var comments;
@@ -153,9 +156,21 @@ module.exports = {
                         commentData = data[0].data;
                     }
 
-                    try {
-                        $ = cheerio.load(htmlData, { decodeEntities: false })
-                        var container = $('<div id="container"></div>')
+                    $ = cheerio.load(htmlData, { decodeEntities: false })
+                    var container = $('<div id="container"></div>')
+                    if (hot24HoursCache.date && !hot24HoursCache.loadImage) {
+                        if (isMatchContent && !$('#signals').html()) {
+                            $('.zb_left img').remove()
+                            $('.jijin-link').attr('target', '_blank')
+                            container.append($('.zb_left .tzhanbao .title'))
+                            container.append($('.zb_left .tzhanbao .content'))
+                        }
+                        else {
+                            $('#signals img').remove()
+                            container.append($('.title h1'))
+                            container.append($('#signals'))
+                        }
+                    } else {
                         if (isMatchContent && !$('#signals').html()) {
                             $('.zb_left img').each(function (i, x) {
                                 var src = $(x).attr('src')
@@ -184,24 +199,17 @@ module.exports = {
                             container.append($('.title h1'))
                             container.append($('#signals'))
                         }
-
-                        comments = util.parseJson(commentData)
-                    } catch (err) {
-                        console.error(err)
                     }
-                    //res.setHeader('Content-Type', 'image/jpeg')
+
+                    comments = util.parseJson(commentData)
                     res.send({ code: 200, msg: 'done', data: { page: container.html(), comments: comments } })
                 }
                 else {
-                    res.send({ code: 200, msg: 'error', data: {} })
+                    res.send({ code: 404, msg: 'error', data: {} })
                 }
             }).catch(function (err) {
-                console.error(err)
+                res.send({ code: 503, msg: 'error', data: { page: `Error: ${err}` } })
             })
-    
-
-
-        */
     },
 
     getHot24Data: function (req, res) {
@@ -423,7 +431,38 @@ module.exports = {
             })
     },
 
-    sendImageLoadFlag: function (req, res) {
+    getEndingData: function (req, res) {
+        var today = util.formatRequestDate(new Date())
+        var yesterday = util.formatRequestDate(new Date(), 1)
+        Promise.all([getRequestData('m.zhibo8.cc', `/json/record/${today}.htm`), getRequestData('m.zhibo8.cc', `/json/record/${yesterday}.htm`)]).then(function (data) {
+            if (data.length == 2) {
+                var collection = []
+                for (let item of data) {
+                    var resultList = util.parseJson(item.data).list.filter(x => x.type == 'football' && util.isMatchInLive(x.label))
+                    if (resultList.length > 0) {
+                        var mapedData = resultList.map(function (x) {
+                            return {
+                                text: `${x.stime} ${x.league.name_cn} ${x.home_team} - ${x.visit_team}`,
+                                highlight: 'https://www.zhibo8.cc' + x.url,
+                                record: 'https://www.zhibo8.cc' + x.luxiang_url,
+                                myFollow: util.indexOf(x.label, '曼城') || util.indexOf(x.label, '巴塞罗那')
+                            }
+                        })
+                        collection.push({ date: resultList[0].sdate + ' 星期' + new Date(resultList[0].sdate).getDay(), match: mapedData })
+                    }
+                }
+                if (collection.length == 2 && collection[0].date > collection[1].date) {
+                    collection = [collection[1], collection[0]]
+                }
+                res.send({ code: 200, msg: 'done', data: collection })
+            }
+        }).catch(function (err) {
+            console.error(err)
+            res.send({ code: 200, msg: 'error' })
+        })
+    },
+
+    sendLoadImageFlag: function (req, res) {
         hot24HoursCache.loadImage = req.body.loadImage
         res.send()
     },

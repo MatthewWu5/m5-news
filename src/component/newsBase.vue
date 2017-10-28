@@ -1,9 +1,8 @@
 <template>
     <div class="margin">
         <router-link :to="{name: 'FootballNews'}">News</router-link>
-        <router-link :to="{name: 'MessiVideo'}">Leo-Video</router-link>
         <router-link :to="{name: 'LiveMatch'}">Match</router-link>
-        <a href="https://www.zhibo8.cc/zuqiu/luxiang.htm" target="_blank">Record</a>
+        <router-link :to="{name: 'MessiVideo'}">Leo-Video</router-link>
         <router-link :to="{name: 'Topic'}">Topic</router-link>
         <router-view style="margin-top: 5px;margin-left:15px;margin-right:15px"></router-view>
     </div>

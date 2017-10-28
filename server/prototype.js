@@ -4,7 +4,7 @@ Array.prototype.distinct = function (prop) {
     if (this.length == 0 || !this[0].hasOwnProperty(prop)) {
         return;
     }
-    for (item of this) {
+    for (let item of this) {
         if (cacheKey.indexOf(item[prop]) == -1) {
             cacheKey.push(item[prop])
             cache.push(item)

@@ -61,7 +61,7 @@ var getFormatNewsData = function (category, rawData, urlType = 'news') {
         maxDate: result.length > 0 ? new Date(result[0].updatetime).toString() : ''
     }
 }
-var formatRequestDate = function (minDate, index) {
+var formatRequestDate = function (minDate, index = 0) {
     let date = new Date(minDate)
     date.setDate(date.getDate() - index);
     let month = date.getMonth() + 1;
