@@ -100,9 +100,9 @@ export default {
 }
 
 .page img:not(.jijin-img) {
-    width: 600px;
+    /*width: 600px;
     height: 300px;
-    max-width: 1000px !important;
+    max-width: 1000px !important;*/
 }
 
 .news-page-container,
@@ -149,8 +149,9 @@ export default {
         border-bottom: solid 2px #a8c6e2
     }
     .news-page-container .page img:not(.jijin-img) {
-        width: 920px;
-        height: 460px;
+        /*width: 920px;*/
+        /*height: 460px;*/
+        width: 100%;
     }
 }
 </style>
