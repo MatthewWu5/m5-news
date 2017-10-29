@@ -14,8 +14,11 @@
                 <swipe-item>
                     <div class="comment" v-if="comments && comments.length>0">
                         <div class="row" v-for="comment in comments" v-bind:key="comment">
-                            <div class="col-sm-2" style="color:#a8c6e2">{{comment.up}}</div>
-                            <div class="col-sm-10">{{comment.content}}</div>
+                            <div>{{comment.content}}</div>
+                            <div>
+                                <span>{{comment.up}}</span>-
+                                <span>{{comment.down}}</span>
+                            </div>
                         </div>
                     </div>
                     <div v-else>'in comment swipe' To home page...</div>
@@ -129,15 +132,6 @@ export default {
     margin-left: -15px;
 }
 
-.comment {
-    margin-top: 10px;
-    margin-right: 20px;
-}
-
-.page {
-    margin-top: 10px
-}
-
 .page img:not(.jijin-img) {
     /*width: 600px;
     height: 300px;
@@ -152,6 +146,7 @@ export default {
 
 .news-page-container .page,
 .news-page-container .comment {
+    margin-top: 10px;
     overflow: auto;
     padding-bottom: 40px;
 }
@@ -164,10 +159,33 @@ export default {
     margin-top: 10px;
     margin-right: 10px;
     margin-bottom: 10px;
-    border-bottom: solid 1px #a8c6e2
+    margin-left: 0px;
+    border-bottom: solid 1px #a8c6e2;
+    position: relative;
+}
+
+.news-page-container .comment .row>div:nth-child(2) {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+.news-page-container .comment .row>div:nth-child(2)>span:nth-child(1) {
+    color: #3694ec;
+}
+
+.news-page-container .comment .row>div:nth-child(2)>span:nth-child(2) {
+    color: #404448;
+    margin-left: -13px;
 }
 
 @media (max-width: 992px) {
+    .page,
+    .comment {
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-top: 0px;
+    }
     .newsPage>button {
         display: none;
     }
@@ -185,15 +203,16 @@ export default {
     }
     .news-page-container .page h1 {
         font-size: 40px;
-        margin-bottom: 20px
+        margin-bottom: 20px;
     }
     .news-page-container .comment .row {
-        border-bottom: solid 2px #a8c6e2
+        border-bottom: solid 2px #a8c6e2;
     }
     .news-page-container .page img:not(.jijin-img) {
         /*width: 920px;*/
         /*height: 460px;*/
         width: 100%;
+        max-width: initial !important;
     }
 }
 </style>

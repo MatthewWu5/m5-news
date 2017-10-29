@@ -112,6 +112,10 @@ export default {
     font-weight: bolder;
 }
 
+.live-link-overflow>a.my-follow {
+    font-weight: bolder;
+}
+
 .p-link {
     color: #337ab7;
     cursor: pointer;

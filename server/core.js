@@ -55,25 +55,30 @@ module.exports = {
         //news
         //https://news.zhibo8.cc/zuqiu/2017-08-12/598ec61e92a37.htm
         //https://cache.zhibo8.cc/json/2017_08_12/news/zuqiu/598ec61e92a37_hot.htm
+        //https://cache.zhibo8.cc/json/2017_10_29/news/zuqiu/59f58854150d5_0.htm
 
         //video
         //https://www.zhibo8.cc/zuqiu/2017/0816-fangshou.htm
         //https://cache.zhibo8.cc/json/2017/zuqiujijin/0816/fangshou_hot.htm
 
-        let commentPath;
+        let hotCommentPath, commentPath
         if (req.body.host == 'news.zhibo8.cc') {
             let splits = req.body.path.split('/')
             let tailUrl = splits[splits.length - 1].split('.')[0];
-            commentPath = '/json/' + splits[splits.length - 2].replace(/-/g, '_') + '/news/zuqiu/'
+            hotCommentPath = '/json/' + splits[splits.length - 2].replace(/-/g, '_') + '/news/zuqiu/'
                 + tailUrl + '_hot.htm';
+            commentPath = '/json/' + splits[splits.length - 2].replace(/-/g, '_') + '/news/zuqiu/'
+                + tailUrl + '_0.htm';
             var isMatchContent = parseInt(tailUrl) > 0
         } else if (req.body.host == 'www.zhibo8.cc') {
             let splits = req.body.path.split('/')
             //0816-fangshou
             let tailUrl = splits[splits.length - 1].split('.')[0];
             let subStrs = tailUrl.split('-')
-            commentPath = '/json/' + splits[splits.length - 2] + '/zuqiujijin/'
+            hotCommentPath = '/json/' + splits[splits.length - 2] + '/zuqiujijin/'
                 + subStrs[0] + '/' + subStrs[1] + '_hot.htm';
+            commentPath = '/json/' + splits[splits.length - 2] + '/zuqiujijin/'
+                + subStrs[0] + '/' + subStrs[1] + '_0.htm';
         } else {
             return;
         }
@@ -142,18 +147,21 @@ module.exports = {
         }
         */
 
-        Promise.all([getRequestData(req.body.host, req.body.path), getRequestData('cache.zhibo8.cc', commentPath)])
-            .then(function (data) {
-                var comments;
+        Promise.all([getRequestData(req.body.host, req.body.path), getRequestData('cache.zhibo8.cc', hotCommentPath), getRequestData('cache.zhibo8.cc', commentPath)])
+            .then(function (resps) {
+                var hotCommentData;
                 var commentData;
                 var htmlData;
-                if (data.length == 2) {
-                    if (data[0].path == req.body.path) {
-                        htmlData = data[0].data;
-                        commentData = data[1].data;
-                    } else {
-                        htmlData = data[1].data;
-                        commentData = data[0].data;
+                if (resps.length == 3) {
+                    for (let resp of resps) {
+                        switch (resp.path) {
+                            case req.body.path: htmlData = resp.data
+                                continue
+                            case hotCommentPath: hotCommentData = resp.data
+                                continue
+                            case commentPath: commentData = resp.data
+                                continue
+                        }
                     }
 
                     $ = cheerio.load(htmlData, { decodeEntities: false })
@@ -201,8 +209,22 @@ module.exports = {
                         }
                     }
 
-                    comments = util.parseJson(commentData)
-                    res.send({ code: 200, msg: 'done', data: { page: container.html(), comments: comments } })
+                    var comments = util.parseJson(hotCommentData)
+                    if (comments && comments.length > 0) {
+                        comments = comments.concat(util.parseJson(commentData))
+                        comments = comments.distinct('id')
+                    } else {
+                        comments = util.parseJson(commentData)
+                    }
+
+                    var selectedComments = comments.map(function (comment) {
+                        return {
+                            up: comment.up,
+                            down: comment.down,
+                            content: comment.content
+                        }
+                    })
+                    res.send({ code: 200, msg: 'done', data: { page: container.html(), comments: selectedComments } })
                 }
                 else {
                     res.send({ code: 404, msg: 'error', data: {} })
@@ -213,8 +235,7 @@ module.exports = {
     },
 
     getHot24Data: function (req, res) {
-        //should use 304
-        if (hot24HoursCache.date && (new Date().getTime() - hot24HoursCache.date.getTime()) / 1000 < 7200) {
+        if (hot24HoursCache.date && (new Date().getTime() - hot24HoursCache.date.getTime()) / 1000 / 3600 < 2) {
             res.send({ code: 200, msg: 'done', data: { source: hot24HoursCache.source, minDate: hot24HoursCache.minDate, loadImage: hot24HoursCache.loadImage } })
             return
         }
@@ -259,9 +280,20 @@ module.exports = {
                             var news = source.find(x => x.category == category).news
                             incrementalNews.reverse()
                             for (let incre of incrementalNews) {
-                                news.unshift(incre)
+                                var findResult = news.find(x => x.path == incre.path)
+                                if (findResult) {
+                                    findResult.title = incre.title
+                                    findResult.url = incre.url
+                                    findResult.host = incre.host
+                                    findResult.time = incre.time
+                                    findResult.updatetime = incre.updatetime
+                                    findResult.lable = incre.lable
+                                    findResult.isLeo = incre.isLeo
+                                } else {
+                                    news.unshift(incre)
+                                }
                             }
-                            source.find(x => x.category == category).news = news.distinct('path')
+                            // source.find(x => x.category == category).news = news.distinct('path')
                         }
                     }
                     insertData(result._international.news, hot24HoursCache.source, '_international')
@@ -364,8 +396,8 @@ module.exports = {
     },
 
     getLiveData: function (req, res) {
-        if (liveDataCache.date && (new Date().getTime() - liveDataCache.date.getTime()) / 1000 / 3600 < 24) {
-            res.send({ code: 200, msg: 'done', data: liveDataCache.data })
+        if (liveDataCache.date && (new Date().getTime() - liveDataCache.date.getTime()) / 1000 / 3600 < 2) {
+            res.send({ code: 200, msg: 'done', data: liveDataCache.liveData })
             return
         }
         getRequestData('www.zhibo8.cc', '/index.html').then(function (data) {
@@ -393,7 +425,7 @@ module.exports = {
                 }
             })
             liveDataCache.date = new Date()
-            liveDataCache.data = collection
+            liveDataCache.liveData = collection
             res.send({ code: 200, msg: 'done', data: collection })
         }).catch(function (err) {
             console.error(err)
@@ -432,6 +464,10 @@ module.exports = {
     },
 
     getEndingData: function (req, res) {
+        if (liveDataCache.date && (new Date().getTime() - liveDataCache.date.getTime()) / 1000 / 3600 < 2) {
+            res.send({ code: 200, msg: 'done', data: liveDataCache.endData })
+            return
+        }
         var today = util.formatRequestDate(new Date())
         var yesterday = util.formatRequestDate(new Date(), 1)
         Promise.all([getRequestData('m.zhibo8.cc', `/json/record/${today}.htm`), getRequestData('m.zhibo8.cc', `/json/record/${yesterday}.htm`)]).then(function (data) {
@@ -443,17 +479,19 @@ module.exports = {
                         var mapedData = resultList.map(function (x) {
                             return {
                                 text: `${x.stime} ${x.league.name_cn} ${x.home_team} - ${x.visit_team}`,
-                                highlight: 'https://www.zhibo8.cc' + x.url,
+                                highlight: 'https://m.zhibo8.cc' + x.url,
                                 record: 'https://www.zhibo8.cc' + x.luxiang_url,
                                 myFollow: util.indexOf(x.label, '曼城') || util.indexOf(x.label, '巴塞罗那')
                             }
                         })
+                        mapedData.reverse()
                         collection.push({ date: resultList[0].sdate + ' 星期' + new Date(resultList[0].sdate).getDay(), match: mapedData })
                     }
                 }
                 if (collection.length == 2 && collection[0].date > collection[1].date) {
                     collection = [collection[1], collection[0]]
                 }
+                liveDataCache.endData = collection
                 res.send({ code: 200, msg: 'done', data: collection })
             }
         }).catch(function (err) {
