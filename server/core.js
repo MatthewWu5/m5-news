@@ -107,8 +107,6 @@ module.exports = {
                                 var src = $(x).attr('src')
                                 if (src.indexOf('http') == -1) {
                                     src = 'https:' + src
-                                } else {
-                                    src = src.replace('http', 'https')
                                 }
                                 $(x).attr('src', src)
                                 $(x).attr('alt', '')
@@ -121,8 +119,6 @@ module.exports = {
                                 var src = $(x).attr('src')
                                 if (src.indexOf('http') == -1) {
                                     src = 'https:' + src
-                                } else {
-                                    src = src.replace('http', 'https')
                                 }
                                 $(x).attr('src', src)
                                 $(x).attr('alt', '')
@@ -184,9 +180,7 @@ module.exports = {
                                 var src = $(x).attr('src')
                                 if (src.indexOf('http') == -1) {
                                     src = 'https:' + src
-                                } else {
-                                    src = src.replace('http', 'https')
-                                }
+                                } 
                                 $(x).attr('src', src)
                                 $(x).attr('alt', '')
                             })
@@ -198,9 +192,7 @@ module.exports = {
                                 var src = $(x).attr('src')
                                 if (src.indexOf('http') == -1) {
                                     src = 'https:' + src
-                                } else {
-                                    src = src.replace('http', 'https')
-                                }
+                                } 
                                 $(x).attr('src', src)
                                 $(x).attr('alt', '')
                             })

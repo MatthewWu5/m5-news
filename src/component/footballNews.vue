@@ -199,7 +199,7 @@ export default {
     OnPageClick: function(n) {
       let host = n.host, path = n.path, updatetime = n.time;
       let self = this;
-      self.requestStatus = 'page going...';
+      self.requestStatus = 'going...';
       axios.post(url.getPageData, { host: host, path: path })
         .then(resp => {
           self.$nextTick(function() {

@@ -94,13 +94,13 @@ export default {
   }
   .search-area .checkbox-option {
     top: -20px;
-    left: 92px;
-    -webkit-transform: scale(3);
+    left: 15px;
+    -webkit-transform: scale(3.5);
   }
   .search-area .fa-picture-o {
-    font-size: 47px !important;
-    top: -34px;
-    left: 10px;
+    font-size: 57px !important;
+    top: -37px;
+    left: 80px;
   }
   .margin>a {
     font-size: 45px;
