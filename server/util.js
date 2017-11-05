@@ -20,13 +20,25 @@ var isTop5League = function (str) {
     return false;
 }
 var isMatchInLive = function (str) {
-    if (str.indexOf('曼城') != -1 || str.indexOf('曼联') != -1
-        || str.indexOf('阿森纳') != -1 || str.indexOf('切尔西') != -1
-        || str.indexOf('利物浦') != -1 || str.indexOf('热刺') != -1
-        || str.indexOf('巴塞罗那') != -1 || str.indexOf('皇家马德里') != -1
-        || str.indexOf('巴黎圣日耳曼') != -1
-        || str.indexOf('拜仁慕尼黑') != -1) {
-        return true
+    if (str.indexOf('足球') != -1) {
+        if (str.indexOf('曼城') != -1 || str.indexOf('曼联') != -1
+            || str.indexOf('阿森纳') != -1 || str.indexOf('切尔西') != -1
+            || str.indexOf('利物浦') != -1 || str.indexOf('热刺') != -1
+            || str.indexOf('巴塞罗那') != -1 || str.indexOf('皇家马德里') != -1
+            || str.indexOf('巴黎圣日耳曼') != -1
+            || str.indexOf('拜仁慕尼黑') != -1
+            || str.indexOf('巴西') != -1
+            || str.indexOf('阿根廷') != -1
+            || str.indexOf('中国') != -1
+            || str.indexOf('西班牙') != -1
+            || str.indexOf('法国') != -1
+            || str.indexOf('德国') != -1
+            || str.indexOf('比利时') != -1
+            || str.indexOf('英格兰') != -1
+            || str.indexOf('葡萄牙') != -1
+            || str.indexOf('意大利') != -1) {
+            return true
+        }
     }
     return false
 }

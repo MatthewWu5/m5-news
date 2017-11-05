@@ -209,7 +209,7 @@ export default {
             self.gotoPage = true;
             self.newsTime = updatetime;
             n.isReaded = true;
-            self.$refs.newsPage.ScrollTop()
+            self.$refs.newsPage.GotoPageContent()
           })
         }).catch(err => {
           console.error(err)

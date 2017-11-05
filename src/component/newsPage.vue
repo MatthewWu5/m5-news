@@ -12,16 +12,17 @@
                     </div>
                 </swipe-item>
                 <swipe-item>
-                    <div class="comment" v-if="comments && comments.length>0">
-                        <div class="row" v-for="comment in comments" v-bind:key="comment">
-                            <div>{{comment.content}}</div>
-                            <div>
-                                <span>{{comment.up}}</span>-
-                                <span>{{comment.down}}</span>
+                    <div v-html="_comment"></div>
+                    <!--<div class="comment" v-if="comments && comments.length>0">
+                            <div class="row" v-for="comment in comments" v-bind:key="comment">
+                                <div>{{comment.content}}</div>
+                                <div>
+                                    <span>{{comment.up}}</span>-
+                                    <span>{{comment.down}}</span>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div v-else>'in comment swipe' To home page...</div>
+                        </div>-->
+                    <!--<div v-else>'in comment swipe' To home page...</div>-->
                 </swipe-item>
                 <swipe-item v-if="comments && comments.length>0">To home page...</swipe-item>
             </swipe>
@@ -53,9 +54,6 @@ export default {
             if (this.page) {
                 this.showComment = false;
                 var container = $('<div></div>')
-                //TODO: ineffective scroll top
-                $('.page').scrollTop(0)
-                $('.comment').scrollTop(0)
 
                 $(this.page).each(function(index, element) {
                     container.append($(element))
@@ -63,6 +61,24 @@ export default {
                 return container.html()
             }
         },
+        _comment: function() {
+            if (this.comments && this.comments.length > 0) {
+                var result = '<div class="comment">'
+                for (let comment of this.comments) {
+                    result += `<div class="row">
+                                 <div>${comment.content}</div>
+                                 <div>
+                                    <span>${comment.up}</span>-
+                                    <span>${comment.down}</span>
+                                 </div> 
+                               </div>`
+                }
+                result += '</div>'
+                return result
+            } else {
+                return `<div>'in comment swipe' To home page...</div>`
+            }
+        }
         // _showCommentFlag: function() {
         //     if (this.showComment) {
         //         this.$refs.mySwipe.goto(2)
@@ -73,12 +89,6 @@ export default {
     methods: {
         OnBackClick: function() {
             this.$emit('listenToChildEvent')
-        },
-        ScrollTop: function() {
-            //TODO: how to call subcomponent's method by parent
-            console.log('ScrollTop', $('.page'))
-            $('.page').scrollTop(0)
-            $('.comment').scrollTop(0)
         },
         GotoPageContent: function() {
             this.$refs.mySwipe.goto(1)
