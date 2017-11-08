@@ -2,7 +2,11 @@ var config = ['getData1', 'getData2', 'getJsonData', 'getPageData', 'getHot24Dat
     'getIncrementalData', 'getLiveData', 'getLivePageData', 'sendLoadImageFlag', 'getEndingData']
 
 var exportObj = {}
-for (let prop of config) {
-    exportObj[prop] = '/' + prop
+for(index in config){
+    var prop = config[index]
+     exportObj[prop] = '/' + prop
 }
+// for (let prop of config) {
+//     exportObj[prop] = '/' + prop;
+// }
 module.exports = exportObj
