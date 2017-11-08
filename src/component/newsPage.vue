@@ -14,14 +14,14 @@
                 <swipe-item>
                     <div v-html="_comment"></div>
                     <!--<div class="comment" v-if="comments && comments.length>0">
-                            <div class="row" v-for="comment in comments" v-bind:key="comment">
-                                <div>{{comment.content}}</div>
-                                <div>
-                                    <span>{{comment.up}}</span>-
-                                    <span>{{comment.down}}</span>
-                                </div>
-                            </div>
-                        </div>-->
+                                                                                                    <div class="row" v-for="comment in comments" v-bind:key="comment">
+                                                                                                        <div>{{comment.content}}</div>
+                                                                                                        <div>
+                                                                                                            <span>{{comment.up}}</span>-
+                                                                                                            <span>{{comment.down}}</span>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>-->
                     <!--<div v-else>'in comment swipe' To home page...</div>-->
                 </swipe-item>
                 <swipe-item v-if="comments && comments.length>0">To home page...</swipe-item>
@@ -54,7 +54,7 @@ export default {
             if (this.page) {
                 this.showComment = false;
                 var container = $('<div></div>')
-
+                $('.page').scrollTop(0)
                 $(this.page).each(function(index, element) {
                     container.append($(element))
                 })
@@ -79,12 +79,6 @@ export default {
                 return `<div>'in comment swipe' To home page...</div>`
             }
         }
-        // _showCommentFlag: function() {
-        //     if (this.showComment) {
-        //         this.$refs.mySwipe.goto(2)
-        //     }
-        //     return this.showComment
-        // }
     },
     methods: {
         OnBackClick: function() {
@@ -137,92 +131,87 @@ export default {
 }
 
 </script>
-<style>
-.newsPage {
-    margin-left: -15px;
-}
-
-.page img:not(.jijin-img) {
-    /*width: 600px;
-    height: 300px;
-    max-width: 1000px !important;*/
-}
-
-.news-page-container,
-.news-page-container .page,
-.news-page-container .comment {
-    height: 900px;
-}
-
-.news-page-container .page,
-.news-page-container .comment {
+<style lang="scss">
+$container-height: 900px;
+$container-height-phone: 1360px;
+@mixin page-container {
     margin-top: 10px;
     overflow: auto;
     padding-bottom: 40px;
 }
 
+.newsPage {
+    margin-left: -15px;
+    @media (max-width: 992px) {
+        >button {
+            display: none;
+        }
+    }
+}
+
 .news-page-container {
+    height: $container-height;
     border-bottom: solid 1px #a8c6e2;
-}
-
-.news-page-container .comment .row {
-    margin-top: 10px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    margin-left: 0px;
-    border-bottom: solid 1px #a8c6e2;
-    position: relative;
-}
-
-.news-page-container .comment .row>div:nth-child(2) {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-}
-
-.news-page-container .comment .row>div:nth-child(2)>span:nth-child(1) {
-    color: #3694ec;
-}
-
-.news-page-container .comment .row>div:nth-child(2)>span:nth-child(2) {
-    color: #404448;
-    margin-left: -13px;
-}
-
-@media (max-width: 992px) {
-    .page,
-    .comment {
-        margin-left: 20px;
-        margin-right: 20px;
-        margin-top: 0px;
-    }
-    .newsPage>button {
-        display: none;
-    }
-    .news-page-container {
+    @media (max-width: 992px) {
         font-size: 50px;
         border-bottom: solid 2px #a8c6e2;
+        height: $container-height-phone;
     }
-    .news-page-container,
-    .news-page-container .page,
-    .news-page-container .comment {
-        height: 1360px !important;
+    .page,
+    .comment {
+        height: $container-height;
+        @include page-container;
+        @media (max-width: 992px) {
+            margin-left: 20px;
+            margin-right: 20px;
+            margin-top: 0px;
+            height: $container-height-phone;
+        }
     }
-    .news-page-container .page .time {
-        font-size: 40px;
+    @media (max-width: 992px) {
+        .page {
+            .time {
+                font-size: 40px;
+            }
+            h1 {
+                font-size: 40px;
+                margin-bottom: 20px;
+            }
+            img:not(.jijin-img) {
+                width: 100%;
+                max-width: initial !important;
+            }
+        }
     }
-    .news-page-container .page h1 {
-        font-size: 40px;
-        margin-bottom: 20px;
-    }
-    .news-page-container .comment .row {
-        border-bottom: solid 2px #a8c6e2;
-    }
-    .news-page-container .page img:not(.jijin-img) {
-        /*width: 920px;*/
-        /*height: 460px;*/
-        width: 100%;
-        max-width: initial !important;
+    .comment {
+        .row {
+            margin-top: 10px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            margin-left: 0px;
+            border-bottom: solid 1px #a8c6e2;
+            position: relative;
+            >div:nth-child(2) {
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                >span {
+                    &:nth-child(1) {
+                        color: #3694ec;
+                    }
+                    &:nth-child(2) {
+                        color: #404448;
+                        margin-left: -3px;
+                        @media (max-width: 992px) {
+                            margin-left: -13px;
+                        }
+                    }
+                }
+            }
+            @media (max-width: 992px) {
+                border-bottom: solid 2px #a8c6e2;
+            }
+        }
     }
 }
 </style>

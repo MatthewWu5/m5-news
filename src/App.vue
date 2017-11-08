@@ -1,11 +1,7 @@
 <template>
   <div id="app">
-    <div class="">
-
-      <!--<div v-for="item in v_for_data">{{item.prop1+' '+item.prop2}}</div>-->
-      <router-view>
-      </router-view>
-    </div>
+    <router-view>
+    </router-view>
   </div>
 </template>
 
@@ -28,85 +24,9 @@ export default {
 }
 </script>
 
-<style>
-@media (max-width: 992px) {
-  #app {
-    font-size: 40px;
-  }
-  .search-area {
-    font-size: 35px !important;
-    margin-bottom: 10px;
-    margin-right: 45px
-  }
-  .search-area .search-input {
-    width: 400px;
-  }
-  .search-area .interval-days {
-    width: 95px !important;
-    text-align: center;
-  }
-  .search-area i.removeBtn {
-    margin-left: -45px !important;
-  }
-  .search-area .fa-refresh {
-    font-size: 50px !important;
-    position: absolute;
-    top: 10px;
-    right: 35px;
-    margin-top: 5px;
-  }
-  .search-area .page-btn {
-    display: none;
-  }
-  #app .content-container {
-    height: 1173px;
-    overflow: auto;
-    font-size: 50px;
-    border-top: solid 2px #a8c6e2;
-    border-bottom: solid 2px #a8c6e2;
-    margin-right: 25px !important;
-
-    /*background:url(./assets/leo1.jpg) no-repeat;
-    background-size: 103%;
-    background-position-x: -11px;*/
-  }
-  #app .content-container-showOption {
-    height: 1100px !important;
-  }
-  /*#app .content-container a {
-    color: #faff19;
-    background-color: #12ad12;
-    color: black;
-  }*/
-  #app .leo-container,
-  .liveMatch {
-    height: 1300px !important;
-  }
-  .tab-container span {
-    font-size: 40px;
-    border: solid 2px #a8c6e2;
-    border-bottom: initial;
-    display: inline-block;
-    width: calc(100%/4);
-  }
-  .live-link-overflow {
-    height: 70px !important;
-  }
-  .search-area .checkbox-option {
-    top: -20px;
-    left: 15px;
-    -webkit-transform: scale(3.5);
-  }
-  .search-area .fa-picture-o {
-    font-size: 57px !important;
-    top: -37px;
-    left: 80px;
-  }
-  .margin>a {
-    font-size: 45px;
-  }
-}
-/*end media on phone*/
+<style lang="scss">
+$content-container-height: 850px;
+$content-container-height-phone: 1173px;
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -114,26 +34,98 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
   color: #2c3e50;
-  /*margin-top: 60px;*/
+  @media (max-width: 992px) {
+    font-size: 40px;
+    .content-container-showOption {
+      height: 1100px !important;
+    }
+    .leo-container,
+    .liveMatch {
+      height: 1300px !important;
+    }
+    .tab-container span {
+      font-size: 40px;
+      border: solid 2px #a8c6e2;
+      border-bottom: initial;
+      display: inline-block;
+      width: calc(100%/4);
+    }
+  }
 }
 
-.my-area {
-  border: 2px solid gainsboro;
-  padding: 10px;
+.content-container {
+  height: $content-container-height;
+  overflow: auto;
+  border-top: solid 1px #a8c6e2;
+  border-bottom: solid 1px #a8c6e2;
+  padding-left: 20px;
+  padding-bottom: 40px;
+  margin-top: 5px;
+  @media (max-width: 992px) {
+    height: $content-container-height-phone;
+    font-size: 50px;
+    border-top: solid 2px #a8c6e2;
+    border-bottom: solid 2px #a8c6e2;
+    margin-right: 25px;
+  }
+  .mint-swipe-item.is-active {
+    overflow: auto;
+  }
 }
 
-.my-area>h2 {
-  color: red;
-}
-
-.search-area i.removeBtn {
-  width: 10px;
-  height: 10px;
-  margin-left: -18px
-}
-
-.search-area .interval-days {
-  width: 53px;
+.search-area {
+  @media (max-width: 992px) {
+    font-size: 35px;
+    margin-bottom: 10px;
+    margin-right: 45px;
+    .search-input {
+      width: 400px;
+    }
+    .page-btn {
+      display: none;
+    }
+    .checkbox-option {
+      top: -20px;
+      left: 15px;
+      -webkit-transform: scale(3.5);
+    }
+  }
+  i.removeBtn {
+    width: 10px;
+    height: 10px;
+    margin-left: -18px;
+    @media (max-width: 992px) {
+      margin-left: -45px;
+    }
+  }
+  .interval-days {
+    width: 53px;
+    @media (max-width: 992px) {
+      width: 95px;
+      text-align: center;
+    }
+  }
+  .fa-refresh {
+    font-size: 15px;
+    margin-left: 43px;
+    @media (max-width: 992px) {
+      font-size: 50px;
+      position: absolute;
+      top: 10px;
+      right: 35px;
+      margin-top: 5px;
+    }
+  }
+  .fa-picture-o {
+    position: absolute;
+    top: -15px;
+    font-size: 20px;
+    @media (max-width: 992px) {
+      font-size: 57px;
+      top: -37px;
+      left: 80px;
+    }
+  }
 }
 
 .button-press,
@@ -148,7 +140,6 @@ export default {
 }
 
 .incremental {
-  /*color: #e0ad16;*/
   color: #0888f7;
 }
 
@@ -159,20 +150,9 @@ export default {
 .live-link-overflow {
   height: 25px;
   overflow-y: hidden;
-}
-
-.content-container {
-  height: 850px;
-  overflow: auto;
-  border-top: solid 1px #a8c6e2;
-  border-bottom: solid 1px #a8c6e2;
-  padding-left: 20px;
-  padding-bottom: 40px;
-  margin-top: 5px;
-}
-
-.content-container .mint-swipe-item.is-active {
-  overflow: auto;
+  @media (max-width: 992px) {
+    height: 70px;
+  }
 }
 
 .checkbox-option {
@@ -182,22 +162,13 @@ export default {
   -webkit-transform: scale(1.5);
 }
 
-.fa-picture-o {
-  position: absolute;
-  top: -15px;
-  font-size: 20px !important;
-}
-
-.search-area .fa-refresh {
-  font-size: 15px;
-  margin-left: 43px;
-}
-
 .margin>a {
   margin-left: 20px;
-}
-
-.margin>a:first-child {
-  margin-left: 0px;
+  &:first-child {
+    margin-left: 0px;
+  }
+  @media (max-width: 992px) {
+    font-size: 45px;
+  }
 }
 </style>
