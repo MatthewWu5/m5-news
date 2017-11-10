@@ -2,10 +2,16 @@ var config = ['getData1', 'getData2', 'getJsonData', 'getPageData', 'getHot24Dat
     'getIncrementalData', 'getLiveData', 'getLivePageData', 'sendLoadImageFlag', 'getEndingData']
 
 var exportObj = {}
-for(index in config){
-    var prop = config[index]
-     exportObj[prop] = '/' + prop
-}
+config.forEach(function(item){
+    exportObj[item] = '/' + item
+})
+//Do not use 'for in' on array
+// for (let index in config) {
+//     if (config.hasOwnProperty(index)) {
+//         var prop = config[index]
+//         exportObj[prop] = '/' + prop
+//     }
+// }
 // for (let prop of config) {
 //     exportObj[prop] = '/' + prop;
 // }

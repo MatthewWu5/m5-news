@@ -10,6 +10,6 @@
             "name": "Launch Program",
             // "program": "${file}"
             "program": "${workspaceRoot}\\build\\dev-server.js"
-        },
+        }
     ]
 }
