@@ -2,8 +2,8 @@ var https = require('https')
 var url = require('url')
 var cheerio = require('cheerio')
 var util = require('./util')
+var prototypeUtil = require('./prototype')
 var const_news = require('./const')
-require('./prototype')
 var getRequestData = function (host, path) {
     return new Promise(function (resolve, reject) {
         // var options = url.parse('https://news.zhibo8.cc/zuqiu/json/2017-07-20.htm');
@@ -204,7 +204,8 @@ module.exports = {
                     var comments = util.parseJson(hotCommentData)
                     if (comments && comments.length > 0) {
                         comments = comments.concat(util.parseJson(commentData))
-                        comments = comments.distinct('id')
+                        // comments = comments.distinct('id')
+                        comments = prototypeUtil.distinct(comments, 'id')
                     } else {
                         comments = util.parseJson(commentData)
                     }

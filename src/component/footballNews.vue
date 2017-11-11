@@ -60,6 +60,7 @@
 <script>
 import $ from 'jquery'
 import const_news from '../../server/const'
+import prototypeUtil from '../../server/prototype'
 import axios from 'axios'
 import url from '../../server/url'
 import newsPage from './newsPage'
@@ -223,7 +224,7 @@ export default {
       this.$refs.homeSwipe.goto(1)
       this.gotoPage = true
       this.showComment = newIndex == 0
-      if(newIndex == 0){
+      if (newIndex == 0) {
         this.$refs.newsPage.GotoPageComment()
       }
     },
@@ -270,7 +271,7 @@ export default {
                   currentIncrementalNews.forEach(function(element) {
                     element.isIncremental = true;
                   })
-                  item.news = currentIncrementalNews.concat(item.news).distinct('path')
+                  item.news = prototypeUtil.distinct(currentIncrementalNews.concat(item.news), 'path')
                   item.maxDate = incremental[item.category].maxDate;
                   $('.content-container').scrollTop(0)
                 }
