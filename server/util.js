@@ -29,7 +29,6 @@ var isMatchInLive = function (str) {
             || str.indexOf('拜仁慕尼黑') != -1
             || str.indexOf('巴西') != -1
             || str.indexOf('阿根廷') != -1
-            || str.indexOf('中国') != -1
             || str.indexOf('西班牙') != -1
             || str.indexOf('法国') != -1
             || str.indexOf('德国') != -1

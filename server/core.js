@@ -467,7 +467,7 @@ module.exports = {
             if (data.length == 2) {
                 var collection = []
                 for (let item of data) {
-                    var resultList = util.parseJson(item.data).list.filter(x => x.type == 'football' && util.isMatchInLive(x.label))
+                    var resultList = util.parseJson(item.data).list.filter(x => x.type == 'football' && util.isMatchInLive(x.label) && x.sdate!='')
                     if (resultList.length > 0) {
                         var mapedData = resultList.map(function (x) {
                             return {

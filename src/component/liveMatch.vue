@@ -81,7 +81,7 @@ export default {
             target.addClass('clicked')
             let host = n.host, path = n.path
             let self = this
-            self.requestStatus = 'goto page...'
+            self.requestStatus = 'going...'
             axios.post(url.getLivePageData, { host: host, path: path })
                 .then(resp => {
                     target.removeClass('clicked')
