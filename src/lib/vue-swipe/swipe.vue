@@ -74,7 +74,7 @@
       return {
         ready: false,
         dragging: false,
-        userScrolling: false,
+        userScrolling: -1,
         animating: false,
         index: 0,
         pages: [],
@@ -411,10 +411,13 @@
         var distanceX = Math.abs(offsetLeft);
         var distanceY = Math.abs(offsetTop);
         if (distanceX < 5 || (distanceX >= 5 && distanceY >= 1.73 * distanceX)) {
-          this.userScrolling = true;
+          this.userScrolling = 1;
           return;
         } else {
-          this.userScrolling = false;
+          if(this.userScrolling == 1){
+            return;
+          }
+          this.userScrolling = 0;
           event.preventDefault();
         }
         offsetLeft = Math.min(Math.max(-dragState.pageWidth + 1, offsetLeft), dragState.pageWidth - 1);
@@ -487,7 +490,7 @@
         }
         if (this.animating) return;
         this.dragging = true;
-        this.userScrolling = false;
+        this.userScrolling = -1;
         this.doOnTouchStart(event);
       },
 
@@ -497,7 +500,7 @@
       },
 
       dragEndEvent(event) {
-        if (this.userScrolling) {
+        if (this.userScrolling == 1) {
           this.dragging = false;
           this.dragState = {};
           return;
@@ -543,7 +546,7 @@
         }
         if (this.animating) return;
         this.dragging = true;
-        this.userScrolling = false;
+        this.userScrolling = -1;
         this.doOnTouchStart(event);
       });
 
@@ -553,7 +556,7 @@
       });
 
       element.addEventListener('touchend', (event) => {
-        if (this.userScrolling) {
+        if (this.userScrolling == 1) {
           this.dragging = false;
           this.dragState = {};
           return;

@@ -13,16 +13,6 @@
                 </swipe-item>
                 <swipe-item>
                     <div v-html="_comment"></div>
-                    <!--<div class="comment" v-if="comments && comments.length>0">
-                                                                                                    <div class="row" v-for="comment in comments" v-bind:key="comment">
-                                                                                                        <div>{{comment.content}}</div>
-                                                                                                        <div>
-                                                                                                            <span>{{comment.up}}</span>-
-                                                                                                            <span>{{comment.down}}</span>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>-->
-                    <!--<div v-else>'in comment swipe' To home page...</div>-->
                 </swipe-item>
                 <swipe-item v-if="comments && comments.length>0">To home page...</swipe-item>
             </swipe>
