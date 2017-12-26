@@ -5,8 +5,15 @@ var router = express.Router()
 
 //dynamic loading router
 // router.post(url.getJsonData, core.getJsonData)
-for (prop in url) {
-    router.post(url[prop], core[prop])
+for (let prop in url) {
+    function addCatch(req, res) {
+        try {
+            core[prop](req, res)
+        } catch (ex) {
+            console.log(req.url, ex)
+        }
+    }
+    router.post(url[prop], addCatch)
 }
 
 module.exports = router;
