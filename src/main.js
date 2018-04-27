@@ -1,16 +1,8 @@
 import Vue from 'vue'
-//import axios from 'axios'
-import App from './App.vue'
-import router from './router'
+import Vonic from 'vonic/src/index.js'
+import axios from 'axios'
+import routes from './router'
 
-//obsolete in vue2
-Vue.config.debug = true;
-
-new Vue({
-  el: '#app',
-  router,
-  render: h => h(App),
+Vue.use(Vonic.app, {
+  routes: routes
 })
-
-//instead of router index init path
-//router.push('test')
