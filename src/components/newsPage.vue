@@ -12,7 +12,15 @@
                     </div>
                 </swipe-item>
                 <swipe-item>
-                    <div v-html="_comment"></div>
+                    <!-- <div v-html="_comment"></div> -->
+                    <list class="list-ios container-for-scroll">
+                        <item v-for="item in this.comments" v-bind:key="item">
+                            <p style="line-height:20px;white-space:normal">{{item.content}}</p>
+                            <div class="item-note">
+                                <span>{{item.up}}</span> - <span>{{item.down}}</span>
+                            </div>
+                        </item>
+                    </list>
                 </swipe-item>
                 <swipe-item v-if="comments && comments.length>0">To home page...</swipe-item>
             </swipe>
@@ -50,24 +58,24 @@ export default {
                 return container.html()
             }
         },
-        _comment: function() {
-            if (this.comments && this.comments.length > 0) {
-                var result = '<div class="comment">'
-                for (let comment of this.comments) {
-                    result += `<div class="row">
-                                 <div>${comment.content}</div>
-                                 <div>
-                                    <span>${comment.up}</span>-
-                                    <span>${comment.down}</span>
-                                 </div> 
-                               </div>`
-                }
-                result += '</div>'
-                return result
-            } else {
-                return `<div>'in comment swipe' To home page...</div>`
-            }
-        }
+        // _comment: function() {
+        //     if (this.comments && this.comments.length > 0) {
+        //         var result = '<div class="comment">'
+        //         for (let comment of this.comments) {
+        //             result += `<div class="row">
+        //                          <div>${comment.content}</div>
+        //                          <div>
+        //                             <span>${comment.up}</span>-
+        //                             <span>${comment.down}</span>
+        //                          </div> 
+        //                        </div>`
+        //         }
+        //         result += '</div>'
+        //         return result
+        //     } else {
+        //         return `<div>'in comment swipe' To home page...</div>`
+        //     }
+        // }
     },
     methods: {
         OnBackClick: function() {
@@ -122,15 +130,9 @@ export default {
 </script>
 <style lang="scss">
 $container-height: 900px;
-$container-height-phone: 1360px;
-@mixin page-container {
-    margin-top: 10px;
-    overflow: auto;
-    padding-bottom: 40px;
-}
+$container-height-phone: 622px;
 
 .newsPage {
-    margin-left: -15px;
     @media (max-width: 992px) {
         >button {
             display: none;
@@ -140,31 +142,31 @@ $container-height-phone: 1360px;
 
 .news-page-container {
     height: $container-height;
-    border-bottom: solid 1px #a8c6e2;
     @media (max-width: 992px) {
-        font-size: 50px;
-        border-bottom: solid 2px #a8c6e2;
         height: $container-height-phone;
     }
     .page,
     .comment {
         height: $container-height;
-        @include page-container;
+        overflow: auto;
+        padding: 10px;
+        width: initial;
         @media (max-width: 992px) {
-            margin-left: 20px;
-            margin-right: 20px;
-            margin-top: 0px;
             height: $container-height-phone;
+        }
+        color: #666;
+        background-color: #fff;
+        h1 {
+            color: #666;
         }
     }
     @media (max-width: 992px) {
         .page {
-            .time {
-                font-size: 40px;
-            }
             h1 {
-                font-size: 40px;
-                margin-bottom: 20px;
+                font-size: 20px;
+            }
+            #signals p {
+                line-height: 23px;
             }
             img:not(.jijin-img) {
                 width: 100%;

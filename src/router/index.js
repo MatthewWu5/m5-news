@@ -6,7 +6,7 @@ import LiveMatch from '../components/liveMatch.vue'
 const routes = [
     {
         path: '/',
-        redirect: '/news'
+        redirect: '/news/football'
     },
     {
         path: '/news',

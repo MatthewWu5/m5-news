@@ -225,7 +225,7 @@ export default {
       axios.post(url.sendLoadImageFlag, { loadImage: checked })
     },
     OnPageClick: function(n) {
-      console.log("OnPageClick", n)
+      $loading.show('loading...')
       let host = n.host,
         path = n.path,
         updatetime = n.time
@@ -248,9 +248,11 @@ export default {
             n.isReaded = true
             self.$refs.newsPage.GotoPageContent()
           })
+          $loading.hide()
         })
         .catch(err => {
           console.error(err)
+          $loading.hide()
         })
     },
     OnGoPageClick: function() {
@@ -339,7 +341,7 @@ export default {
         .catch(err => {
           console.error(err)
         })
-    }
+    },
   },
   created: function() {
     //https://soccer.hupu.com/home/latest-news?league=%E8%A5%BF%E7%94%B2&page=1

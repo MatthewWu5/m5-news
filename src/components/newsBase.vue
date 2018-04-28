@@ -43,6 +43,14 @@ export default {
 </script>
 
 <style lang="scss">
+$container-height-phone: 622px;
+
+.container-for-scroll {
+  height: $container-height-phone;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 $content-container-height: 850px;
 $content-container-height-phone: 1173px;
 
