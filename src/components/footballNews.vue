@@ -20,7 +20,6 @@
 
       <!-- <div style="margin-top:5px">
         <button class="page-btn" @click="OnGoPageClick">Page</button>
-        <span style="margin-left:10px">{{requestStatus}}</span>
       </div> -->
 
       <!-- <div class="content-container">
@@ -37,16 +36,19 @@
         </swipe>
       </div> -->
       
-
-      <div class="content-container" v-for="item in _filteredNews" v-bind:key="item">
-        <item v-for="n in item.news" v-bind:key="n">
-          <p @click="OnPageClick(n)">{{n.title}}
-            <span class="item-note">
-              {{n.time}}
-            </span>
-          </p>
-        </item>
-      </div>
+      <!-- <swiper ref="swiper" direction="horizontal" width="100%" height="150" pager-color="#ea5a49" pager-bg-color="#e5e4e3" :callback="callback"> -->
+        <!-- <swiper-item> -->
+        <div class="content-container" v-for="item in _filteredNews" v-bind:key="item">
+          <item v-for="n in item.news" v-bind:key="n" @click.native="OnPageClick(n)">
+            <p>{{n.title}}
+              <span class="item-note">
+                {{n.time}}
+              </span>
+            </p>
+          </item>
+        </div>
+        <!-- </swiper-item> -->
+      <!-- </swiper> -->
     </div>
 
     <newsPage :page="page" :comments="comments" :showComment="showComment" :time="newsTime" v-show="gotoPage" v-on:listenToChildEvent="messageFromChild" ref="newsPage"></newsPage>
@@ -55,41 +57,40 @@
 </template>
 
 <script>
-import const_news from "../utils/const"
-import prototypeUtil from "../utils/prototype"
-import axios from "axios"
-import url from "../utils/url"
-import newsPage from "./newsPage"
-import { Swipe, SwipeItem } from "../lib/vue-swipe"
+import const_news from '../utils/const'
+import prototypeUtil from '../utils/prototype'
+import axios from 'axios'
+import url from '../utils/url'
+import newsPage from './newsPage'
+import { Swipe, SwipeItem } from '../lib/vue-swipe'
 // import { VonInput } from 'vonic'
 
 export default {
-  name: "footballNews",
+  name: 'footballNews',
   components: { newsPage, Swipe, SwipeItem },
   data() {
     return {
       footballNews: [],
-      searchKey: "",
-      label: "",
+      searchKey: '',
+      label: '',
       categories: [const_news.Category.News],
       intervalDay: 2,
       currentMinDate: new Date(),
-      requestStatus: "",
 
-      page: "",
+      page: '',
       comments: [],
       gotoPage: false,
       showComment: false,
-      newsTime: "",
+      newsTime: '',
 
       imageData: [],
 
       labelIndex: 0,
       labelMaps: {
-        All: "",
-        Mancity: "曼城",
-        Barca: "巴塞罗那",
-        Barclays: "英超"
+        All: '',
+        Mancity: '曼城',
+        Barca: '巴塞罗那',
+        Barclays: '英超'
       },
       categoryIndex: 0,
       categoryMaps: {
@@ -123,9 +124,9 @@ export default {
               y =>
                 y.title.indexOf(key) != -1 &&
                 y.lable.indexOf(label) != -1 &&
-                (label == "英超"
-                  ? y.lable.indexOf("曼城") == -1
-                  : y.lable != "")
+                (label == '英超'
+                  ? y.lable.indexOf('曼城') == -1
+                  : y.lable != '')
             )
           }
         })
@@ -134,22 +135,22 @@ export default {
     _currentMinDateString: function() {
       var date = this.currentMinDate
       return (
-        date.getFullYear() + "." + (date.getMonth() + 1) + "." + date.getDate()
+        date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDate()
       )
     },
 
     _class: function() {
       //i want subscope but 'this' always be global scope
-      console.log("_class", this)
-      let _class = ""
+      console.log('_class', this)
+      let _class = ''
       if (this.isLeo) {
-        _class += "leo-news-color "
+        _class += 'leo-news-color '
       }
       if (this.isIncremental) {
-        _class += "incremental "
+        _class += 'incremental '
       }
       if (this.isReaded) {
-        _class += "readed "
+        _class += 'readed '
       }
       return _class
     }
@@ -157,9 +158,9 @@ export default {
   methods: {
     showCustomPopup() {
       let options = {
-        effect: "scale",
-        title: "",
-        buttons: [{ text: "Ok" }, { text: "Cancel" }]
+        effect: 'scale',
+        title: '',
+        buttons: [{ text: 'Ok' }, { text: 'Cancel' }]
         // components: { VonInput }
       }
       let template = `<von-input type="text" placeholder="search text" value="${
@@ -170,58 +171,60 @@ export default {
       var self = this
       popup.show().then(buttonIndex => {
         if (buttonIndex == 0) {
-          self.searchKey = $(".von-popup input").val()
+          self.searchKey = $('.von-popup input').val()
         } else {
-          if (self.searchKey != "") {
-            self.searchKey = ""
+          if (self.searchKey != '') {
+            self.searchKey = ''
           }
         }
       })
     },
     showActionSheet() {
       $actionSheet.show({
-        theme: "", //ios
-        title: "Interval days",
+        theme: '', //ios
+        title: 'Interval days',
         buttons: {
-          "2": () => {
+          '2': () => {
             this.moreNewsOnLoad(2)
           },
 
-          "5": () => {
+          '5': () => {
             this.moreNewsOnLoad(5)
           },
 
-          "10": () => {
+          '10': () => {
             this.moreNewsOnLoad(10)
           }
         }
       })
     },
     getClass: function(n) {
-      let _class = ""
+      let _class = ''
       if (n.isLeo) {
-        _class += "leo-news-color "
+        _class += 'leo-news-color '
       }
       if (n.isIncremental) {
-        _class += "incremental "
+        _class += 'incremental '
       }
       if (n.isReaded) {
-        _class += "readed "
+        _class += 'readed '
       }
       return _class
     },
     // todo: scroll top
     OnLabelChange(index) {
       this.labelIndex = index
-      this.label = Object.values(this.labelMaps)[index]
+      var prop = Object.keys(this.labelMaps)[index]
+      this.label = this.labelMaps[prop]
     },
     OnCategoryChange(index) {
       this.categoryIndex = index
-      this.categories = Object.values(this.categoryMaps)[index]
+      var prop = Object.keys(this.categoryMaps)[index]
+      this.categories = this.categoryMaps[prop]
     },
     onImageChecked(event) {
       let checked = event.target.checked
-      $('meta[name="referrer"]').attr("content", checked ? "never" : "always")
+      $('meta[name="referrer"]').attr('content', checked ? 'never' : 'always')
       axios.post(url.sendLoadImageFlag, { loadImage: checked })
     },
     OnPageClick: function(n) {
@@ -230,7 +233,6 @@ export default {
         path = n.path,
         updatetime = n.time
       let self = this
-      self.requestStatus = "going..."
       axios
         .get(url.getPageData, {
           params: {
@@ -242,7 +244,6 @@ export default {
           self.$nextTick(function() {
             self.page = resp.data.data.page
             self.comments = resp.data.data.comments
-            self.requestStatus = ""
             self.gotoPage = true
             self.newsTime = updatetime
             n.isReaded = true
@@ -272,7 +273,7 @@ export default {
     },
     moreNewsOnLoad: function(intervalDay) {
       var self = this
-      self.requestStatus = "loading..."
+      $loading.show('loading...')
       axios
         .get(url.getMoreData, {
           params: {
@@ -291,16 +292,17 @@ export default {
               current.news = current.news.concat(source[objKeys[i]].news)
             }
             self.currentMinDate = new Date(resp.data.data.minDate)
-            self.requestStatus = ""
+            $loading.hide()
           })
         })
         .catch(err => {
           console.error(err)
+          $loading.hide()
         })
     },
     refreshOnClick: function() {
       var self = this
-      self.requestStatus = "loading..."
+      $loading.show('loading...')
       var maxDateList = self.footballNews.map(x => {
         return {
           category: x.category,
@@ -328,43 +330,45 @@ export default {
                   })
                   item.news = prototypeUtil.distinct(
                     currentIncrementalNews.concat(item.news),
-                    "path"
+                    'path'
                   )
                   item.maxDate = incremental[item.category].maxDate
-                  $(".content-container").scrollTop(0)
+                  $('.content-container').scrollTop(0)
                 }
               }
             }
-            self.requestStatus = ""
+            $loading.hide()
           })
         })
         .catch(err => {
           console.error(err)
+          $loading.hide()
         })
-    },
+    }
   },
   created: function() {
     //https://soccer.hupu.com/home/latest-news?league=%E8%A5%BF%E7%94%B2&page=1
     var self = this
     //Server
-    self.requestStatus = "initing..."
+    $loading.show('loading...')
     axios
       .get(url.getHot24Data)
       .then(resp => {
         self.$nextTick(function() {
           self.footballNews = resp.data.data.source
           self.currentMinDate = new Date(resp.data.data.minDate)
-          self.requestStatus = ""
+          $loading.hide()
           if (resp.data.data.loadImage) {
-            $(".tool-bar .toggle input")[0].checked = true
-            $('meta[name="referrer"]').attr("content", "never")
+            $('.tool-bar .toggle input')[0].checked = true
+            $('meta[name="referrer"]').attr('content', 'never')
           } else {
-            $('meta[name="referrer"]').attr("content", "always")
+            $('meta[name="referrer"]').attr('content', 'always')
           }
         })
       })
       .catch(err => {
         console.error(err)
+        $loading.hide()
       })
   }
 }

@@ -20,7 +20,12 @@ got an error `Cannot convert undefined or null to object`, because `_labelMaps` 
 
 ## To implement
 
-- [ ] write a loading in the axios, `interceptors`
+- [ ] package a axios, 
+1. remove the `requestStatus` => write a loading in the axios, `interceptors`  
 https://segmentfault.com/q/1010000009350401/a-1020000009351474
 
+2. add console.error in catch
+
 - [ ] how to effect a component in popup, write it in the vonic $popup
+
+- [ ] how to make es7 `Object.values()` compatible with ios safari(works on laptop), babel-preset-env and babel-loader in config are not effect, use `Object.keys()` instead

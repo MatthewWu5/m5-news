@@ -1,4 +1,4 @@
-var serverUrl = 'http://localhost/'
+var serverUrl = 'http://dapi.eastasia.cloudapp.azure.com:8080/'
 var action = ['getPageData', 'getHot24Data', 'getMoreData', 'getMoreVideoData',
     'getIncrementalData', 'getLiveData', 'getLivePageData', 'getEndingData', 'sendLoadImageFlag']
 

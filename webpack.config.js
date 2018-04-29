@@ -22,7 +22,11 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        exclude: /node_modules/
+        options: {
+          presets: ['env']
+        },
+        // exclude: /node_modules/,
+        include: [/src/, /node_modules\/vonic/]
       },
       {
         test: /\.scss$/,
@@ -41,7 +45,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.vue'],
     alias: {
-      'vue$': 'vue/dist/vue.common.js'
+      vue$: 'vue/dist/vue.common.js'
     }
   },
   devServer: {
