@@ -36,19 +36,19 @@
         </swipe>
       </div> -->
       
-      <!-- <swiper ref="swiper" direction="horizontal" width="100%" height="150" pager-color="#ea5a49" pager-bg-color="#e5e4e3" :callback="callback"> -->
-        <!-- <swiper-item> -->
-        <div class="content-container" v-for="item in _filteredNews" v-bind:key="item">
-          <item v-for="n in item.news" v-bind:key="n" @click.native="OnPageClick(n)">
-            <p>{{n.title}}
-              <span class="item-note">
-                {{n.time}}
-              </span>
-            </p>
-          </item>
-        </div>
-        <!-- </swiper-item> -->
-      <!-- </swiper> -->
+      <swiper ref="swiper" direction="horizontal" width="100%" height="150" pager-color="#ea5a49" pager-bg-color="#e5e4e3">
+        <swiper-item>
+          <div class="content-container" v-for="item in _filteredNews" v-bind:key="item">
+            <item v-for="n in item.news" v-bind:key="n" @click.native="OnPageClick(n)">
+              <p>{{n.title}}
+                <span class="item-note">
+                  {{n.time}}
+                </span>
+              </p>
+            </item>
+          </div>
+        </swiper-item>
+      </swiper>
     </div>
 
     <newsPage :page="page" :comments="comments" :showComment="showComment" :time="newsTime" v-show="gotoPage" v-on:listenToChildEvent="messageFromChild" ref="newsPage"></newsPage>
@@ -62,12 +62,12 @@ import prototypeUtil from '../utils/prototype'
 import axios from 'axios'
 import url from '../utils/url'
 import newsPage from './newsPage'
-import { Swipe, SwipeItem } from '../lib/vue-swipe'
-// import { VonInput } from 'vonic'
+// import { Swipe, SwipeItem } from '../lib/vue-swipe'
 
 export default {
   name: 'footballNews',
-  components: { newsPage, Swipe, SwipeItem },
+  components: { newsPage },
+  // components: { newsPage, Swipe, SwipeItem },
   data() {
     return {
       footballNews: [],
