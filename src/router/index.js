@@ -3,8 +3,6 @@ import MessiVideo from '../components/messiVideo.vue'
 import NewsBase from '../components/newsBase.vue'
 import LiveMatch from '../components/liveMatch.vue'
 
-import Index from '../components/Index.vue'
-
 const routes = [
   {
     path: '/',
@@ -28,7 +26,7 @@ const routes = [
       {
         path: 'liveMatch',
         name: 'LiveMatch',
-        component: Index
+        component: LiveMatch
       }
     ]
   }
