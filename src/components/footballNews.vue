@@ -46,6 +46,7 @@
 import const_news from '../utils/const'
 import prototypeUtil from '../utils/prototype'
 import axios from 'axios'
+// import axios from '../lib/_axios'
 import url from '../utils/url'
 import newsPage from './newsPage'
 import { Swipe, SwipeItem } from '../lib/vue-swipe'
