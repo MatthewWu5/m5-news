@@ -37,7 +37,7 @@
     </swipe-item>
     <swipe-item>
        <!--v-on:listenToChildEvent="messageFromChild"-->
-      <newsPage :page="page" :comments="comments" :time="newsTime" ref="newsPage"></newsPage>
+      <newsPage :page="page" :comments="comments" :time="newsTime"></newsPage>
     </swipe-item>
   </swipe>
 </template>

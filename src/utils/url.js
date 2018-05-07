@@ -1,4 +1,6 @@
-var serverUrl = 'http://dapi.eastasia.cloudapp.azure.com:8080/'
+import config from '../config'
+
+var serverUrl = config.serverPrefixUrl
 var action = ['getPageData', 'getHot24Data', 'getMoreData', 'getMoreVideoData',
     'getIncrementalData', 'getLiveData', 'getLivePageData', 'getEndingData', 'sendLoadImageFlag']
 

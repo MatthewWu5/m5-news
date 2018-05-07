@@ -35,7 +35,9 @@ export default {
   },
   updated() {
     var page = document.querySelector('.newsPage .page')
-    page.scrollTop = 0
+    if (page) {
+      page.scrollTop = 0
+    }
   }
 }
 </script>
@@ -66,35 +68,5 @@ export default {
     overflow-y: auto;
     overflow-x: hidden;
   } 
-  // .comment {
-  //   .row {
-  //     margin-top: 10px;
-  //     margin-right: 10px;
-  //     margin-bottom: 10px;
-  //     margin-left: 0px;
-  //     border-bottom: solid 1px #a8c6e2;
-  //     position: relative;
-  //     > div:nth-child(2) {
-  //       position: absolute;
-  //       right: 0;
-  //       bottom: 0;
-  //       > span {
-  //         &:nth-child(1) {
-  //           color: #3694ec;
-  //         }
-  //         &:nth-child(2) {
-  //           color: #404448;
-  //           margin-left: -3px;
-  //           @media (max-width: 992px) {
-  //             margin-left: -13px;
-  //           }
-  //         }
-  //       }
-  //     }
-  //     @media (max-width: 992px) {
-  //       border-bottom: solid 2px #a8c6e2;
-  //     }
-  //   }
-  // }
 }
 </style>
