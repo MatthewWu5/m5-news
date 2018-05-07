@@ -1,18 +1,15 @@
 <template>
     <div class="newsPage">
-        <button @click="OnBackClick">Back</button>
-        <button v-show="comments && comments.length>0" @click="OnCommentClick">{{'Comment:'+showComment}}</button>
         <div class="news-page-container">
-            <swipe ref="mySwipe" :speed="100" :default-index="1" :auto="0" :continuous="false" :show-indicators="false" @change="changeSwipe">
-                <swipe-item>Previous to home page...</swipe-item>
+           <!--:propagation-first-page="true"-->
+            <swipe ref="mySwipe" :speed="100" :auto="0" :continuous="false" :show-indicators="false" propagation="true">
                 <swipe-item>
                     <div class="page">
                         <div class="time">{{time}}</div>
-                        <div v-html="_page"></div>
+                        <div v-html="this.page"></div>
                     </div>
                 </swipe-item>
                 <swipe-item>
-                    <!-- <div v-html="_comment"></div> -->
                     <list class="list-ios container-for-scroll">
                         <item v-for="item in this.comments" v-bind:key="item">
                             <p style="line-height:20px;white-space:normal">{{item.content}}</p>
@@ -22,7 +19,6 @@
                         </item>
                     </list>
                 </swipe-item>
-                <swipe-item v-if="comments && comments.length>0">To home page...</swipe-item>
             </swipe>
         </div>
     </div>
@@ -36,102 +32,17 @@ export default {
   props: {
     page: String,
     comments: Array,
-    showComment: Boolean,
     time: String
   },
-  data() {
-    return {
-      //showComment: false
-    }
-  },
-  computed: {
-    _page: function() {
-      if (this.page) {
-        this.showComment = false
-        var container = $('<div></div>')
-        $('.page').scrollTop(0)
-        $(this.page).each(function(index, element) {
-          container.append($(element))
-        })
-        return container.html()
-      }
-    }
-    // _comment: function() {
-    //     if (this.comments && this.comments.length > 0) {
-    //         var result = '<div class="comment">'
-    //         for (let comment of this.comments) {
-    //             result += `<div class="row">
-    //                          <div>${comment.content}</div>
-    //                          <div>
-    //                             <span>${comment.up}</span>-
-    //                             <span>${comment.down}</span>
-    //                          </div>
-    //                        </div>`
-    //         }
-    //         result += '</div>'
-    //         return result
-    //     } else {
-    //         return `<div>'in comment swipe' To home page...</div>`
-    //     }
-    // }
-  },
-  methods: {
-    OnBackClick: function() {
-      this.$emit('listenToChildEvent')
-    },
-    GotoPageContent: function() {
-      this.$refs.mySwipe.goto(1)
-    },
-    GotoPageComment: function() {
-      if (this.comments && this.comments.length > 0) {
-        this.$refs.mySwipe.goto(2)
-      } else {
-        this.$refs.mySwipe.goto(1)
-      }
-    },
-    OnCommentClick: function() {
-      console.log(this.showComment)
-      if (this.showComment) {
-        this.$refs.mySwipe.goto(1)
-      } else {
-        this.$refs.mySwipe.goto(2)
-      }
-      this.showComment = !this.showComment
-    },
-    changeSwipe: function(newIndex, oldIndex) {
-      if (oldIndex == 1 && newIndex == 0) {
-        this.$refs.mySwipe.goto(1)
-        this.OnBackClick()
-      } else if (oldIndex == 1 && newIndex == 2) {
-        if (this.comments && this.comments.length > 0) {
-          this.showComment = true
-        } else {
-          this.$refs.mySwipe.goto(1)
-          this.OnBackClick()
-        }
-      } else if (oldIndex == 2 && newIndex == 1) {
-        if (this.comments && this.comments.length > 0) {
-          this.showComment = false
-        }
-      } else if (oldIndex == 2 && newIndex == 3) {
-        this.$refs.mySwipe.goto(1)
-        this.OnBackClick()
-      }
-    }
+  updated() {
+    var page = document.querySelector('.newsPage .page')
+    page.scrollTop = 0
   }
 }
 </script>
 <style lang="scss">
 $container-height: 900px;
 $container-height-phone: 622px;
-
-.newsPage {
-  @media (max-width: 992px) {
-    > button {
-      display: none;
-    }
-  }
-}
 
 .news-page-container {
   height: $container-height;

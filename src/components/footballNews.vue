@@ -1,59 +1,45 @@
 <template>
-  <div>
-    <div class="brief-page" v-show="!gotoPage">
-      <tabs :tab-items="_labelMaps" :tab-index="labelIndex" :on-tab-click="OnLabelChange"></tabs>
+  <swipe ref="briefSwiper" class="brief-swiper" :speed="100" :auto="0" :continuous="false" :show-indicators="false">
+    <swipe-item>
+      <div class="brief-page">
+        <tabs :tab-items="_labelMaps" :tab-index="labelIndex" :on-tab-click="OnLabelChange"></tabs>
 
-      <!-- <i class="fa fa-refresh" @click="refreshOnClick"></i> -->
+        <!-- <i class="fa fa-refresh" @click="refreshOnClick"></i> -->
 
-      <!-- @click.native -->
-      <div class="tool-bar">
-        <button class="button button-positive button-clear button-small" @click="showActionSheet">Days</button>
-        <button class="button button-positive button-clear button-small" @click="showCustomPopup">Search</button>
-        <span class="min-time">
-          {{'Min Time: '+_currentMinDateString}}
-        </span>
-        <label class="toggle toggle-positive"><!----> <input type="checkbox" value="false" @click="onImageChecked"> <div class="track"><div class="handle"></div></div></label>
-      </div>
-      
-
-      <button-bar class="label-tab" theme="positive" :tab-items="_categoryMaps" :tab-index="categoryIndex" :on-tab-click="OnCategoryChange"></button-bar>
-
-      <!-- <div style="margin-top:5px">
-        <button class="page-btn" @click="OnGoPageClick">Page</button>
-      </div> -->
-
-      <!-- <div class="content-container">
-        <swipe ref="homeSwipe" :speed="100" :default-index="1" :auto="0" :continuous="false" :show-indicators="false" @change="changeSwipe">
-          <swipe-item>Back to page comment...</swipe-item>
-          <swipe-item>
-            <div v-for="item in _filteredNews" v-bind:key="item">
-              <div v-for="n in item.news" v-bind:key="n" :title="n.time">
-                <a href="#" :class="getClass(n)" @click="OnPageClick(n)">{{n.title}}</a>
-              </div>
+        <!-- @click.native -->
+        <div class="tool-bar">
+          <button class="button button-positive button-clear button-small" @click="showActionSheet">Days</button>
+          <button class="button button-positive button-clear button-small" @click="showCustomPopup">Search</button>
+          <span class="min-time">
+            {{'Min Time: '+_currentMinDateString}}
+          </span>
+          <label class="toggle toggle-positive">
+            <!----><input type="checkbox" value="false" @click="onImageChecked">
+            <div class="track">
+              <div class="handle"></div>
             </div>
-          </swipe-item>
-          <swipe-item>Go to page content...</swipe-item>
-        </swipe>
-      </div> -->
-      
-      <swiper ref="swiper" direction="horizontal" width="100%" height="150" pager-color="#ea5a49" pager-bg-color="#e5e4e3">
-        <swiper-item>
-          <div class="content-container" v-for="item in _filteredNews" v-bind:key="item">
-            <item v-for="n in item.news" v-bind:key="n" @click.native="OnPageClick(n)">
-              <p>{{n.title}}
-                <span class="item-note">
-                  {{n.time}}
-                </span>
-              </p>
-            </item>
-          </div>
-        </swiper-item>
-      </swiper>
-    </div>
+          </label>
+        </div>
 
-    <newsPage :page="page" :comments="comments" :showComment="showComment" :time="newsTime" v-show="gotoPage" v-on:listenToChildEvent="messageFromChild" ref="newsPage"></newsPage>
+        <button-bar class="label-tab" theme="positive" :tab-items="_categoryMaps" :tab-index="categoryIndex" :on-tab-click="OnCategoryChange"></button-bar>
 
-  </div>
+        <div class="content-container" v-for="item in _filteredNews" v-bind:key="item">
+          <item v-for="n in item.news" v-bind:key="n" @click.native="OnPageClick(n)">
+            <p>{{n.title}}
+              <span class="item-note">
+                {{n.time}}
+              </span>
+            </p>
+          </item>
+        </div>
+
+      </div>
+    </swipe-item>
+    <swipe-item>
+       <!--v-on:listenToChildEvent="messageFromChild"-->
+      <newsPage :page="page" :comments="comments" :time="newsTime" ref="newsPage"></newsPage>
+    </swipe-item>
+  </swipe>
 </template>
 
 <script>
@@ -62,25 +48,21 @@ import prototypeUtil from '../utils/prototype'
 import axios from 'axios'
 import url from '../utils/url'
 import newsPage from './newsPage'
-// import { Swipe, SwipeItem } from '../lib/vue-swipe'
+import { Swipe, SwipeItem } from '../lib/vue-swipe'
 
 export default {
   name: 'footballNews',
-  components: { newsPage },
-  // components: { newsPage, Swipe, SwipeItem },
+  components: { newsPage, Swipe, SwipeItem },
   data() {
     return {
       footballNews: [],
       searchKey: '',
       label: '',
       categories: [const_news.Category.News],
-      intervalDay: 2,
       currentMinDate: new Date(),
 
       page: '',
       comments: [],
-      gotoPage: false,
-      showComment: false,
       newsTime: '',
 
       imageData: [],
@@ -111,7 +93,7 @@ export default {
     _categoryMaps() {
       return Object.keys(this.categoryMaps)
     },
-    _filteredNews: function() {
+    _filteredNews() {
       var key = this.searchKey
       var label = this.label
       var categories = this.categories
@@ -132,27 +114,11 @@ export default {
         })
     },
 
-    _currentMinDateString: function() {
+    _currentMinDateString() {
       var date = this.currentMinDate
       return (
         date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDate()
       )
-    },
-
-    _class: function() {
-      //i want subscope but 'this' always be global scope
-      console.log('_class', this)
-      let _class = ''
-      if (this.isLeo) {
-        _class += 'leo-news-color '
-      }
-      if (this.isIncremental) {
-        _class += 'incremental '
-      }
-      if (this.isReaded) {
-        _class += 'readed '
-      }
-      return _class
     }
   },
   methods: {
@@ -165,7 +131,7 @@ export default {
       }
       let template = `<von-input type="text" placeholder="search text" value="${
         this.searchKey
-      }"></von-input>`
+        }"></von-input>`
       console.log(template)
       let popup = $popup.fromTemplate(template, options)
       var self = this
@@ -197,19 +163,6 @@ export default {
           }
         }
       })
-    },
-    getClass: function(n) {
-      let _class = ''
-      if (n.isLeo) {
-        _class += 'leo-news-color '
-      }
-      if (n.isIncremental) {
-        _class += 'incremental '
-      }
-      if (n.isReaded) {
-        _class += 'readed '
-      }
-      return _class
     },
     // todo: scroll top
     OnLabelChange(index) {
@@ -244,10 +197,9 @@ export default {
           self.$nextTick(function() {
             self.page = resp.data.data.page
             self.comments = resp.data.data.comments
-            self.gotoPage = true
             self.newsTime = updatetime
             n.isReaded = true
-            self.$refs.newsPage.GotoPageContent()
+            this.$refs.briefSwiper.next()
           })
           $loading.hide()
         })
@@ -255,21 +207,6 @@ export default {
           console.error(err)
           $loading.hide()
         })
-    },
-    OnGoPageClick: function() {
-      this.gotoPage = true
-      this.$refs.newsPage.GotoPageContent()
-    },
-    changeSwipe: function(newIndex, oldIndex) {
-      this.$refs.homeSwipe.goto(1)
-      this.gotoPage = true
-      this.showComment = newIndex == 0
-      if (newIndex == 0) {
-        this.$refs.newsPage.GotoPageComment()
-      }
-    },
-    messageFromChild: function() {
-      this.gotoPage = false
     },
     moreNewsOnLoad: function(intervalDay) {
       var self = this
@@ -375,6 +312,12 @@ export default {
 </script>
 
 <style lang="scss">
+$container-height-phone: 622px;
+
+.brief-swiper {
+  height: $container-height-phone !important;
+}
+
 .image-press {
   color: #23527c;
 }
@@ -390,7 +333,7 @@ export default {
   left: 0;
 }
 
-.tabs-top > .tabs {
+.tabs-top>.tabs {
   top: 0px;
 }
 

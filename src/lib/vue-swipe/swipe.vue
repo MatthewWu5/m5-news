@@ -74,7 +74,7 @@
       return {
         ready: false,
         dragging: false,
-        userScrolling: -1,
+        userScrolling: false,
         animating: false,
         index: 0,
         pages: [],
@@ -128,8 +128,12 @@
       propagation: {
         type: Boolean,
         default: false
-      }
+      },
 
+      propagationFirstPage: {
+        type: Boolean,
+        default: false
+      }
     },
 
     methods: {
@@ -186,7 +190,7 @@
 
         var pages = [];
         this.index = this.defaultIndex;
-        
+
         children.forEach((child, index) => {
           pages.push(child.$el);
 
@@ -411,26 +415,41 @@
         var distanceX = Math.abs(offsetLeft);
         var distanceY = Math.abs(offsetTop);
         if (distanceX < 5 || (distanceX >= 5 && distanceY >= 1.73 * distanceX)) {
-          this.userScrolling = 1;
+          this.userScrolling = true;
           return;
         } else {
-          if(this.userScrolling == 1){
-            return;
-          }
-          this.userScrolling = 0;
+          this.userScrolling = false;
           event.preventDefault();
         }
         offsetLeft = Math.min(Math.max(-dragState.pageWidth + 1, offsetLeft), dragState.pageWidth - 1);
 
         var towards = offsetLeft < 0 ? 'next' : 'prev';
 
+        // Add by Matthew5
+        // let needPropagation = this.propagationFirstPage && !dragState.prevPage && towards === 'prev';
+        // let intervaling = true;
+        // setTimeout(() => {
+        //   intervaling = false;
+        // }, 2000)
+
+        // if ((dragState.prevPage && towards === 'prev') || (needPropagation && intervaling)) {
         if (dragState.prevPage && towards === 'prev') {
+          console.log('prevPage', dragState.prevPage)
           this.translate(dragState.prevPage, offsetLeft - dragState.pageWidth);
+        } else if (dragState.nextPage && towards === 'next') {
+          console.log('nextPage', dragState.nextPage)
+          this.translate(dragState.nextPage, offsetLeft + dragState.pageWidth);
+        } else {
+          console.log('else')
+          // when continuous=false and it's the end of each side,
+          // limit swipe width with quadratic-functional ease
+          // y = (-1 / dk) x (|x| - 2k)
+          const k = dragState.pageWidth;
+          const x = offsetLeft;
+          const d = 6; // scroll until 1/d of screenWidth at maximum
+          offsetLeft = -1 / d / k * x * (Math.abs(x) - 2 * k);
         }
         this.translate(dragState.dragPage, offsetLeft);
-        if (dragState.nextPage && towards === 'next') {
-          this.translate(dragState.nextPage, offsetLeft + dragState.pageWidth);
-        }
       },
 
       doOnTouchEnd() {
@@ -488,9 +507,15 @@
         if (this.prevent) {
           event.preventDefault();
         }
+        if (!this.propagation) {
+          event.stopPropagation();
+        }
+        // if (!this.propagation && !this.propagationFirstPage) {
+        //   event.stopPropagation();
+        // }
         if (this.animating) return;
         this.dragging = true;
-        this.userScrolling = -1;
+        this.userScrolling = false;
         this.doOnTouchStart(event);
       },
 
@@ -500,13 +525,14 @@
       },
 
       dragEndEvent(event) {
-        if (this.userScrolling == 1) {
+        if (this.userScrolling) {
           this.dragging = false;
           this.dragState = {};
           return;
         }
         if (!this.dragging) return;
         this.doOnTouchEnd(event);
+        console.log('dragEndEvent')
         this.dragging = false;
       }
     },
@@ -537,34 +563,6 @@
 
       var element = this.$el;
 
-      element.addEventListener('touchstart', (event) => {
-        if (this.prevent) {
-          event.preventDefault();
-        }
-        if (this.propagation) {
-          event.stopPropagation();
-        }
-        if (this.animating) return;
-        this.dragging = true;
-        this.userScrolling = -1;
-        this.doOnTouchStart(event);
-      });
-
-      element.addEventListener('touchmove', (event) => {
-        if (!this.dragging) return;
-        this.doOnTouchMove(event);
-      });
-
-      element.addEventListener('touchend', (event) => {
-        if (this.userScrolling == 1) {
-          this.dragging = false;
-          this.dragState = {};
-          return;
-        }
-        if (!this.dragging) return;
-        this.doOnTouchEnd(event);
-        this.dragging = false;
-      });
       // for mobile
       element.addEventListener('touchstart', this.dragStartEvent);
       element.addEventListener('touchmove', this.dragMoveEvent);
