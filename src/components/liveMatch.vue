@@ -1,32 +1,40 @@
 <template>
     <!--https://www.zhiboba.com-->
     <div>
-        <div v-show="!gotoPage">
-            <div class="search-area">
-                <button @click="OnGoPageClick">Page</button>
-                <a style="margin-left:10px" href="https://www.zhibo8.cc/zuqiu/luxiang.htm" target="_blank">Record</a>
-                <span style="margin-left:10px">{{requestStatus}}</span>
-            </div>
-            <div class="liveMatch content-container">
-                <div v-for="item in endData" v-bind:key="item">
-                    <div>{{item.date}}</div>
-                    <div v-for="m in item.match" v-bind:key="m" class="live-link-overflow">
-                        <a v-bind:href="m.highlight" target="_blank" :class="getClass(m)" style="color:#c1cbd4">{{m.text}}</a>
-                    </div>
-                </div>
-                <div v-for="item in liveData" v-bind:key="item">
-                    <div>{{item.date}}</div>
-                    <div v-for="m in item.match" v-bind:key="m" class="live-link-overflow">
-                        <!--<a v-bind:href="m.href" target="_blank" :class="getClass(m)">{{m.text}}</a>-->
+        <a class="button button-positive button-clear button-small" href="https://www.zhibo8.cc/zuqiu/luxiang.htm">Record</a>
 
-                        <!--do not use <a> it will load footballNews.vue, i don't know why-->
-                        <!--<a href="#" :class="getClass(m)" @click="OnLivePageClick(m)">{{m.text}}</a>-->
-                        <p class="p-link" :class="getClass(m)" @click="OnLivePageClick(m)">{{m.text}}</p>
-                    </div>
+        <swipe ref="liveSwiper" class="live-swiper" :speed="100" :auto="0" :continuous="false" :show-indicators="false">
+            <swipe-item>
+                <div class="content-container">
+                    <list v-for="item in endData" v-bind:key="item">
+                        <item thin>
+                            {{item.date}}
+                        </item>
+                        <item v-for="m in item.match" v-bind:key="m" class="live-link-overflow" :class="getClass(m)">
+                            <a v-bind:href="m.highlight" target="_blank">{{m.text}}</a>
+                        </item>
+                    </list>
+
+                    <list v-for="item in liveData" v-bind:key="item">
+                        <item thin>
+                            {{item.date}}
+                        </item>
+                        <item v-for="m in item.match" v-bind:key="m" class="live-link-overflow" @click.native="OnLivePageClick(m)" :class="getClass(m)">
+                            {{m.text}}
+                        </item>
+                    </list>
+
+                    <!--<a v-bind:href="m.href" target="_blank" :class="getClass(m)">{{m.text}}</a>-->
+
+                    <!--do not use <a> it will load footballNews.vue, i don't know why-->
+                    <!--<a href="#" :class="getClass(m)" @click="OnLivePageClick(m)">{{m.text}}</a>-->
+
                 </div>
-            </div>
-        </div>
-        <newsPage :page="page" :comments="comments" :showComment="showComment" v-show="gotoPage" v-on:listenToChildEvent="messageFromChild"></newsPage>
+            </swipe-item>
+            <swipe-item>
+                <newsPage :page="page" :comments="comments"></newsPage>
+            </swipe-item>
+        </swipe>
     </div>
 </template>
 
@@ -34,26 +42,22 @@
 import axios from 'axios'
 import url from '../utils/url'
 import newsPage from './newsPage'
+import { Swipe, SwipeItem } from '../lib/vue-swipe'
 export default {
     name: 'liveMatch',
-    components: { newsPage },
+    components: { newsPage, Swipe, SwipeItem },
     data() {
         return {
             liveData: [],
-            requestStatus: '',
             page: '',
             comments: [],
-            gotoPage: false,
-            showComment: false,
         }
     },
     created: function() {
         var self = this
-        self.requestStatus = 'loading...'
         axios.get(url.getLiveData).then(resp => {
             self.$nextTick(function() {
                 self.liveData = resp.data.data
-                self.requestStatus = self.requestStatus == 'loading' ? '' : 'loading'
             })
         }).catch(err => {
             console.error(err)
@@ -62,7 +66,6 @@ export default {
         axios.get(url.getEndingData).then(resp => {
             self.$nextTick(function() {
                 self.endData = resp.data.data
-                self.requestStatus = self.requestStatus == 'loading' ? '' : 'loading'
             })
         }).catch(err => {
             console.error(err)
@@ -76,57 +79,46 @@ export default {
             return ''
         },
         OnLivePageClick: function(n) {
-            let target = $(event.target)
-            target.addClass('clicked')
             let host = n.host, path = n.path
             let self = this
-            self.requestStatus = 'going...'
-            console.log('get value', host, path)
             axios.get(url.getLivePageData, {
                 params: {
                     host: host, path: path
                 }
             }).then(resp => {
-                target.removeClass('clicked')
                 self.$nextTick(function() {
                     self.page = resp.data.data.page
                     self.comments = resp.data.data.comments
-                    self.requestStatus = ''
-                    self.gotoPage = true
-                    //self.$refs,newsPage.ScrollTop()
+                    this.$refs.liveSwiper.next()
                 })
             }).catch(err => {
                 console.error(err)
             })
-        },
-        OnGoPageClick: function() {
-            this.gotoPage = !this.gotoPage
-            this.showComment = false
-        },
-        messageFromChild: function() {
-            this.gotoPage = false
-        },
+        }
     }
 }
 </script>
-<style>
-.live-link-overflow>p.my-follow {
-    color: #12abf7;
-    font-weight: bolder;
+<style lang="scss">
+$container-height-phone: 592px;
+
+.live-swiper {
+    height: $container-height-phone !important;
+    .content-container {
+        height: 100%;
+    }
 }
 
-.live-link-overflow>a.my-follow {
-    font-weight: bolder;
+.live-link-overflow.my-follow,
+.live-link-overflow.my-follow>a {
+    color: #4a90e2;
 }
 
-.p-link {
-    color: #337ab7;
-    cursor: pointer;
+.live-link-overflow > a {
+    color: #b5b5b5;
+    text-decoration: initial;
 }
 
-.clicked,
-.live-link-overflow>p.my-follow.clicked {
-    color: #23527c;
-    text-decoration: underline;
+.live-link-overflow {
+    overflow-y: hidden;
 }
 </style>

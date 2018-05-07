@@ -338,19 +338,22 @@ $container-height-phone: 622px;
 }
 
 .content-container {
-  margin: 5px;
-  /* height: calc(100% - 100px); */
-  height: 505px;
   overflow-y: auto;
   overflow-x: hidden;
-
   .item-note {
     margin-top: 5px;
   }
 }
 
-.tool-bar {
+.brief-page .content-container {
+  height: 505px;
+}
+
+.brief-page .tool-bar {
   margin-top: 52px;
+}
+
+.tool-bar {
   position: relative;
   .min-time {
     color: #4a90e2;

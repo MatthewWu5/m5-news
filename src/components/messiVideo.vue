@@ -1,20 +1,17 @@
 <template>
-    <div class="row">
-        <!--<div>改用在后台用nodejs发web request试试 傻逼直播吧开发因为跨域server端callback json却返回了字符串导致我不能做梅西单独的视频，傻逼！ 害我在网上查了一晚上，结果不是我的问题！！！</div>-->
-        <div class="search-area">
-            <input type="text" v-model="intervalDay" style="width:120px"></input>
-            Days
-            <button @click="moreVideoOnClick">More</button>
-            <span style="color: #a8c6e2;font-weight: bold;margin-left:10px">
-                        {{'Min Time: '+_currentMinDateString}}
-                    </span> {{requestStatus}}
+    <div class="">
+        <div class="tool-bar">
+            <button class="button button-positive button-clear button-small" @click="showActionSheet">Days</button>
+            <span class="min-time">
+                {{'Min Time: '+_currentMinDateString}}
+            </span>
         </div>
-        <div class="content-container leo-container">
-            <div v-for="n in leoVideo" v-bind:key="n">
-                <a :href="n.url" target="_blank">{{n.title}}</a>
-                <!--<span>{{n.time}}</span>-->
-            </div>
-        </div>
+        <list class="content-container">
+            <item v-for="item in this.leoVideo" v-bind:key="item">
+                <a :href="item.url" target="_blank">{{item.title}}</a>
+                <span class="item-note">{{item.time}}</span>
+            </item>
+        </list>
     </div>
 </template>
 
@@ -26,44 +23,59 @@ export default {
     data() {
         return {
             leoVideo: [],
-            intervalDay: 10,
             currentMinDate: new Date(),
-            requestStatus: ''
         }
     },
     computed: {
-        _currentMinDateString: function () {
+        _currentMinDateString: function() {
             var date = this.currentMinDate;
             return date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDate()
         }
     },
     methods: {
-        getMoreVideo: function () {
+        getMoreVideo(intervalDay = 10) {
             var self = this;
-            self.requestStatus = 'loading...';
-            axios.get(url.getMoreVideoData, { params: { currentMinDate: self.currentMinDate, intervalDay: self.intervalDay } })
+            axios.get(url.getMoreVideoData, { params: { currentMinDate: self.currentMinDate, intervalDay: intervalDay } })
                 .then(resp => {
-                    self.$nextTick(function () {
+                    self.$nextTick(function() {
                         self.leoVideo = self.leoVideo.concat(resp.data.data.source)
                         self.currentMinDate = new Date(resp.data.data.minDate)
-                        self.requestStatus = '';
                     })
                 }).catch(err => {
                     console.error(err)
                 })
         },
 
-        moreVideoOnClick: function () {
-            this.getMoreVideo();
+        showActionSheet() {
+            $actionSheet.show({
+                theme: '', //ios
+                title: 'Interval days',
+                buttons: {
+                    '10': () => {
+                        this.getMoreVideo()
+                    },
+
+                    '20': () => {
+                        this.getMoreVideo(20)
+                    },
+
+                    '30': () => {
+                        this.getMoreVideo(30)
+                    }
+                }
+            })
         }
     },
-    mounted: function () {
+    mounted: function() {
         this.getMoreVideo();
     }
 }
 </script>
+<style lang="scss">
+$container-height-phone: 592px;
 
-<style>
-
+.content-container {
+    height: $container-height-phone;
+}
 </style>
 
