@@ -1,29 +1,20 @@
 import axios from 'axios'
 
-let _axios = Object.create(axios)
+axios.interceptors.request.use(function(config) {
+  $loading.show('loading...')
+  return config
+})
 
-// Provide aliases for supported request methods
-utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
-    /*eslint func-names:0*/
-    _axios.__proto__[method] = function (url, config) {
-        $loading.show('loading...')
-        return this.request(utils.merge(config || {}, {
-            method: method,
-            url: url
-        }));
-    };
-});
+axios.interceptors.response.use(
+  function(res) {
+    $loading.hide()
+    return res
+  },
+  function(error) {
+    $loading.hide()
+    console.error(error)
+    return Promise.reject(error)
+  }
+)
 
-utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-    /*eslint func-names:0*/
-    _axios.__proto__[method] = function (url, data, config) {
-        $loading.show('loading...')
-        return this.request(utils.merge(config || {}, {
-            method: method,
-            url: url,
-            data: data
-        }));
-    };
-});
-
-module.exports = _axios
+module.exports = axios

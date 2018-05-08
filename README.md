@@ -20,7 +20,7 @@ got an error `Cannot convert undefined or null to object`, because `_labelMaps` 
 
 ## To implement
 
-- [ ] package a axios, 
+- [x] package a axios, 
 1. remove the `requestStatus` => write a loading in the axios, `interceptors`  
 https://segmentfault.com/q/1010000009350401/a-1020000009351474
 

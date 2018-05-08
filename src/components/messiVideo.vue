@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from '../lib/_axios'
 import url from '../utils/url'
 export default {
     name: 'messiVideo',
@@ -41,8 +41,6 @@ export default {
                         self.leoVideo = self.leoVideo.concat(resp.data.data.source)
                         self.currentMinDate = new Date(resp.data.data.minDate)
                     })
-                }).catch(err => {
-                    console.error(err)
                 })
         },
 

@@ -45,8 +45,7 @@
 <script>
 import const_news from '../utils/const'
 import prototypeUtil from '../utils/prototype'
-import axios from 'axios'
-// import axios from '../lib/_axios'
+import axios from '../lib/_axios'
 import url from '../utils/url'
 import newsPage from './newsPage'
 import { Swipe, SwipeItem } from '../lib/vue-swipe'
@@ -132,7 +131,7 @@ export default {
       }
       let template = `<von-input type="text" placeholder="search text" value="${
         this.searchKey
-        }"></von-input>`
+      }"></von-input>`
       console.log(template)
       let popup = $popup.fromTemplate(template, options)
       var self = this
@@ -178,11 +177,11 @@ export default {
     },
     onImageChecked(event) {
       let checked = event.target.checked
-      $('meta[name="referrer"]').attr('content', checked ? 'never' : 'always')
-      axios.post(url.sendLoadImageFlag, { loadImage: checked })
+      axios.post(url.sendLoadImageFlag, { loadImage: checked }).then(resp => {
+        $('meta[name="referrer"]').attr('content', checked ? 'never' : 'always')
+      })
     },
     OnPageClick: function(n) {
-      $loading.show('loading...')
       let host = n.host,
         path = n.path,
         updatetime = n.time
@@ -202,16 +201,10 @@ export default {
             n.isReaded = true
             this.$refs.briefSwiper.next()
           })
-          $loading.hide()
-        })
-        .catch(err => {
-          console.error(err)
-          $loading.hide()
         })
     },
     moreNewsOnLoad: function(intervalDay) {
       var self = this
-      $loading.show('loading...')
       axios
         .get(url.getMoreData, {
           params: {
@@ -230,17 +223,11 @@ export default {
               current.news = current.news.concat(source[objKeys[i]].news)
             }
             self.currentMinDate = new Date(resp.data.data.minDate)
-            $loading.hide()
           })
-        })
-        .catch(err => {
-          console.error(err)
-          $loading.hide()
         })
     },
     refreshOnClick: function() {
       var self = this
-      $loading.show('loading...')
       var maxDateList = self.footballNews.map(x => {
         return {
           category: x.category,
@@ -275,12 +262,7 @@ export default {
                 }
               }
             }
-            $loading.hide()
           })
-        })
-        .catch(err => {
-          console.error(err)
-          $loading.hide()
         })
     }
   },
@@ -288,14 +270,12 @@ export default {
     //https://soccer.hupu.com/home/latest-news?league=%E8%A5%BF%E7%94%B2&page=1
     var self = this
     //Server
-    $loading.show('loading...')
     axios
       .get(url.getHot24Data)
       .then(resp => {
         self.$nextTick(function() {
           self.footballNews = resp.data.data.source
           self.currentMinDate = new Date(resp.data.data.minDate)
-          $loading.hide()
           if (resp.data.data.loadImage) {
             $('.tool-bar .toggle input')[0].checked = true
             $('meta[name="referrer"]').attr('content', 'never')
@@ -303,10 +283,6 @@ export default {
             $('meta[name="referrer"]').attr('content', 'always')
           }
         })
-      })
-      .catch(err => {
-        console.error(err)
-        $loading.hide()
       })
   }
 }
@@ -334,7 +310,7 @@ $container-height-phone: 622px;
   left: 0;
 }
 
-.tabs-top>.tabs {
+.tabs-top > .tabs {
   top: 0px;
 }
 

@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from '../lib/_axios'
 import url from '../utils/url'
 import newsPage from './newsPage'
 import { Swipe, SwipeItem } from '../lib/vue-swipe'
@@ -59,16 +59,12 @@ export default {
             self.$nextTick(function() {
                 self.liveData = resp.data.data
             })
-        }).catch(err => {
-            console.error(err)
         })
 
         axios.get(url.getEndingData).then(resp => {
             self.$nextTick(function() {
                 self.endData = resp.data.data
             })
-        }).catch(err => {
-            console.error(err)
         })
     },
     methods: {
@@ -91,8 +87,6 @@ export default {
                     self.comments = resp.data.data.comments
                     this.$refs.liveSwiper.next()
                 })
-            }).catch(err => {
-                console.error(err)
             })
         }
     }
